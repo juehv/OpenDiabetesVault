@@ -9,6 +9,6 @@ package de.jhit.openmediavault.app.datareader;
  *
  * @author Jens
  */
-public class ParadigmCsvImporter {
+public class CarelinkCsvImporter {
     
 }
