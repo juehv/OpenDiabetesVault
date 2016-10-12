@@ -6,6 +6,11 @@
 package de.jhit.openmediavault.app.datareader;
 
 import com.csvreader.CsvReader;
+import de.jhit.openmediavault.app.preferences.Constants;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -13,8 +18,23 @@ import com.csvreader.CsvReader;
  */
 public class CsvValidator {
 
-    static boolean validateCarelinkHeader(CsvReader creader) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    static boolean validateCarelinkHeader(CsvReader creader) throws IOException {
+
+        boolean result = true;
+        Set<String> header = new TreeSet<>(Arrays.asList(creader.getHeaders()));
+
+        // Check english headers
+        for (int i = 0; i < Constants.CARELINK_CSV_HEADER.length; i++) {
+            for (String item : Constants.CARELINK_CSV_HEADER[i]) {
+                result &= header.contains(item);
+            }
+            if (result == true) {
+                Constants.CARELINK_CSV_LANG_SELECTION = i;
+                break;
+            }
+        }
+
+        return result;
     }
-    
+
 }

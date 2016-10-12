@@ -55,6 +55,7 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Options");
 
         jLabel1.setText("Carelink Credentials");
 

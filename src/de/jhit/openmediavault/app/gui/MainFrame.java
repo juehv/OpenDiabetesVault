@@ -6,8 +6,19 @@
 package de.jhit.openmediavault.app.gui;
 
 import de.jhit.openmediavault.app.Launcher;
+import de.jhit.openmediavault.app.container.DataEntry;
+import de.jhit.openmediavault.app.datareader.CarelinkCsvImporter;
+import java.awt.Cursor;
 import java.awt.Dialog;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -15,14 +26,23 @@ import java.util.prefs.Preferences;
  */
 public class MainFrame extends javax.swing.JFrame {
 
+    private void setWaitCursor() {
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+    }
+
+    private void setNormalCursor() {
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }
+
     static final String carelinkLastPathKey = "carelinkLastPath";
     Preferences prefs = Preferences.userNodeForPackage(Launcher.class);
+
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
-        
+
         // restore last path
         carelinkPathField.setText(prefs.get(carelinkLastPathKey, ""));
     }
@@ -47,9 +67,16 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        refillList = new javax.swing.JList<>();
         jPanel5 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Study Data Helper");
 
         carelinkPathField.setEnabled(false);
 
@@ -72,6 +99,11 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         importButton.setText("Import");
+        importButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -141,28 +173,61 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Hyper", jPanel3);
 
+        refillList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(refillList);
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 395, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 272, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Refil", jPanel4);
+        jTabbedPane1.addTab("Refill", jPanel4);
+
+        jLabel2.setText("Refill every:");
+
+        jLabel3.setText("BG AVG:");
+
+        jLabel4.setText("No of Hypos:");
+
+        jLabel5.setText("No of refills");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 395, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
+                .addContainerGap(322, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 272, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addContainerGap(130, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Statistics", jPanel5);
@@ -182,11 +247,19 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void carelinkPathBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carelinkPathBrowseButtonActionPerformed
-        String path = "";
-        //TODO Open Dialog
-        
-        carelinkPathField.setText(path);
-        prefs.put(carelinkLastPathKey, path);        
+        String path = prefs.get(carelinkLastPathKey, "");
+
+        JFileChooser chooser = new JFileChooser(path);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "Carelink Daten", "csv");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            path = chooser.getSelectedFile().getAbsolutePath();
+            carelinkPathField.setText(path);
+            prefs.put(carelinkLastPathKey, path);
+        }
+
     }//GEN-LAST:event_carelinkPathBrowseButtonActionPerformed
 
     private void optionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsButtonActionPerformed
@@ -195,18 +268,61 @@ public class MainFrame extends javax.swing.JFrame {
         window.setVisible(true);
     }//GEN-LAST:event_optionsButtonActionPerformed
 
+    private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importButtonActionPerformed
+        setWaitCursor();
+        // import csv data
+        String path = prefs.get(carelinkLastPathKey, "");
+        File csvFile = new File(path);
+        if (!csvFile.exists()) {
+            JOptionPane.showMessageDialog(this, "Please select a File!",
+                    "No File selected", JOptionPane.ERROR_MESSAGE);
+            setNormalCursor();
+            return;
+        }
+        try {
+            // Parse data
+            List<DataEntry> entrys = CarelinkCsvImporter.parseCarelinkCsvExport(path);
+            if (entrys == null || entrys.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Error while reading file.",
+                        "Reading File Error", JOptionPane.ERROR_MESSAGE);
+                setNormalCursor();
+                return;
+            }
+            // do s.th. with the data
+            refillList.setListData(GuiDataHelper.createRefillList(entrys));
+            refillList.repaint();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE,
+                    "Carelink CSV File not found", ex);
+            JOptionPane.showMessageDialog(this, "Unknown Error\n"
+                    + "Please send the log file to info@jensheuschkel-it.de",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            setNormalCursor();
+            return;
+        }
+        // TODO import google data
+
+        setNormalCursor();
+    }//GEN-LAST:event_importButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton carelinkPathBrowseButton;
     private javax.swing.JTextField carelinkPathField;
     private javax.swing.JCheckBox googleImportCheckbox;
     private javax.swing.JButton importButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton optionsButton;
+    private javax.swing.JList<String> refillList;
     // End of variables declaration//GEN-END:variables
 }

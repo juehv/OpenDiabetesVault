@@ -12,8 +12,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,35 +32,40 @@ public class CarelinkCsvImporter {
      * @return
      * @throws FileNotFoundException
      */
-    public static List<DataEntry> parseCsvBookEntrys(String filepath)
+    public static List<DataEntry> parseCarelinkCsvExport(String filepath)
             throws FileNotFoundException {
-        List<DataEntry> bookEntrys = new ArrayList<>();
+        List<DataEntry> CarelinkEntry = new ArrayList<>();
         // read file
-        CsvReader creader = new CsvReader(filepath, ',', Charset.forName("UTF-8"));
+        CsvReader creader = new CsvReader(filepath, ';', Charset.forName("UTF-8"));
 
         try {
             // validate header
             for (int i = 0; i < Constants.CARELINK_CSV_EMPTY_LINES; i++) {
                 creader.readHeaders();
+                //TODO compute meta data
             }
             if (!CsvValidator.validateCarelinkHeader(creader)) {
                 Logger.getLogger(CarelinkCsvImporter.class.getName()).
                         log(Level.SEVERE,
-                                "Stop parser because of unvalid header:\n"+
-                                Arrays.toString(Constants.CARELINK_CSV_HEADER)+
-                                "\n{0}", creader.getRawRecord());
+                                "Stop parser because of unvalid header:\n"
+                                + Arrays.toString(Constants.CARELINK_CSV_HEADER[0])
+                                + "\n{0}", creader.getRawRecord());
                 return null;
             }
 
             // read entries
             while (creader.readRecord()) {
                 // Todo cathegorize entry
-                    DataEntry entry = new DataEntry();
-                    
-                    entry = parseEntry(entry, creader);
-                    bookEntrys.add(entry);
-                    System.out.println(creader.getCurrentRecord() + " " + entry.toString());
-                
+                DataEntry entry = parseEntry(creader);
+                if (entry != null) {
+                    CarelinkEntry.add(entry);
+                    Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+                            Level.INFO, "Got Entry: {0}", entry.toString());
+                } else {
+//                    Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+//                            Level.FINE, "Drop Entry: {0}", creader.getRawRecord());
+                }
+
             }
 
         } catch (IOException | ParseException ex) {
@@ -66,7 +73,7 @@ public class CarelinkCsvImporter {
         } finally {
             creader.close();
         }
-        return bookEntrys;
+        return CarelinkEntry;
     }
 
     /**
@@ -76,8 +83,66 @@ public class CarelinkCsvImporter {
      * @throws IOException
      * @throws ParseException
      */
-    private static DataEntry parseEntry(DataEntry entry, CsvReader reader)
+    private static DataEntry parseEntry(CsvReader reader)
             throws IOException, ParseException {
+        DataEntry entry = null;
+        String[] validHeader = Constants.CARELINK_CSV_HEADER[Constants.CARELINK_CSV_LANG_SELECTION];
+
+        String type = reader.get(validHeader[2]);
+        for (int i = 0; i < Constants.CARELINK_TYPE.length; i++) {
+            if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[i])) {
+                switch (i) {
+                    case 0: // prime
+                        entry = new DataEntry();
+                        entry.type = Constants.CARELINK_TYPE[i];
+                        entry.timestamp
+                                = createTimestamp(reader.get(validHeader[0]),
+                                        reader.get(validHeader[1]));
+                        
+                        break;
+                    case 1: // fill
+                        entry = new DataEntry();
+                        entry.type = Constants.CARELINK_TYPE[i];
+                        entry.timestamp
+                                = createTimestamp(reader.get(validHeader[0]),
+                                        reader.get(validHeader[1]));
+                        break;
+                    case 2: // BGCapturedOnPump
+                        entry = new DataEntry();
+                        entry.type = Constants.CARELINK_TYPE[i];
+                        entry.timestamp
+                                = createTimestamp(reader.get(validHeader[0]),
+                                        reader.get(validHeader[1]));
+                        break;
+                    case 3: // BGReceived
+                        entry = new DataEntry();
+                        entry.type = Constants.CARELINK_TYPE[i];
+                        entry.timestamp
+                                = createTimestamp(reader.get(validHeader[0]),
+                                        reader.get(validHeader[1]));
+                        break;
+                    case 4: // BolusWizardBolusEstimate
+                        entry = new DataEntry();
+                        entry.type = Constants.CARELINK_TYPE[i];
+                        entry.timestamp
+                                = createTimestamp(reader.get(validHeader[0]),
+                                        reader.get(validHeader[1]));
+                        break;
+                    case 5: // BolusNormal
+                        entry = new DataEntry();
+                        entry.type = Constants.CARELINK_TYPE[i];
+                        entry.timestamp
+                                = createTimestamp(reader.get(validHeader[0]),
+                                        reader.get(validHeader[1]));
+                        break;
+                    default:
+                        Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+                                Level.SEVERE, "Error while type checking!");
+                        break;
+
+                }
+            }
+        }
         // get time
 //        String date = reader.get(Constants.THEADER_DATE);
 //        String startT = reader.get(Constants.THEADER_TIME_START);
@@ -85,6 +150,13 @@ public class CarelinkCsvImporter {
 
         return entry;
 
+    }
+
+    private static Date createTimestamp(String date, String time) throws ParseException {
+        String format = Constants.CARELINK_CSV_DATETIME_FORMAT[Constants.CARELINK_CSV_LANG_SELECTION];
+
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        return df.parse(time + date);
     }
 
 }
