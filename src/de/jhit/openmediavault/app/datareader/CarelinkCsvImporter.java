@@ -91,44 +91,68 @@ public class CarelinkCsvImporter {
         String type = reader.get(validHeader[2]);
         for (int i = 0; i < Constants.CARELINK_TYPE.length; i++) {
             if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[i])) {
+                String[] rawValues = reader.get(validHeader[3]).split(",");
                 switch (i) {
-                    case 0: // prime
-                        entry = new DataEntry();
-                        entry.type = Constants.CARELINK_TYPE[i];
-                        entry.timestamp
-                                = createTimestamp(reader.get(validHeader[0]),
-                                        reader.get(validHeader[1]));
-                        
-                        break;
-                    case 1: // fill
+                    case 0: // Rewind
                         entry = new DataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         break;
-                    case 2: // BGCapturedOnPump
+                    case 1: // Prime
                         entry = new DataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         break;
-                    case 3: // BGReceived
+                    case 2: // fill canula
                         entry = new DataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         break;
-                    case 4: // BolusWizardBolusEstimate
+                    case 3: // BGCapturedOnPump
+                        entry = new DataEntry();
+                        entry.type = Constants.CARELINK_TYPE[i];
+                        entry.timestamp
+                                = createTimestamp(reader.get(validHeader[0]),
+                                        reader.get(validHeader[1]));
+                        for (String value : rawValues) {
+                            if (value.contains(
+                                    Constants.CARELINK_RAW_VALUE_BGAMOUNT)) {
+                                entry.amount = Double.
+                                        parseDouble(value.split("=")[1]);
+                            }
+                        }
+                        break;
+                    case 4: // BGReceived
+                        entry = new DataEntry();
+                        entry.type = Constants.CARELINK_TYPE[i];
+                        entry.timestamp
+                                = createTimestamp(reader.get(validHeader[0]),
+                                        reader.get(validHeader[1]));
+                        for (String value : rawValues) {
+                            if (value.contains(
+                                    Constants.CARELINK_RAW_VALUE_BGAMOUNT)) {
+                                entry.amount = Double.
+                                        parseDouble(value.split("=")[1]);
+                            } else if (value.contains(
+                                    Constants.CARELINK_RAW_VALUE_BG_LINK_ID)) {
+                                entry.linkId = "#" + value.split("=")[1];
+                            }
+                        }
+                        break;
+                    case 5: // BolusWizardBolusEstimate
                         entry = new DataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         break;
-                    case 5: // BolusNormal
+                    case 6: // BolusNormal
                         entry = new DataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
