@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.jhit.openmediavault.app.datareader;
+package de.jhit.openmediavault.app.data;
 
 import com.csvreader.CsvReader;
 import de.jhit.openmediavault.app.container.DataEntry;
@@ -69,7 +69,8 @@ public class CarelinkCsvImporter {
             }
 
         } catch (IOException | ParseException ex) {
-            Logger.getLogger(CarelinkCsvImporter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+                    Level.SEVERE, "Error while parsing Careling CSV", ex);
         } finally {
             creader.close();
         }

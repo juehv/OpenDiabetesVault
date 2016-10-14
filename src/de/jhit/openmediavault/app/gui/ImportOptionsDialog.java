@@ -6,6 +6,7 @@
 package de.jhit.openmediavault.app.gui;
 
 import de.jhit.openmediavault.app.Launcher;
+import de.jhit.openmediavault.app.preferences.Constants;
 import java.util.prefs.Preferences;
 
 /**
@@ -14,10 +15,6 @@ import java.util.prefs.Preferences;
  */
 public class ImportOptionsDialog extends javax.swing.JDialog {
 
-    static final String carelinkUserKey = "carelinkUser";
-    static final String carelinkPwKey = "carelinkPw";
-    static final String googleUserKey = "googleUser";
-    static final String googlePwKey = "googlePw";
     Preferences prefs = Preferences.userNodeForPackage(Launcher.class);
     /**
      * Creates new form ImportOptions
@@ -28,10 +25,14 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
         initComponents();
         
         // restore saved credentials
-        carelinkUserField.setText(prefs.get(carelinkUserKey, ""));
-        carelinkPasswordField.setText(prefs.get(carelinkPwKey, ""));
-        googleUserField.setText(prefs.get(googleUserKey, ""));
-        googlePasswordField.setText(prefs.get(googlePwKey, ""));
+        carelinkUserField.setText(prefs.get(Constants.CARELINK_USER_KEY, ""));
+        carelinkPasswordField.setText(prefs.get(Constants.CARELINK_PW_KEY, ""));
+        googleUserField.setText(prefs.get(Constants.GOOGLE_USER_KEY, ""));
+        googlePasswordField.setText(prefs.get(Constants.GOOGLE_PW_KEY, ""));
+        hypoSpinner.setValue(prefs.getDouble(Constants.HYPO_THRESHOLD_KEY, 
+                Constants.HYPO_THRESHOLD_DEFAULT));
+        hyperSpinner.setValue(prefs.getDouble(Constants.HYPER_THRESHOLD_KEY, 
+                Constants.HYPER_THRESHOLD_DEFAULT));
     }
 
     /**
@@ -43,6 +44,7 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         carelinkUserField = new javax.swing.JTextField();
         carelinkPasswordField = new javax.swing.JPasswordField();
@@ -53,17 +55,35 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
         googleTestButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        hypoSpinner = new javax.swing.JSpinner();
+        hyperSpinner = new javax.swing.JSpinner();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        mgRadioButton = new javax.swing.JRadioButton();
+        mmolRadioButton = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Options");
 
-        jLabel1.setText("Carelink Credentials");
+        jLabel1.setText("Carelink Credentials:");
+        jLabel1.setEnabled(false);
+
+        carelinkUserField.setEnabled(false);
+
+        carelinkPasswordField.setEnabled(false);
 
         carelinkTestButton.setText("Test");
+        carelinkTestButton.setEnabled(false);
 
-        jLabel2.setText("Google Credentials");
+        jLabel2.setText("Google Credentials:");
+        jLabel2.setEnabled(false);
+
+        googleUserField.setEnabled(false);
+
+        googlePasswordField.setEnabled(false);
 
         googleTestButton.setText("Test");
+        googleTestButton.setEnabled(false);
 
         saveButton.setText("Save");
         saveButton.addActionListener(new java.awt.event.ActionListener() {
@@ -79,31 +99,63 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
             }
         });
 
+        hypoSpinner.setModel(new javax.swing.SpinnerNumberModel(71.0d, 70.0d, 100.0d, 1.0d));
+        hypoSpinner.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        hyperSpinner.setModel(new javax.swing.SpinnerNumberModel(180.0d, 120.0d, 300.0d, 1.0d));
+
+        jLabel3.setText("Hypo-Threshold:");
+
+        jLabel4.setText("Hyper-Threshold:");
+
+        buttonGroup1.add(mgRadioButton);
+        mgRadioButton.setSelected(true);
+        mgRadioButton.setText("mg/dl");
+
+        buttonGroup1.add(mmolRadioButton);
+        mmolRadioButton.setText("mmol/l");
+        mmolRadioButton.setEnabled(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(googleUserField)
-                    .addComponent(carelinkUserField)
-                    .addComponent(carelinkPasswordField)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(carelinkUserField, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(carelinkPasswordField, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(googleUserField, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(googlePasswordField, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(googlePasswordField)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(carelinkTestButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(googleTestButton, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(cancelButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 258, Short.MAX_VALUE)
-                        .addComponent(saveButton)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cancelButton)
+                                .addGap(0, 254, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(hyperSpinner, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(hypoSpinner, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(carelinkTestButton)
+                            .addComponent(googleTestButton)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(mmolRadioButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(mgRadioButton)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -115,16 +167,28 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
                 .addComponent(carelinkUserField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(carelinkPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(carelinkTestButton)
-                .addGap(18, 18, 18)
+                .addGap(11, 11, 11)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(googleUserField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(googlePasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(googleTestButton)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(mgRadioButton)
+                    .addComponent(mmolRadioButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hypoSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hyperSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveButton)
@@ -140,16 +204,19 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        prefs.put(carelinkUserKey, carelinkUserField.getText());
-        prefs.put(carelinkPwKey, new String (carelinkPasswordField.getPassword()));
-        prefs.put(googleUserKey, googleUserField.getText());
-        prefs.put(googlePwKey, new String (googlePasswordField.getPassword()));
+        prefs.put(Constants.CARELINK_USER_KEY, carelinkUserField.getText());
+        prefs.put(Constants.CARELINK_PW_KEY, new String (carelinkPasswordField.getPassword()));
+        prefs.put(Constants.GOOGLE_USER_KEY, googleUserField.getText());
+        prefs.put(Constants.GOOGLE_PW_KEY, new String (googlePasswordField.getPassword()));
+        prefs.putDouble(Constants.HYPO_THRESHOLD_KEY, (Double) hypoSpinner.getValue());
+        prefs.putDouble(Constants.HYPER_THRESHOLD_KEY, (Double) hyperSpinner.getValue());
         this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPasswordField carelinkPasswordField;
     private javax.swing.JButton carelinkTestButton;
@@ -157,8 +224,14 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
     private javax.swing.JPasswordField googlePasswordField;
     private javax.swing.JButton googleTestButton;
     private javax.swing.JTextField googleUserField;
+    private javax.swing.JSpinner hyperSpinner;
+    private javax.swing.JSpinner hypoSpinner;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JRadioButton mgRadioButton;
+    private javax.swing.JRadioButton mmolRadioButton;
     private javax.swing.JButton saveButton;
     // End of variables declaration//GEN-END:variables
 }
