@@ -108,12 +108,13 @@ public class CarelinkCsvImporter {
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         break;
-                    case 2: // fill canula
+                    case 2: // exercise marker
                         entry = new DataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+                        entry.amount = 0.0;
                         break;
                     case 3: // BGCapturedOnPump
                         entry = new DataEntry();

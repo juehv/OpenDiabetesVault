@@ -16,23 +16,29 @@ import java.util.prefs.Preferences;
 public class ImportOptionsDialog extends javax.swing.JDialog {
 
     Preferences prefs = Preferences.userNodeForPackage(Launcher.class);
+
     /**
      * Creates new form ImportOptions
+     *
      * @param parent
      */
     public ImportOptionsDialog(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
-        
+
         // restore saved credentials
         carelinkUserField.setText(prefs.get(Constants.CARELINK_USER_KEY, ""));
         carelinkPasswordField.setText(prefs.get(Constants.CARELINK_PW_KEY, ""));
         googleUserField.setText(prefs.get(Constants.GOOGLE_USER_KEY, ""));
         googlePasswordField.setText(prefs.get(Constants.GOOGLE_PW_KEY, ""));
-        hypoSpinner.setValue(prefs.getDouble(Constants.HYPO_THRESHOLD_KEY, 
+        hypoSpinner.setValue(prefs.getDouble(Constants.HYPO_THRESHOLD_KEY,
                 Constants.HYPO_THRESHOLD_DEFAULT));
-        hyperSpinner.setValue(prefs.getDouble(Constants.HYPER_THRESHOLD_KEY, 
+        hyperSpinner.setValue(prefs.getDouble(Constants.HYPER_THRESHOLD_KEY,
                 Constants.HYPER_THRESHOLD_DEFAULT));
+        hypoFollowingTimeSpinner.setValue(prefs.getInt(Constants.HYPO_FOLLOW_TIME_KEY,
+                Constants.HYPO_FOLLOW_TIME_DEFAULT));
+        hyperFollowingTimeSpinner.setValue(prefs.getInt(Constants.HYPER_FOLLOW_TIME_KEY,
+                Constants.HYPER_FOLLOW_TIME_DEFAULT));
     }
 
     /**
@@ -61,6 +67,10 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         mgRadioButton = new javax.swing.JRadioButton();
         mmolRadioButton = new javax.swing.JRadioButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        hyperFollowingTimeSpinner = new javax.swing.JSpinner();
+        hypoFollowingTimeSpinner = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Options");
@@ -116,6 +126,14 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
         mmolRadioButton.setText("mmol/l");
         mmolRadioButton.setEnabled(false);
 
+        jLabel5.setText("Hypo-Following-Time:");
+
+        jLabel6.setText("Hyper-Following-Time:");
+
+        hyperFollowingTimeSpinner.setModel(new javax.swing.SpinnerNumberModel(1440, 60, 2880, 30));
+
+        hypoFollowingTimeSpinner.setModel(new javax.swing.SpinnerNumberModel(60, 1, 240, 1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -140,8 +158,19 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))))
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(hypoFollowingTimeSpinner)
+                                    .addComponent(hyperFollowingTimeSpinner))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel4))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jLabel3)))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(hyperSpinner, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -184,11 +213,15 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(hypoSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel5)
+                    .addComponent(hypoFollowingTimeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(hyperSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel6)
+                    .addComponent(hyperFollowingTimeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveButton)
@@ -205,14 +238,15 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         prefs.put(Constants.CARELINK_USER_KEY, carelinkUserField.getText());
-        prefs.put(Constants.CARELINK_PW_KEY, new String (carelinkPasswordField.getPassword()));
+        prefs.put(Constants.CARELINK_PW_KEY, new String(carelinkPasswordField.getPassword()));
         prefs.put(Constants.GOOGLE_USER_KEY, googleUserField.getText());
-        prefs.put(Constants.GOOGLE_PW_KEY, new String (googlePasswordField.getPassword()));
+        prefs.put(Constants.GOOGLE_PW_KEY, new String(googlePasswordField.getPassword()));
         prefs.putDouble(Constants.HYPO_THRESHOLD_KEY, (Double) hypoSpinner.getValue());
         prefs.putDouble(Constants.HYPER_THRESHOLD_KEY, (Double) hyperSpinner.getValue());
+        prefs.putInt(Constants.HYPO_FOLLOW_TIME_KEY, (Integer) hypoFollowingTimeSpinner.getValue());
+        prefs.putInt(Constants.HYPER_FOLLOW_TIME_KEY, (Integer) hyperFollowingTimeSpinner.getValue());
         this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -224,12 +258,16 @@ public class ImportOptionsDialog extends javax.swing.JDialog {
     private javax.swing.JPasswordField googlePasswordField;
     private javax.swing.JButton googleTestButton;
     private javax.swing.JTextField googleUserField;
+    private javax.swing.JSpinner hyperFollowingTimeSpinner;
     private javax.swing.JSpinner hyperSpinner;
+    private javax.swing.JSpinner hypoFollowingTimeSpinner;
     private javax.swing.JSpinner hypoSpinner;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JRadioButton mgRadioButton;
     private javax.swing.JRadioButton mmolRadioButton;
     private javax.swing.JButton saveButton;

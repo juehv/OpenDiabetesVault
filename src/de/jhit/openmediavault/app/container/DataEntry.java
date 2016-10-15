@@ -33,6 +33,9 @@ public class DataEntry {
                 || type.equalsIgnoreCase(Constants.CARELINK_TYPE[1])) {
             // Prime
             return dformat.format(timestamp) + " --> " + type;
+        } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[2])) {
+            // exercise marker
+            return dformat.format(timestamp) + " --> " + type + " --> " + amount;
         } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[3])
                 || type.equalsIgnoreCase(Constants.CARELINK_TYPE[4])) {
             // BG
@@ -80,7 +83,6 @@ public class DataEntry {
         }
         return true;
     }
-
 
     public static Comparator<DataEntry> getTimeSortComparator() {
 

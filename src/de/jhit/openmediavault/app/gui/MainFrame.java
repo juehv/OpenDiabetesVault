@@ -18,13 +18,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -77,7 +84,7 @@ public class MainFrame extends javax.swing.JFrame {
         primeListData = DataHelper.createCleanPrimeList(entrys);
         wizardListData = DataHelper.createCleanWizardList(entrys);
 
-        // Update Gui Lists
+        // Update Gui components
         primeList.setListData(DataHelper.createGuiList(primeListData));
         hypoList.setListData(DataHelper.createGuiList(hypoListData));
         hyperList.setListData(DataHelper.createGuiList(hyperListData));
@@ -85,15 +92,19 @@ public class MainFrame extends javax.swing.JFrame {
         // clear components
         hypoFollowingValuesList.clearSelection();
         hypoFollowingValuesList.setListData(new String[]{});
+        exerciseHistoryList.setListData(new String[]{});
+        lastMealList.setListData(new String[]{});
         hypoList.clearSelection();
         primeList.clearSelection();
         hyperList.clearSelection();
+        lastPrimeLabel.setVisible(false);
+        sleepRadioButtonGroup.clearSelection();
 
         // repaint components
-        hypoFollowingValuesList.repaint();
-        hypoList.repaint();
-        primeList.repaint();
-        hyperList.repaint();
+//        hypoFollowingValuesList.repaint();
+//        hypoList.repaint();
+//        primeList.repaint();
+//        hyperList.repaint();
     }
 
     private final Preferences prefs = Preferences.userNodeForPackage(Launcher.class);
@@ -145,6 +156,7 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        sleepRadioButtonGroup = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         carelinkPathField = new javax.swing.JTextField();
@@ -162,18 +174,25 @@ public class MainFrame extends javax.swing.JFrame {
         hypoFollowingValuesList = new javax.swing.JList<>();
         jScrollPane3 = new javax.swing.JScrollPane();
         hypoList = new javax.swing.JList<>();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        exerciseHistoryList = new javax.swing.JList<>();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        lastMealList = new javax.swing.JList<>();
+        wakeRadioButton = new javax.swing.JRadioButton();
+        sleepRadioButton = new javax.swing.JRadioButton();
+        nnRadioButton = new javax.swing.JRadioButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         hyperList = new javax.swing.JList<>();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        hyperFollowingValuesList = new javax.swing.JList<>();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         primeList = new javax.swing.JList<>();
+        jLabel8 = new javax.swing.JLabel();
+        lastPrimeLabel = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList<>();
@@ -256,7 +275,7 @@ public class MainFrame extends javax.swing.JFrame {
                                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(118, 118, 118)
                                 .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 355, Short.MAX_VALUE)))
+                        .addGap(0, 333, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -276,7 +295,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(optionsButton)
                     .addComponent(importButton)
@@ -295,15 +314,35 @@ public class MainFrame extends javax.swing.JFrame {
                 hypoListMouseClicked(evt);
             }
         });
+        hypoList.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                hypoListKeyReleased(evt);
+            }
+        });
         jScrollPane3.setViewportView(hypoList);
 
-        jLabel8.setText("letzte hauptmahlzeit, 1h wenn unter schwelle");
+        exerciseHistoryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane7.setViewportView(exerciseHistoryList);
 
-        jLabel9.setText("körperliche aktivität (aus pumpe in den letzten stunden)");
+        lastMealList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "letzte hauptmahlzeit", "1h wenn unter schwelle" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        lastMealList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane8.setViewportView(lastMealList);
 
-        jLabel10.setText("geschlafen aus google + uhrzeit");
+        sleepRadioButtonGroup.add(wakeRadioButton);
+        wakeRadioButton.setText("wake");
+        wakeRadioButton.setEnabled(false);
 
-        jLabel13.setText("+ letzte pumpen akt");
+        sleepRadioButtonGroup.add(sleepRadioButton);
+        sleepRadioButton.setText("sleep");
+        sleepRadioButton.setEnabled(false);
+
+        sleepRadioButtonGroup.add(nnRadioButton);
+        nnRadioButton.setText("NN");
+        nnRadioButton.setEnabled(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -312,42 +351,37 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                    .addComponent(jScrollPane8))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(19, 19, 19)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(19, 19, 19)
-                                        .addComponent(jLabel9))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(51, 51, 51)
-                                        .addComponent(jLabel10))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel13)
-                                .addGap(120, 120, 120)))))
-                .addContainerGap())
+                            .addComponent(sleepRadioButton)
+                            .addComponent(wakeRadioButton)
+                            .addComponent(nnRadioButton)))
+                    .addComponent(jScrollPane2))
+                .addGap(17, 17, 17))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3)
-                .addGap(22, 22, 22)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane3)
+                    .addComponent(jScrollPane2))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane7)
+                    .addComponent(jScrollPane8)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
+                        .addComponent(sleepRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel9)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel10)
+                        .addComponent(wakeRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel13)
+                        .addComponent(nnRadioButton)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -361,6 +395,14 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel7.setText("letzte hauptmahlzeit + keton");
 
+        hyperFollowingValuesList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        hyperFollowingValuesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane6.setViewportView(hyperFollowingValuesList);
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -368,13 +410,16 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jScrollPane4)
+                        .addContainerGap())
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
                             .addComponent(jLabel7))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(94, 94, 94))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -382,16 +427,33 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel7))
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Hyper", jPanel3);
 
         primeList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        primeList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                primeListMouseClicked(evt);
+            }
+        });
+        primeList.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                primeListKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(primeList);
+
+        jLabel8.setText("Time to last prime event:");
+
+        lastPrimeLabel.setText("0 m");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -399,24 +461,30 @@ public class MainFrame extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
+                    .addComponent(lastPrimeLabel))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lastPrimeLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Refill", jPanel4);
+        jTabbedPane1.addTab("Prime", jPanel4);
 
-        jList2.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane5.setViewportView(jList2);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -425,14 +493,14 @@ public class MainFrame extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -460,7 +528,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
                     .addComponent(jLabel11))
-                .addContainerGap(475, Short.MAX_VALUE))
+                .addContainerGap(453, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -475,7 +543,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel11)
-                .addContainerGap(137, Short.MAX_VALUE))
+                .addContainerGap(133, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Statistics", jPanel5);
@@ -578,9 +646,15 @@ public class MainFrame extends javax.swing.JFrame {
         setWaitCursor();
         int index = hypoList.getSelectedIndex();
         if (index < 0) {
+            setNormalCursor();
+            sleepRadioButtonGroup.clearSelection();
+            hypoFollowingValuesList.setListData(new String[]{});
+            exerciseHistoryList.setListData(new String[]{});
+            lastMealList.setListData(new String[]{});
             return;
         }
         DataEntry hypo = hypoListData.get(index);
+        // get hypo series
         List<DataEntry> followingValues = DataHelper.filterFollowingHypoValues(
                 bgListData, hypo.timestamp,
                 prefs.getInt(Constants.HYPO_FOLLOW_TIME_KEY,
@@ -595,7 +669,7 @@ public class MainFrame extends javax.swing.JFrame {
             if (nextValue != null) {
                 nextValueString = nextValue.toGuiListEntry();
             }
-            hypoFollowingValuesList.setListData(new String[]{"No values in range ["
+            hypoFollowingValuesList.setListData(new String[]{"No BG values in range ["
                 + prefs.getInt(Constants.HYPO_FOLLOW_TIME_KEY,
                 Constants.HYPO_FOLLOW_TIME_DEFAULT) + "]",
                 nextValueString});
@@ -603,23 +677,104 @@ public class MainFrame extends javax.swing.JFrame {
             hypoFollowingValuesList.setListData(DataHelper.createGuiList(followingValues));
         }
         hypoFollowingValuesList.repaint();
+
+        // find exercise information
+        List<DataEntry> exerciseMarker = DataHelper
+                .filterExerciseHistoryValues(entrys, hypo.timestamp,
+                        prefs.getInt(Constants.HYPO_EXERCISE_HISTORY_TIME_KEY,
+                                Constants.HYPO_EXERCISE_HISTORY_TIME_DEFAULT));
+        if (exerciseMarker.isEmpty()) {
+            exerciseHistoryList.setListData(new String[]{"No exercise in range ["
+                + prefs.getInt(Constants.HYPO_EXERCISE_HISTORY_TIME_KEY,
+                Constants.HYPO_EXERCISE_HISTORY_TIME_DEFAULT)
+                + "]"});
+        } else {
+            exerciseHistoryList.setListData(DataHelper.createGuiList(exerciseMarker));
+        }
+        exerciseHistoryList.repaint();
+
+        // sleeping inication
+        DataEntry lastUserAction = DataHelper.filterLastValue(entrys,
+                hypo.timestamp);
+        if (lastUserAction != null) {
+            int lastEventMinutes = DataHelper.minutesDiff(lastUserAction.timestamp,
+                    hypo.timestamp);
+            int wakupTime = prefs.getInt(Constants.SLEEP_INDICATION_WAKEUP_TIME_KEY,
+                    Constants.SLEEP_INDICATION_WAKEUP_TIME_DEFAULT);
+            int bedTime = prefs.getInt(Constants.SLEEP_INDICATION_BED_TIME_KEY,
+                    Constants.SLEEP_INDICATION_BED_TIME_DEFAULT);
+            int sleepThreshold = prefs.getInt(Constants.SLEEP_INDICATION_THRESHOLD_KEY,
+                    Constants.SLEEP_INDICATION_THRESHOLD_DEFAULT);
+            Calendar cal = new GregorianCalendar(Locale.GERMANY);
+            cal.setTime(hypo.timestamp);
+
+            if (lastEventMinutes > sleepThreshold && cal.get(Calendar.HOUR) > bedTime
+                    || cal.get(Calendar.HOUR_OF_DAY) < wakupTime) {
+                // inside sleep time and over threshold
+                sleepRadioButton.setSelected(true);
+            } else if (lastEventMinutes < sleepThreshold && cal.get(Calendar.HOUR) < bedTime
+                    || cal.get(Calendar.HOUR_OF_DAY) > wakupTime) {
+                // there was an action and its day time
+                wakeRadioButton.setSelected(true);
+            } else {
+                nnRadioButton.setSelected(true);
+            }
+        } else {
+            nnRadioButton.setSelected(true);
+        }
         setNormalCursor();
     }//GEN-LAST:event_hypoListMouseClicked
+
+    private void primeListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_primeListMouseClicked
+        setWaitCursor();
+        int index = primeList.getSelectedIndex();
+        if (index < 0) {
+            lastPrimeLabel.setVisible(false);
+            setNormalCursor();
+            return;
+        }
+        DataEntry prime = primeListData.get(index);
+
+        DataEntry lastPrime = DataHelper.filterLastValue(primeListData,
+                prime.timestamp);
+        if (lastPrime != null) {
+            int minutes = DataHelper.minutesDiff(lastPrime.timestamp,
+                    prime.timestamp);
+            lastPrimeLabel.setText(String.format(
+                    "%dd %02dh %02dM",
+                    minutes / 1440,
+                    (minutes % 1440) / 60,
+                    minutes % 60));
+            lastPrimeLabel.setVisible(true);
+        } else {
+            lastPrimeLabel.setVisible(false);
+        }
+        setNormalCursor();
+    }//GEN-LAST:event_primeListMouseClicked
+
+    private void hypoListKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hypoListKeyReleased
+        hypoListMouseClicked(null);
+        // TODO clean up GUI <--> logic
+    }//GEN-LAST:event_hypoListKeyReleased
+
+    private void primeListKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_primeListKeyReleased
+        primeListMouseClicked(null);
+    }//GEN-LAST:event_primeListKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton carelinkPathBrowseButton;
     private javax.swing.JTextField carelinkPathField;
     private javax.swing.JButton emailButton;
+    private javax.swing.JList<String> exerciseHistoryList;
     private javax.swing.JCheckBox googleImportCheckbox;
+    private javax.swing.JList<String> hyperFollowingValuesList;
     private javax.swing.JList<String> hyperList;
     private javax.swing.JList<String> hypoFollowingValuesList;
     private javax.swing.JList<String> hypoList;
     private javax.swing.JButton importButton;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -627,7 +782,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jList2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -640,11 +794,20 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JList<String> lastMealList;
+    private javax.swing.JLabel lastPrimeLabel;
+    private javax.swing.JRadioButton nnRadioButton;
     private javax.swing.JButton optionsButton;
     private javax.swing.JList<String> primeList;
     private javax.swing.JLabel rangeChooserLabel;
+    private javax.swing.JRadioButton sleepRadioButton;
+    private javax.swing.ButtonGroup sleepRadioButtonGroup;
+    private javax.swing.JRadioButton wakeRadioButton;
     // End of variables declaration//GEN-END:variables
     private final UtilDateModel model = new UtilDateModel();
     private final Properties p = new Properties();

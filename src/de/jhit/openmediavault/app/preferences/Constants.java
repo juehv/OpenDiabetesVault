@@ -65,12 +65,21 @@ public final class Constants {
     public static final double HYPO_THRESHOLD_MMOL_DEFAULT = 3.9;
     public static final String HYPO_FOLLOW_TIME_KEY = "hypoFollowingTime";
     public static final int HYPO_FOLLOW_TIME_DEFAULT = 60;
-    public static final String HYPER_FOLLOW_TIME_KEY = "hypoFollowingTime";
-    public static final int HYPER_FOLLOW_TIME_DEFAULT = 60;
+    public static final String HYPER_FOLLOW_TIME_KEY = "hyperFollowingTime";
+    public static final int HYPER_FOLLOW_TIME_DEFAULT = 1440;
     public static final String HYPER_THRESHOLD_KEY = "hypersBorder";
     public static double HYPER_THRESHOLD_DEFAULT = 180;
     public static final double HYPER_THRESHOLD_MG_DEFAULT = 180;
     public static final double HYPER_THRESHOLD_MMOL_DEFAULT = 16.7;
+    public static final String HYPO_EXERCISE_HISTORY_TIME_KEY = "hypoExerciseHistoryTime";
+    public static final int HYPO_EXERCISE_HISTORY_TIME_DEFAULT = 180;
+
+    public static final String SLEEP_INDICATION_BED_TIME_KEY = "sleepIndicationStartTime";
+    public static final int SLEEP_INDICATION_BED_TIME_DEFAULT = 22;
+    public static final String SLEEP_INDICATION_WAKEUP_TIME_KEY = "sleepIndicationStopTime";
+    public static final int SLEEP_INDICATION_WAKEUP_TIME_DEFAULT = 6;
+    public static final String SLEEP_INDICATION_THRESHOLD_KEY = "sleepIndicationThreshold";
+    public static final int SLEEP_INDICATION_THRESHOLD_DEFAULT = 30;
 
     // Carelink Parsing
     public static final int CARELINK_CSV_EMPTY_LINES = 11;

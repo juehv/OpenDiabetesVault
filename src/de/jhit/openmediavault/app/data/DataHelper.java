@@ -102,9 +102,11 @@ public class DataHelper {
             // strongest indicator for prime is rewind
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[0])) {
                 primeList.add(item);
+                // todo find corresbonding prime, and add amount
             }
         }
 
+        //TODO check is rewind has an prime bevore, if yes, don't add this
         for (DataEntry item : data) {
             // a little less strong is prime
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[1])) {
@@ -136,11 +138,39 @@ public class DataHelper {
         return listEntrys;
     }
 
+    public static List<DataEntry> filterExerciseHistoryValues(List<DataEntry> entryList,
+            Date startTime, int minuteRange) {
+        List<DataEntry> listEntrys = new ArrayList<>();
+
+        for (DataEntry item : entryList) {
+            if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[2])
+                    && startTime.after(item.timestamp)
+                    && minutesDiff(item.timestamp, startTime) < minuteRange) {
+                listEntrys.add(item);
+            }
+        }
+
+        return listEntrys;
+    }
+
     public static DataEntry filterNextValue(List<DataEntry> cleanBgList,
             Date startTime) {
 
         for (DataEntry item : cleanBgList) {
             if (startTime.before(item.timestamp)) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    public static DataEntry filterLastValue(List<DataEntry> entryList,
+            Date startTime) {
+
+        for (int i = entryList.size() - 1; i >= 0; i--) {
+            DataEntry item = entryList.get(i);
+            if (startTime.after(item.timestamp)) {
                 return item;
             }
         }
@@ -192,10 +222,10 @@ public class DataHelper {
     // ###################################################################
     // GUI Helper
     // ###################################################################
-    public static String[] createGuiList(List<DataEntry> cleanBgList) {
+    public static String[] createGuiList(List<DataEntry> cleanList) {
         List<String> listEntrys = new ArrayList<>();
 
-        for (DataEntry item : cleanBgList) {
+        for (DataEntry item : cleanList) {
             listEntrys.add(item.toGuiListEntry());
         }
 
