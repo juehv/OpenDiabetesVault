@@ -18,9 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +28,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -55,6 +51,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void setComonents(boolean isEnabled) {
+        datePanel.setEnabled(isEnabled);
         startDatePicker.setEnabled(isEnabled);
         endDatePicker.setEnabled(isEnabled);
         rangeChooserLabel.setEnabled(isEnabled);
@@ -64,6 +61,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.setEnabledAt(3, isEnabled);
         jTabbedPane1.setEnabledAt(4, isEnabled);
         jTabbedPane1.setEnabledAt(5, isEnabled);
+
     }
 
     private void updateCarelinkData() {
@@ -82,14 +80,16 @@ public class MainFrame extends javax.swing.JFrame {
                 prefs.getInt(Constants.HYPER_FOLLOW_TIME_KEY,
                         Constants.HYPER_FOLLOW_TIME_DEFAULT));
         primeListData = DataHelper.createCleanPrimeList(entrys);
-        wizardListData = DataHelper.createCleanWizardList(entrys);
+        foodBolusListData = DataHelper.createCleanFoodBolusList(entrys);
+        exerciseMarkerListData = DataHelper.createExerciseMarkerList(entrys);
 
         // Update Gui components
         primeList.setListData(DataHelper.createGuiList(primeListData));
         hypoList.setListData(DataHelper.createGuiList(hypoListData));
         hyperList.setListData(DataHelper.createGuiList(hyperListData));
+        bolusList.setListData(DataHelper.createGuiList(foodBolusListData));
 
-        // clear components
+        // clear secondary components
         hypoFollowingValuesList.clearSelection();
         hypoFollowingValuesList.setListData(new String[]{});
         exerciseHistoryList.setListData(new String[]{});
@@ -115,7 +115,8 @@ public class MainFrame extends javax.swing.JFrame {
     private List<DataEntry> hypoListData = new ArrayList<>();
     private List<DataEntry> hyperListData = new ArrayList<>();
     private List<DataEntry> primeListData = new ArrayList<>();
-    private List<DataEntry> wizardListData = new ArrayList<>();
+    private List<DataEntry> foodBolusListData = new ArrayList<>();
+    private List<DataEntry> exerciseMarkerListData = new ArrayList<>();
 
     /**
      * Creates new form MainFrame
@@ -195,7 +196,7 @@ public class MainFrame extends javax.swing.JFrame {
         lastPrimeLabel = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList<>();
+        bolusList = new javax.swing.JList<>();
         jPanel5 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -324,11 +325,6 @@ public class MainFrame extends javax.swing.JFrame {
         exerciseHistoryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane7.setViewportView(exerciseHistoryList);
 
-        lastMealList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "letzte hauptmahlzeit", "1h wenn unter schwelle" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         lastMealList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane8.setViewportView(lastMealList);
 
@@ -484,8 +480,8 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Prime", jPanel4);
 
-        jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane5.setViewportView(jList2);
+        bolusList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane5.setViewportView(bolusList);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -504,7 +500,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Food", jPanel6);
+        jTabbedPane1.addTab("Food / Bolus", jPanel6);
 
         jLabel2.setText("Refill every:");
 
@@ -680,7 +676,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         // find exercise information
         List<DataEntry> exerciseMarker = DataHelper
-                .filterExerciseHistoryValues(entrys, hypo.timestamp,
+                .filterHistoryValues(exerciseMarkerListData, hypo.timestamp,
                         prefs.getInt(Constants.HYPO_EXERCISE_HISTORY_TIME_KEY,
                                 Constants.HYPO_EXERCISE_HISTORY_TIME_DEFAULT));
         if (exerciseMarker.isEmpty()) {
@@ -692,6 +688,27 @@ public class MainFrame extends javax.swing.JFrame {
             exerciseHistoryList.setListData(DataHelper.createGuiList(exerciseMarker));
         }
         exerciseHistoryList.repaint();
+
+        // last meals
+        List<DataEntry> lastMeals = DataHelper
+                .filterHistoryValues(foodBolusListData, hypo.timestamp,
+                        prefs.getInt(Constants.HYPO_FOOD_HISTORY_TIME_KEY,
+                                Constants.HYPO_FOOD_HISTORY_TIME_DEFAULT));
+        if (lastMeals.isEmpty()) {
+            // if no value in range, show info and next available entry
+            DataEntry lastValue = DataHelper.filterLastValue(foodBolusListData,
+                    hypo.timestamp);
+            String lastValueString = "";
+            if (lastValue != null) {
+                lastValueString = lastValue.toGuiListEntry();
+            }
+            lastMealList.setListData(new String[]{"No meal in range ["
+                + prefs.getInt(Constants.HYPO_FOOD_HISTORY_TIME_KEY,
+                Constants.HYPO_FOOD_HISTORY_TIME_DEFAULT)
+                + "]", lastValueString});
+        } else {
+            lastMealList.setListData(DataHelper.createGuiList(lastMeals));
+        }
 
         // sleeping inication
         DataEntry lastUserAction = DataHelper.filterLastValue(entrys,
@@ -762,6 +779,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_primeListKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JList<String> bolusList;
     private javax.swing.JButton carelinkPathBrowseButton;
     private javax.swing.JTextField carelinkPathField;
     private javax.swing.JButton emailButton;
@@ -782,7 +800,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JList<String> jList2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

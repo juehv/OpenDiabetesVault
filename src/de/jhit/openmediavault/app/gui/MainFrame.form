@@ -321,10 +321,7 @@
                 <Component class="javax.swing.JList" name="lastMealList">
                   <Properties>
                     <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                      <StringArray count="2">
-                        <StringItem index="0" value="letzte hauptmahlzeit"/>
-                        <StringItem index="1" value="1h wenn unter schwelle"/>
-                      </StringArray>
+                      <StringArray count="0"/>
                     </Property>
                     <Property name="selectionMode" type="int" value="0"/>
                   </Properties>
@@ -555,8 +552,8 @@
         <Container class="javax.swing.JPanel" name="jPanel6">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Food">
-                <Property name="tabTitle" type="java.lang.String" value="Food"/>
+              <JTabbedPaneConstraints tabName="Food / Bolus">
+                <Property name="tabTitle" type="java.lang.String" value="Food / Bolus"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -589,7 +586,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JList" name="jList2">
+                <Component class="javax.swing.JList" name="bolusList">
                   <Properties>
                     <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                       <StringArray count="0"/>

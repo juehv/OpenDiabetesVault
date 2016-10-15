@@ -10,6 +10,7 @@ import de.jhit.openmediavault.app.preferences.Constants;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import sun.util.calendar.CalendarUtils;
 
 /**
  *
@@ -95,6 +96,18 @@ public class DataHelper {
         return listEntrys;
     }
 
+    public static List<DataEntry> createExerciseMarkerList(List<DataEntry> entryList) {
+        List<DataEntry> listEntrys = new ArrayList<>();
+
+        for (DataEntry item : entryList) {
+            if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[2])) {
+                listEntrys.add(item);
+            }
+        }
+
+        return listEntrys;
+    }
+
     public static List<DataEntry> createCleanPrimeList(List<DataEntry> data) {
         List<DataEntry> primeList = new ArrayList<>();
 
@@ -138,13 +151,12 @@ public class DataHelper {
         return listEntrys;
     }
 
-    public static List<DataEntry> filterExerciseHistoryValues(List<DataEntry> entryList,
+    public static List<DataEntry> filterHistoryValues(List<DataEntry> entryList,
             Date startTime, int minuteRange) {
         List<DataEntry> listEntrys = new ArrayList<>();
 
         for (DataEntry item : entryList) {
-            if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[2])
-                    && startTime.after(item.timestamp)
+            if (startTime.after(item.timestamp)
                     && minutesDiff(item.timestamp, startTime) < minuteRange) {
                 listEntrys.add(item);
             }
@@ -191,21 +203,31 @@ public class DataHelper {
 //        bolusList.sort(DataEntry.getTimeSortComparator());
 //        return bolusList;
 //    }
-    public static List<DataEntry> createCleanWizardList(List<DataEntry> data) {
+    public static List<DataEntry> createCleanFoodBolusList(List<DataEntry> data) {
+        List<DataEntry> fullBolusList = new ArrayList<>();
         List<DataEntry> bolusList = new ArrayList<>();
 
         for (DataEntry item : data) {
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[5])) {
-                bolusList.add(item);
+                fullBolusList.add(item);
             }
         }
 
         // fill up boli without wizard (uuhhh bad guys)
         for (DataEntry item : data) {
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[6])) {
-                if (!dataEntryListContains(bolusList, item)) {
-                    bolusList.add(item);
+                if (!dataEntryListContains(fullBolusList, item)) {
+                    if (item.amount > 0.0) {
+                        fullBolusList.add(item);
+                    }
                 }
+            }
+        }
+
+        //remove correction entrys (needed to exclude boli)
+        for (DataEntry item : fullBolusList) {
+            if (item.amount > 0.0) {
+                bolusList.add(item);
             }
         }
 

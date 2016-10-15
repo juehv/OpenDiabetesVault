@@ -114,7 +114,6 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
-                        entry.amount = 0.0;
                         break;
                     case 3: // BGCapturedOnPump
                         entry = new DataEntry();
@@ -123,8 +122,7 @@ public class CarelinkCsvImporter {
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         for (String value : rawValues) {
-                            if (value.contains(
-                                    Constants.CARELINK_RAW_VALUE_BGAMOUNT)) {
+                            if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
                                 entry.amount = Double.
                                         parseDouble(value.split("=")[1]);
                             }
@@ -137,8 +135,7 @@ public class CarelinkCsvImporter {
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         for (String value : rawValues) {
-                            if (value.contains(
-                                    Constants.CARELINK_RAW_VALUE_BGAMOUNT)) {
+                            if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
                                 entry.amount = Double.
                                         parseDouble(value.split("=")[1]);
                             } else if (value.contains(
@@ -153,6 +150,13 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+                        for (String value : rawValues) {
+                            if (value.contains(Constants.CARELINK_RAW_VALUE_CARB_INPUT)) {
+                                entry.amount = Double.
+                                        parseDouble(value.split("=")[1]);
+                                break;
+                            }
+                        }
                         break;
                     case 6: // BolusNormal
                         entry = new DataEntry();
@@ -160,6 +164,13 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+                        for (String value : rawValues) {
+                            if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
+                                entry.amount = Double.
+                                        parseDouble(value.split("=")[1]);
+                                break;
+                            }
+                        }
                         break;
                     default:
                         Logger.getLogger(CarelinkCsvImporter.class.getName()).log(

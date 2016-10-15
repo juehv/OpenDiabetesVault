@@ -19,7 +19,7 @@ public class DataEntry {
 
     public String type = "";
     public Date timestamp = new Date();
-    public Double amount = -1.0;
+    public double amount = -1.0;
     public String linkId = "";
 
     @Override
@@ -40,13 +40,13 @@ public class DataEntry {
                 || type.equalsIgnoreCase(Constants.CARELINK_TYPE[4])) {
             // BG
             return dformat.format(timestamp) + " --> " + type + " --> " + amount;
-        } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[4])) {
+        } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[5])) {
             // Bolus Wizard (interested in KEs)
-            return dformat.format(timestamp) + " --> " + type + " --> " + amount;
+            return dformat.format(timestamp) + " --> " + type + " --> " + amount + "BE";
         }
-        if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[5])) {
+        if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[6])) {
             // Bolus given
-            return dformat.format(timestamp) + " --> " + type + " --> " + amount;
+            return dformat.format(timestamp) + " --> " + type + " --> " + amount + "I.E.";
         }
         return toString();
     }
@@ -76,6 +76,14 @@ public class DataEntry {
                 return false;
             }
             if (this.amount - item.amount > 0.0001) {
+                return false;
+            }
+        } else if ((type.equalsIgnoreCase(Constants.CARELINK_TYPE[5])
+                || type.equalsIgnoreCase(Constants.CARELINK_TYPE[6]))
+                && ((item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[5])
+                || item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[6])))) {
+            // bolus 
+            if (DataHelper.minutesDiff(this.timestamp, item.timestamp) > 1) {
                 return false;
             }
         } else {

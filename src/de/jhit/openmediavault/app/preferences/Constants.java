@@ -73,6 +73,8 @@ public final class Constants {
     public static final double HYPER_THRESHOLD_MMOL_DEFAULT = 16.7;
     public static final String HYPO_EXERCISE_HISTORY_TIME_KEY = "hypoExerciseHistoryTime";
     public static final int HYPO_EXERCISE_HISTORY_TIME_DEFAULT = 180;
+    public static final String HYPO_FOOD_HISTORY_TIME_KEY = "hypoFoodHistoryTime";
+    public static final int HYPO_FOOD_HISTORY_TIME_DEFAULT = 720;
 
     public static final String SLEEP_INDICATION_BED_TIME_KEY = "sleepIndicationStartTime";
     public static final int SLEEP_INDICATION_BED_TIME_DEFAULT = 22;
@@ -95,7 +97,8 @@ public final class Constants {
             = {"Rewind", "Prime", "JournalEntryExerciseMarker", // TODO correct fill canula
                 "BGCapturedOnPump", "BGReceived",
                 "BolusWizardBolusEstimate", "BolusNormal"};
-    public static final String CARELINK_RAW_VALUE_BGAMOUNT = "AMOUNT";
+    public static final String CARELINK_RAW_VALUE_AMOUNT = "AMOUNT";
+     public static final String CARELINK_RAW_VALUE_CARB_INPUT = "CARB_INPUT";
     public static final String CARELINK_RAW_VALUE_BG_LINK_ID = "PARADIGM_LINK_ID";
 
     // Other
