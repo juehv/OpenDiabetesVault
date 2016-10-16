@@ -104,7 +104,7 @@ public final class Constants {
     public static final String CARELINK_RAW_VALUE_BG_LINK_ID = "PARADIGM_LINK_ID";
 
     // Other
-    public static final String DATE_TIME_OUTPUT_FORMAT = "dd.MM.yy - HH:mm";
+    public static final String DATE_TIME_OUTPUT_FORMAT = "dd.MM. HH:mm";
 
     // could be interesting
 //    private static final Map<String, String> CARELINK_TYPE;

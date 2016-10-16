@@ -114,6 +114,7 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+                        entry.amount = 0; // for better loocking values in gui
                         break;
                     case 3: // BGCapturedOnPump
                         entry = new DataEntry();

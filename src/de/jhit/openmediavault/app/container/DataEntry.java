@@ -32,21 +32,25 @@ public class DataEntry {
         if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[0])
                 || type.equalsIgnoreCase(Constants.CARELINK_TYPE[1])) {
             // Prime
-            return dformat.format(timestamp) + " --> " + type;
+            return String.format("%s --> (%s)", dformat.format(timestamp), type);
         } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[2])) {
             // exercise marker
-            return dformat.format(timestamp) + " --> " + type + " --> " + amount;
+            return String.format("%s --> %.1f (%s)", dformat.format(timestamp),
+                    amount, type);
         } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[3])
                 || type.equalsIgnoreCase(Constants.CARELINK_TYPE[4])) {
             // BG
-            return dformat.format(timestamp) + " --> " + type + " --> " + amount;
+            return String.format("%s --> %.1f (%s)", dformat.format(timestamp),
+                    amount, type);
         } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[5])) {
             // Bolus Wizard (interested in KEs)
-            return dformat.format(timestamp) + " --> " + type + " --> " + amount + "BE";
+            return String.format("%s --> %.1f BE (%s)", dformat.format(timestamp),
+                    amount, type);
         }
         if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[6])) {
             // Bolus given
-            return dformat.format(timestamp) + " --> " + type + " --> " + amount + "I.E.";
+            return String.format("%s --> %.2f I.E. (%s)", dformat.format(timestamp),
+                    amount, type);
         }
         return toString();
     }
