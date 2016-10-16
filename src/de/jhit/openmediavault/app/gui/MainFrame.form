@@ -65,7 +65,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="optionsButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="emailButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="exportButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="importButton" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -97,7 +97,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="optionsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="importButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="emailButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -145,13 +145,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="emailButton">
+            <Component class="javax.swing.JButton" name="exportButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="E-Mail"/>
+                <Property name="text" type="java.lang.String" value="Export"/>
+                <Property name="toolTipText" type="java.lang.String" value="Exports the data as text for an email to clipboard."/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emailButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -602,8 +603,9 @@
                           <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="454" max="32767" attributes="0"/>
+                      <EmptySpace pref="426" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -620,7 +622,9 @@
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="133" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="101" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -649,6 +653,11 @@
             <Component class="javax.swing.JLabel" name="jLabel11">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Bolus without wizard"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel6">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="hypo/hypor without series"/>
               </Properties>
             </Component>
           </SubComponents>

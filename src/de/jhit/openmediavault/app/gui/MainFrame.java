@@ -13,6 +13,9 @@ import de.jhit.openmediavault.app.preferences.Constants;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dialog;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -48,7 +51,7 @@ public class MainFrame extends javax.swing.JFrame {
 //        datePanel.setEnabled(isEnabled);
 //        startDatePicker.setEnabled(isEnabled);
 //        endDatePicker.setEnabled(isEnabled);
-        emailButton.setEnabled(isEnabled);
+        exportButton.setEnabled(isEnabled);
         jTabbedPane1.setEnabledAt(1, isEnabled);
         jTabbedPane1.setEnabledAt(2, isEnabled);
         jTabbedPane1.setEnabledAt(3, isEnabled);
@@ -63,6 +66,23 @@ public class MainFrame extends javax.swing.JFrame {
 //                DataHelper.createCleanBgList(entrys),
 //                fromRagen, toRagen);
         bgListData = DataHelper.createCleanBgList(entrys);
+
+        if (DataHelper.isUnitMmol(bgListData)) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.INFO,
+                    "Identified mmol/l as unit");
+            currentHypoThreshold = prefs.getDouble(Constants.HYPO_THRESHOLD_MMOL_KEY,
+                    Constants.HYPO_THRESHOLD_MG_DEFAULT);
+            currentHyperThreshold = prefs.getDouble(Constants.HYPER_THRESHOLD_MMOL_KEY,
+                    Constants.HYPER_THRESHOLD_MG_DEFAULT);
+        } else {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.INFO,
+                    "Identified mg/dl as unit");
+            currentHypoThreshold = prefs.getDouble(Constants.HYPO_THRESHOLD_MG_KEY,
+                    Constants.HYPO_THRESHOLD_MG_DEFAULT);
+            currentHyperThreshold = prefs.getDouble(Constants.HYPER_THRESHOLD_MG_KEY,
+                    Constants.HYPER_THRESHOLD_MG_DEFAULT);
+        }
+
         hypoListData = DataHelper.createHypoList(bgListData,
                 currentHypoThreshold,
                 prefs.getInt(Constants.HYPO_FOLLOW_TIME_KEY,
@@ -165,7 +185,7 @@ public class MainFrame extends javax.swing.JFrame {
         googleImportCheckbox = new javax.swing.JCheckBox();
         optionsButton = new javax.swing.JButton();
         importButton = new javax.swing.JButton();
-        emailButton = new javax.swing.JButton();
+        exportButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         hypoFollowingValuesList = new javax.swing.JList<>();
@@ -199,6 +219,7 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Study Data Helper");
@@ -231,11 +252,12 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        emailButton.setText("E-Mail");
-        emailButton.setEnabled(false);
-        emailButton.addActionListener(new java.awt.event.ActionListener() {
+        exportButton.setText("Export");
+        exportButton.setToolTipText("Exports the data as text for an email to clipboard.");
+        exportButton.setEnabled(false);
+        exportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                emailButtonActionPerformed(evt);
+                exportButtonActionPerformed(evt);
             }
         });
 
@@ -253,7 +275,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(optionsButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(emailButton)
+                        .addComponent(exportButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(importButton))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -278,7 +300,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(optionsButton)
                     .addComponent(importButton)
-                    .addComponent(emailButton))
+                    .addComponent(exportButton))
                 .addContainerGap())
         );
 
@@ -521,6 +543,8 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel11.setText("Bolus without wizard");
 
+        jLabel6.setText("hypo/hypor without series");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -532,8 +556,9 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel11))
-                .addContainerGap(454, Short.MAX_VALUE))
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel6))
+                .addContainerGap(426, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -548,7 +573,9 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel11)
-                .addContainerGap(133, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
+                .addContainerGap(101, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Statistics", jPanel5);
@@ -612,11 +639,6 @@ public class MainFrame extends javax.swing.JFrame {
                 return;
             }
             entrys = importData;
-            //TODO find out which unit is used
-            currentHypoThreshold = prefs.getDouble(Constants.HYPO_THRESHOLD_MG_KEY,
-                    Constants.HYPO_THRESHOLD_MG_DEFAULT);
-            currentHyperThreshold = prefs.getDouble(Constants.HYPER_THRESHOLD_MG_KEY,
-                    Constants.HYPER_THRESHOLD_MG_DEFAULT);
             updateCarelinkData();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE,
@@ -633,24 +655,28 @@ public class MainFrame extends javax.swing.JFrame {
         setNormalCursor();
     }//GEN-LAST:event_importButtonActionPerformed
 
-    private void emailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailButtonActionPerformed
-        Desktop desktop;
-        if (Desktop.isDesktopSupported()
-                && (desktop = Desktop.getDesktop()).isSupported(Desktop.Action.MAIL)) {
-            try {
-                URI mailto = new URI("mailto:john@example.com?subject=Hello%20World");
-                desktop.mail(mailto);
-            } catch (URISyntaxException | IOException ex) {
-                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE,
-                        "Error while sending E-Mail", ex);
-                JOptionPane.showMessageDialog(this, "E-Mail generation is not supported \n"
-                        + "on your Device :(", "Not supported", JOptionPane.WARNING_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "E-Mail generation is not supported \n"
-                    + "on your PC :(", "Not supported", JOptionPane.WARNING_MESSAGE);
-        }
-    }//GEN-LAST:event_emailButtonActionPerformed
+    private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+        setWaitCursor();
+        // generate text
+        String text = DataHelper.createInformationMailBody(entrys, primeListData, bolusWizardKeListData,
+                hypoListData, hyperListData, exerciseMarkerListData, currentHypoThreshold,
+                prefs.getInt(Constants.HYPO_MEAL_HISTORY_TIME_KEY, Constants.HYPO_MEAL_HISTORY_TIME_DEFAULT),
+                prefs.getInt(Constants.HYPO_EXERCISE_HISTORY_TIME_KEY, Constants.HYPO_EXERCISE_HISTORY_TIME_DEFAULT),
+                prefs.getInt(Constants.SLEEP_INDICATION_WAKEUP_TIME_KEY, Constants.SLEEP_INDICATION_WAKEUP_TIME_DEFAULT),
+                prefs.getInt(Constants.SLEEP_INDICATION_BED_TIME_KEY, Constants.SLEEP_INDICATION_BED_TIME_DEFAULT),
+                prefs.getInt(Constants.SLEEP_INDICATION_THRESHOLD_KEY, Constants.SLEEP_INDICATION_THRESHOLD_DEFAULT),
+                currentHyperThreshold,
+                prefs.getInt(Constants.HYPER_MEAL_HISTORY_TIME_KEY, Constants.HYPER_MEAL_HISTORY_TIME_DEFAULT));
+
+        StringSelection stringSelection = new StringSelection(text);
+        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clpbrd.setContents(stringSelection, null);
+
+        setNormalCursor();
+
+        JOptionPane.showMessageDialog(this, "Text succesfully exported to your clipboard!",
+                "", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_exportButtonActionPerformed
 
     private void hypoListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hypoListMouseClicked
         setWaitCursor();
@@ -857,8 +883,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JList<String> bolusWizardKeList;
     private javax.swing.JButton carelinkPathBrowseButton;
     private javax.swing.JTextField carelinkPathField;
-    private javax.swing.JButton emailButton;
     private javax.swing.JList<String> exerciseHistoryList;
+    private javax.swing.JButton exportButton;
     private javax.swing.JCheckBox googleImportCheckbox;
     private javax.swing.JList<String> hyperFollowingValuesList;
     private javax.swing.JList<String> hyperLastMealList;
@@ -873,6 +899,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

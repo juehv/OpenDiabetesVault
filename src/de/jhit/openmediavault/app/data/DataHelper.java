@@ -7,10 +7,13 @@ package de.jhit.openmediavault.app.data;
 
 import de.jhit.openmediavault.app.container.DataEntry;
 import de.jhit.openmediavault.app.preferences.Constants;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-import sun.util.calendar.CalendarUtils;
+import java.util.Locale;
 
 /**
  *
@@ -150,7 +153,7 @@ public class DataHelper {
 
         return listEntrys;
     }
-    
+
     public static List<DataEntry> filterFollowingHyperValues(List<DataEntry> cleanBgList,
             Date startTime, int minuteRange, double threshold) {
         List<DataEntry> listEntrys = new ArrayList<>();
@@ -206,6 +209,14 @@ public class DataHelper {
         }
 
         return null;
+    }
+
+    public static boolean isUnitMmol(List<DataEntry> cleanBgList) {
+        double avg = 0;
+        for (DataEntry item : cleanBgList) {
+            avg += item.amount;
+        }
+        return (avg / cleanBgList.size()) < 50;
     }
 
     // this list is needed to create a combination of ke and bolus. --> later
@@ -270,5 +281,122 @@ public class DataHelper {
         }
 
         return listEntrys.toArray(new String[]{});
+    }
+
+    // ###################################################################
+    // Export Helper
+    // ###################################################################
+    public static String createInformationMailBody(List<DataEntry> completeList,
+            List<DataEntry> primeList, List<DataEntry> bolusWizardList, List<DataEntry> hypoList,
+            List<DataEntry> hyperList, List<DataEntry> exerciseMarkerList,
+            double hypoThreshold, int hypoMealHistoryTime, int exerciseHistoryTime,
+            int wakupTime, int bedTime, int sleepThreshold, double hyperThreshold,
+            int hyperMealHistoryTime) {
+        StringBuilder sb = new StringBuilder();
+        SimpleDateFormat dformat = new SimpleDateFormat(Constants.DATE_TIME_OUTPUT_FORMAT);
+        // peamble
+        sb.append("\n\n\n\n");
+
+        // create Prime text
+        sb.append("Infusionsset-Wechsel:\n");
+        for (DataEntry item : primeList) {
+            sb.append(dformat.format(item.timestamp)).append(" routinemäßig\n");
+        }
+
+        // create hypo text
+        sb.append("\n\nHypoglykämien (<").append(hypoThreshold).append("):\n");
+        for (DataEntry item : hypoList) {
+            sb.append(item.toTextListEntry())
+                    .append("\n");
+            sb.append("Gabe es Symptome? Ja.\n");
+            sb.append("Konnte die Unterzuckerung selbst behandelt werden? Ja.\n");
+            // calc last meals
+            List<DataEntry> lastMeals = DataHelper
+                    .filterHistoryValues(bolusWizardList, item.timestamp, hypoMealHistoryTime);
+            if (lastMeals.isEmpty()) {
+                // if no value in range, show last available value
+                DataEntry lastValue = DataHelper.filterLastValue(bolusWizardList,
+                        item.timestamp);
+                if (lastValue != null) {
+                    sb.append("Letzte Hauptmahlzeit: ")
+                            .append(lastValue.toTextListEntry()).append("\n");
+                } else {
+                    sb.append("Letzte Hauptmahlzeit: ")
+                            .append("ERROR").append("\n");
+                }
+            } else {
+                for (DataEntry meal : lastMeals) {
+                    sb.append("Letzte Hauptmahlzeit: ")
+                            .append(meal.toTextListEntry()).append("\n");
+                }
+            }
+            // calc exercise
+            sb.append("Stand in Zusammenhang mit körperlicher Aktivität? ");
+            List<DataEntry> exerciseMarker = DataHelper
+                    .filterHistoryValues(exerciseMarkerList, item.timestamp,
+                            exerciseHistoryTime);
+            if (exerciseMarker.isEmpty()) {
+                sb.append("Nein.\n");
+            } else {
+                sb.append("Ja.\n");
+            }
+
+            sb.append("Hatten sie Anzeichen von Krankheitssymptomen? Nein.\n");
+
+            // calc sleep
+            sb.append("Haben Sie geschlafen, als die Unterzuckerung auftrat? ");
+            DataEntry lastUserAction = DataHelper.filterLastValue(completeList,
+                    item.timestamp);
+            if (lastUserAction != null) {
+                int lastEventMinutes = DataHelper.minutesDiff(lastUserAction.timestamp,
+                        item.timestamp);
+                Calendar cal = new GregorianCalendar(Locale.GERMANY);
+                cal.setTime(item.timestamp);
+
+                if (lastEventMinutes > sleepThreshold && cal.get(Calendar.HOUR) > bedTime
+                        || cal.get(Calendar.HOUR_OF_DAY) < wakupTime) {
+                    // inside sleep time and over threshold
+                    sb.append("Ja.\nSind Sie von den Symptomen aufgewacht? Ja.\n");
+                } else if (lastEventMinutes < sleepThreshold && cal.get(Calendar.HOUR) < bedTime
+                        || cal.get(Calendar.HOUR_OF_DAY) > wakupTime) {
+                    // there was an action and its day time
+                    sb.append("Nein.\n");
+                } else {
+                    sb.append("NO DATA\n");
+                }
+            } else {
+                sb.append("NO DATA\n");
+            }
+            sb.append("\n");
+        }
+
+        // create hyper text
+        sb.append("\n\nUnerklärliche Hyperglykämien (>").append(hyperThreshold).append("):\n");
+        for (DataEntry item : hyperList) {
+            sb.append(item.toTextListEntry()).append("\n");
+            // calc last meals
+            List<DataEntry> lastMeals = DataHelper
+                    .filterHistoryValues(bolusWizardList, item.timestamp, hyperMealHistoryTime);
+            if (lastMeals.isEmpty()) {
+                // if no value in range, show last available value
+                DataEntry lastValue = DataHelper.filterLastValue(bolusWizardList,
+                        item.timestamp);
+                if (lastValue != null) {
+                    sb.append("Letzte Hauptmahlzeit: ")
+                            .append(lastValue.toTextListEntry()).append("\n");
+                } else {
+                    sb.append("Letzte Hauptmahlzeit: ")
+                            .append("ERROR").append("\n");
+                }
+            } else {
+                for (DataEntry meal : lastMeals) {
+                    sb.append("Letzte Hauptmahlzeit: ")
+                            .append(meal.toTextListEntry()).append("\n");
+                }
+            }
+            sb.append("Ketton im Blut: Nicht verfügbar.\n");
+            sb.append("Ketton im Urin: \n\n");
+        }
+        return sb.toString();
     }
 }

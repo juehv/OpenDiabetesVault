@@ -55,6 +55,34 @@ public class DataEntry {
         return toString();
     }
 
+    public String toTextListEntry() {
+        SimpleDateFormat dformat = new SimpleDateFormat(Constants.DATE_TIME_OUTPUT_FORMAT);
+        if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[0])) {
+            // rewind
+            return String.format("%s", dformat.format(timestamp));
+        } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[1])) {
+            // Prime
+            return String.format("%s (%s)", dformat.format(timestamp), type);
+        } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[2])) {
+            // exercise marker
+            return "ERROR";
+        } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[3])
+                || type.equalsIgnoreCase(Constants.CARELINK_TYPE[4])) {
+            // BG
+            return String.format("%s %.1f", dformat.format(timestamp),
+                    amount);
+        } else if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[5])) {
+            // Bolus Wizard (interested in KEs)
+            return String.format("%s (%.1f)", dformat.format(timestamp),
+                    amount);
+        }
+        if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[6])) {
+            // Bolus given
+            return "ERROR";
+        }
+        return toString();
+    }
+
     public boolean isEquivalent(DataEntry item) {
         if (item == null) {
             return false;

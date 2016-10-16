@@ -23,19 +23,16 @@ public class Launcher {
         // TODO code application logic here
 
         // Until Alpha test:
-        // * Email export
-        // * Options for every thershold
         // Until Beta Test:
         // * fast Statistics
         // * Better Meal registration
-        // * nicer looking lines
-        // * Text export (from email?)
+        // * Export Menu (select what should be exported)
         // * Import Options (Registered Unit, Name, BG IDs, Pump ID, Fom-To Dates) --> Show on first Page
         // Other:
         // * more Statistics
         // * Java FX GUI
         // * Google Activities
-        // * Automatic Data Export
+        // * Automatic Data Export?
         // * Help Pages
         // * Donate Button
         
