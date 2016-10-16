@@ -22,12 +22,23 @@ public class Launcher {
     public static void main(String[] args) {
         // TODO code application logic here
 
-        // Daten einlesen
-        // Hypo, -> Messungen in 1h danach -> Körperliche Aktivität von Google -> letzte Mahlzeiten -> Schätzen welche es war
-        // Hypers listen (>250)
-        // Refills
-        // Mahlzeitenübersicht
-        // Anz gemessene Werte pro Tag
+        // Until Alpha test:
+        // * finish Hyper
+        // * Email export
+        // * Options for every thershold
+        // Until Beta Test:
+        // * fast Statistics
+        // * Better Meal registration
+        // * nicer looking lines
+        // * Text export (from email?)
+        // * Import Options (Registered Unit, Name, BG IDs, Pump ID, Fom-To Dates) --> Show on first Page
+        // Other:
+        // * more Statistics
+        // * Java FX GUI
+        // * Google Activities
+        // * Automatic Data Export
+        // * Help Pages
+        // * Donate Button
         
         try {
             // Set System L&F
