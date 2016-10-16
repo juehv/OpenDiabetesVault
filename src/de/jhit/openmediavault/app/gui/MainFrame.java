@@ -64,13 +64,11 @@ public class MainFrame extends javax.swing.JFrame {
 //                fromRagen, toRagen);
         bgListData = DataHelper.createCleanBgList(entrys);
         hypoListData = DataHelper.createHypoList(bgListData,
-                prefs.getDouble(Constants.HYPO_THRESHOLD_KEY,
-                        Constants.HYPO_THRESHOLD_DEFAULT),
+                currentHypoThreshold,
                 prefs.getInt(Constants.HYPO_FOLLOW_TIME_KEY,
                         Constants.HYPO_FOLLOW_TIME_DEFAULT));
         hyperListData = DataHelper.createHyperList(bgListData,
-                prefs.getDouble(Constants.HYPER_THRESHOLD_KEY,
-                        Constants.HYPER_THRESHOLD_DEFAULT),
+                currentHyperThreshold,
                 prefs.getInt(Constants.HYPER_FOLLOW_TIME_KEY,
                         Constants.HYPER_FOLLOW_TIME_DEFAULT));
         primeListData = DataHelper.createCleanPrimeList(entrys);
@@ -117,6 +115,8 @@ public class MainFrame extends javax.swing.JFrame {
     private List<DataEntry> primeListData = new ArrayList<>();
     private List<DataEntry> bolusWizardKeListData = new ArrayList<>();
     private List<DataEntry> exerciseMarkerListData = new ArrayList<>();
+    private double currentHypoThreshold = 0;
+    private double currentHyperThreshold = 0;
 
     /**
      * Creates new form MainFrame
@@ -612,6 +612,11 @@ public class MainFrame extends javax.swing.JFrame {
                 return;
             }
             entrys = importData;
+            //TODO find out which unit is used
+            currentHypoThreshold = prefs.getDouble(Constants.HYPO_THRESHOLD_MG_KEY,
+                    Constants.HYPO_THRESHOLD_MG_DEFAULT);
+            currentHyperThreshold = prefs.getDouble(Constants.HYPER_THRESHOLD_MG_KEY,
+                    Constants.HYPER_THRESHOLD_MG_DEFAULT);
             updateCarelinkData();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE,
@@ -664,8 +669,7 @@ public class MainFrame extends javax.swing.JFrame {
                 bgListData, hypo.timestamp,
                 prefs.getInt(Constants.HYPO_FOLLOW_TIME_KEY,
                         Constants.HYPO_FOLLOW_TIME_DEFAULT),
-                prefs.getDouble(Constants.HYPO_THRESHOLD_KEY,
-                        Constants.HYPO_THRESHOLD_DEFAULT));
+                currentHypoThreshold);
         if (followingValues.isEmpty()) {
             // if no value in range, show info and next available entry
             DataEntry nextValue = DataHelper.filterNextValue(bgListData,
@@ -701,8 +705,8 @@ public class MainFrame extends javax.swing.JFrame {
         // last meals
         List<DataEntry> lastMeals = DataHelper
                 .filterHistoryValues(bolusWizardKeListData, hypo.timestamp,
-                        prefs.getInt(Constants.HYPO_FOOD_HISTORY_TIME_KEY,
-                                Constants.HYPO_FOOD_HISTORY_TIME_DEFAULT));
+                        prefs.getInt(Constants.HYPO_MEAL_HISTORY_TIME_KEY,
+                                Constants.HYPO_MEAL_HISTORY_TIME_DEFAULT));
         if (lastMeals.isEmpty()) {
             // if no value in range, show info and next available entry
             DataEntry lastValue = DataHelper.filterLastValue(bolusWizardKeListData,
@@ -712,8 +716,8 @@ public class MainFrame extends javax.swing.JFrame {
                 lastValueString = lastValue.toGuiListEntry();
             }
             hypoLastMealList.setListData(new String[]{"No meal in range ["
-                + prefs.getInt(Constants.HYPO_FOOD_HISTORY_TIME_KEY,
-                Constants.HYPO_FOOD_HISTORY_TIME_DEFAULT)
+                + prefs.getInt(Constants.HYPO_MEAL_HISTORY_TIME_KEY,
+                Constants.HYPO_MEAL_HISTORY_TIME_DEFAULT)
                 + "]", lastValueString});
         } else {
             hypoLastMealList.setListData(DataHelper.createGuiList(lastMeals));
@@ -804,8 +808,7 @@ public class MainFrame extends javax.swing.JFrame {
                 bgListData, hyper.timestamp,
                 prefs.getInt(Constants.HYPER_FOLLOW_TIME_KEY,
                         Constants.HYPER_FOLLOW_TIME_DEFAULT),
-                prefs.getDouble(Constants.HYPER_THRESHOLD_KEY,
-                        Constants.HYPER_THRESHOLD_DEFAULT));
+                currentHyperThreshold);
         if (followingValues.isEmpty()) {
             // if no value in range, show info and next available entry
             DataEntry nextValue = DataHelper.filterNextValue(bgListData,
@@ -825,8 +828,8 @@ public class MainFrame extends javax.swing.JFrame {
         // last meals
         List<DataEntry> lastMeals = DataHelper
                 .filterHistoryValues(bolusWizardKeListData, hyper.timestamp,
-                        prefs.getInt(Constants.HYPER_FOOD_HISTORY_TIME_KEY,
-                                Constants.HYPER_FOOD_HISTORY_TIME_DEFAULT));
+                        prefs.getInt(Constants.HYPER_MEAL_HISTORY_TIME_KEY,
+                                Constants.HYPER_MEAL_HISTORY_TIME_DEFAULT));
         if (lastMeals.isEmpty()) {
             // if no value in range, show info and next available entry
             DataEntry lastValue = DataHelper.filterLastValue(bolusWizardKeListData,
@@ -836,8 +839,8 @@ public class MainFrame extends javax.swing.JFrame {
                 lastValueString = lastValue.toGuiListEntry();
             }
             hyperLastMealList.setListData(new String[]{"No meal in range ["
-                + prefs.getInt(Constants.HYPER_FOOD_HISTORY_TIME_KEY,
-                Constants.HYPER_FOOD_HISTORY_TIME_DEFAULT)
+                + prefs.getInt(Constants.HYPER_MEAL_HISTORY_TIME_KEY,
+                Constants.HYPER_MEAL_HISTORY_TIME_DEFAULT)
                 + "]", lastValueString});
         } else {
             hyperLastMealList.setListData(DataHelper.createGuiList(lastMeals));
