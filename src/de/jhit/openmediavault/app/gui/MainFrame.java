@@ -178,7 +178,7 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane6 = new javax.swing.JScrollPane();
         hyperFollowingValuesList = new javax.swing.JList<>();
         jScrollPane9 = new javax.swing.JScrollPane();
-        hyperLastMealsList = new javax.swing.JList<>();
+        hyperLastMealList = new javax.swing.JList<>();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         primeList = new javax.swing.JList<>();
@@ -402,13 +402,13 @@ public class MainFrame extends javax.swing.JFrame {
         hyperFollowingValuesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane6.setViewportView(hyperFollowingValuesList);
 
-        hyperLastMealsList.setModel(new javax.swing.AbstractListModel<String>() {
+        hyperLastMealList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Last Meals" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        hyperLastMealsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane9.setViewportView(hyperLastMealsList);
+        hyperLastMealList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane9.setViewportView(hyperLastMealList);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -782,7 +782,62 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_primeListKeyReleased
 
     private void hyperListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hyperListMouseClicked
-        
+        setWaitCursor();
+        int index = hyperList.getSelectedIndex();
+        if (index < 0) {
+            setNormalCursor();
+            hyperFollowingValuesList.setListData(new String[]{});
+            hyperLastMealList.setListData(new String[]{});
+            return;
+        }
+
+        DataEntry hyper = hyperListData.get(index);
+
+        // get hyper series
+        List<DataEntry> followingValues = DataHelper.filterFollowingHyperValues(
+                bgListData, hyper.timestamp,
+                prefs.getInt(Constants.HYPER_FOLLOW_TIME_KEY,
+                        Constants.HYPER_FOLLOW_TIME_DEFAULT),
+                prefs.getDouble(Constants.HYPER_THRESHOLD_KEY,
+                        Constants.HYPER_THRESHOLD_DEFAULT));
+        if (followingValues.isEmpty()) {
+            // if no value in range, show info and next available entry
+            DataEntry nextValue = DataHelper.filterNextValue(bgListData,
+                    hyper.timestamp);
+            String nextValueString = "";
+            if (nextValue != null) {
+                nextValueString = nextValue.toGuiListEntry();
+            }
+            hyperFollowingValuesList.setListData(new String[]{"No BG values in range ["
+                + prefs.getInt(Constants.HYPER_FOLLOW_TIME_KEY,
+                Constants.HYPER_FOLLOW_TIME_DEFAULT) + "]",
+                nextValueString});
+        } else {
+            hyperFollowingValuesList.setListData(DataHelper.createGuiList(followingValues));
+        }
+
+        // last meals
+        List<DataEntry> lastMeals = DataHelper
+                .filterHistoryValues(bolusWizardKeListData, hyper.timestamp,
+                        prefs.getInt(Constants.HYPER_FOOD_HISTORY_TIME_KEY,
+                                Constants.HYPER_FOOD_HISTORY_TIME_DEFAULT));
+        if (lastMeals.isEmpty()) {
+            // if no value in range, show info and next available entry
+            DataEntry lastValue = DataHelper.filterLastValue(bolusWizardKeListData,
+                    hyper.timestamp);
+            String lastValueString = "";
+            if (lastValue != null) {
+                lastValueString = lastValue.toGuiListEntry();
+            }
+            hyperLastMealList.setListData(new String[]{"No meal in range ["
+                + prefs.getInt(Constants.HYPER_FOOD_HISTORY_TIME_KEY,
+                Constants.HYPER_FOOD_HISTORY_TIME_DEFAULT)
+                + "]", lastValueString});
+        } else {
+            hyperLastMealList.setListData(DataHelper.createGuiList(lastMeals));
+        }
+
+        setNormalCursor();
     }//GEN-LAST:event_hyperListMouseClicked
 
     private void hyperListKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hyperListKeyReleased
@@ -797,7 +852,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JList<String> exerciseHistoryList;
     private javax.swing.JCheckBox googleImportCheckbox;
     private javax.swing.JList<String> hyperFollowingValuesList;
-    private javax.swing.JList<String> hyperLastMealsList;
+    private javax.swing.JList<String> hyperLastMealList;
     private javax.swing.JList<String> hyperList;
     private javax.swing.JList<String> hypoFollowingValuesList;
     private javax.swing.JList<String> hypoLastMealList;

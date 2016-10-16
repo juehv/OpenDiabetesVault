@@ -75,6 +75,8 @@ public final class Constants {
     public static final int HYPO_EXERCISE_HISTORY_TIME_DEFAULT = 180;
     public static final String HYPO_FOOD_HISTORY_TIME_KEY = "hypoFoodHistoryTime";
     public static final int HYPO_FOOD_HISTORY_TIME_DEFAULT = 720;
+    public static final String HYPER_FOOD_HISTORY_TIME_KEY = "hyperFoodHistoryTime";
+    public static final int HYPER_FOOD_HISTORY_TIME_DEFAULT = 720;
 
     public static final String SLEEP_INDICATION_BED_TIME_KEY = "sleepIndicationStartTime";
     public static final int SLEEP_INDICATION_BED_TIME_DEFAULT = 22;

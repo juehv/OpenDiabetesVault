@@ -150,6 +150,24 @@ public class DataHelper {
 
         return listEntrys;
     }
+    
+    public static List<DataEntry> filterFollowingHyperValues(List<DataEntry> cleanBgList,
+            Date startTime, int minuteRange, double threshold) {
+        List<DataEntry> listEntrys = new ArrayList<>();
+
+        for (DataEntry item : cleanBgList) {
+            if (startTime.before(item.timestamp)
+                    && minutesDiff(item.timestamp, startTime) < minuteRange) {
+                listEntrys.add(item);
+                if (item.amount < threshold) {
+                    // completes the series
+                    break;
+                }
+            }
+        }
+
+        return listEntrys;
+    }
 
     public static List<DataEntry> filterHistoryValues(List<DataEntry> entryList,
             Date startTime, int minuteRange) {
