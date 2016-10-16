@@ -84,13 +84,19 @@ public class MainFrame extends javax.swing.JFrame {
         bolusWizardKeList.setListData(DataHelper.createGuiList(bolusWizardKeListData));
 
         // clear secondary components
+        hypoList.clearSelection();
         hypoFollowingValuesList.clearSelection();
+        exerciseHistoryList.clearSelection();
+        hypoLastMealList.clearSelection();
         hypoFollowingValuesList.setListData(new String[]{});
         exerciseHistoryList.setListData(new String[]{});
         hypoLastMealList.setListData(new String[]{});
-        hypoList.clearSelection();
-        primeList.clearSelection();
         hyperList.clearSelection();
+        hyperFollowingValuesList.clearSelection();
+        hyperLastMealList.clearSelection();
+        hyperFollowingValuesList.setListData(new String[]{});
+        hyperLastMealList.setListData(new String[]{});
+        primeList.clearSelection();
         lastPrimeLabel.setVisible(false);
         sleepRadioButtonGroup.clearSelection();
 
