@@ -23,7 +23,6 @@ public class Launcher {
         // TODO code application logic here
 
         // Until Alpha test:
-        // * finish Hyper
         // * Email export
         // * Options for every thershold
         // Until Beta Test:
