@@ -7,20 +7,18 @@ package de.jhit.openmediavault.app.gui;
 
 import de.jhit.openmediavault.app.data.DataHelper;
 import de.jhit.openmediavault.app.Launcher;
-import de.jhit.openmediavault.app.container.DataEntry;
+import de.jhit.openmediavault.app.container.RawDataEntry;
 import de.jhit.openmediavault.app.data.CarelinkCsvImporter;
+import de.jhit.openmediavault.app.data.GoogleFitCsvImporter;
+import de.jhit.openmediavault.app.data.LibreTxtImporter;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -128,13 +126,13 @@ public class MainFrame extends javax.swing.JFrame {
     private final Preferences prefs = Preferences.userNodeForPackage(Launcher.class);
 //    private Date fromRagen = new Date();
 //    private Date toRagen = new Date();
-    private List<DataEntry> entrys = new ArrayList<>();
-    private List<DataEntry> bgListData = new ArrayList<>();
-    private List<DataEntry> hypoListData = new ArrayList<>();
-    private List<DataEntry> hyperListData = new ArrayList<>();
-    private List<DataEntry> primeListData = new ArrayList<>();
-    private List<DataEntry> bolusWizardKeListData = new ArrayList<>();
-    private List<DataEntry> exerciseMarkerListData = new ArrayList<>();
+    private List<RawDataEntry> entrys = new ArrayList<>();
+    private List<RawDataEntry> bgListData = new ArrayList<>();
+    private List<RawDataEntry> hypoListData = new ArrayList<>();
+    private List<RawDataEntry> hyperListData = new ArrayList<>();
+    private List<RawDataEntry> primeListData = new ArrayList<>();
+    private List<RawDataEntry> bolusWizardKeListData = new ArrayList<>();
+    private List<RawDataEntry> exerciseMarkerListData = new ArrayList<>();
     private double currentHypoThreshold = 0;
     private double currentHyperThreshold = 0;
 
@@ -177,15 +175,19 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         sleepRadioButtonGroup = new javax.swing.ButtonGroup();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         carelinkPathField = new javax.swing.JTextField();
         carelinkPathBrowseButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        googleImportCheckbox = new javax.swing.JCheckBox();
         optionsButton = new javax.swing.JButton();
         importButton = new javax.swing.JButton();
         exportButton = new javax.swing.JButton();
+        carelinkRadioButton = new javax.swing.JRadioButton();
+        libreRadioButton = new javax.swing.JRadioButton();
+        googleFitRadioButton = new javax.swing.JRadioButton();
+        jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         hypoFollowingValuesList = new javax.swing.JList<>();
@@ -213,6 +215,8 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel6 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         bolusWizardKeList = new javax.swing.JList<>();
+        jScrollPane10 = new javax.swing.JScrollPane();
+        bolusWizardDateList = new javax.swing.JList<>();
         jPanel5 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -233,10 +237,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Minimed Carelink Data:");
-
-        googleImportCheckbox.setText("Import Google Activities");
-        googleImportCheckbox.setEnabled(false);
+        jLabel1.setText("Path:");
 
         optionsButton.setText("Options");
         optionsButton.addActionListener(new java.awt.event.ActionListener() {
@@ -261,6 +262,18 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(carelinkRadioButton);
+        carelinkRadioButton.setSelected(true);
+        carelinkRadioButton.setText("MiniMed Carelink CSV");
+
+        buttonGroup1.add(libreRadioButton);
+        libreRadioButton.setText("Freestyle Libre TXT");
+
+        buttonGroup1.add(googleFitRadioButton);
+        googleFitRadioButton.setText("Google Fit CSV");
+
+        jLabel7.setText("TODO: Zeitraum, Timestamp correction, Help button \"how to get the data\" ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -269,34 +282,43 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(carelinkPathField)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(carelinkPathBrowseButton))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(optionsButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 337, Short.MAX_VALUE)
                         .addComponent(exportButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(importButton))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(googleImportCheckbox))
-                        .addGap(0, 403, Short.MAX_VALUE)))
+                            .addComponent(googleFitRadioButton)
+                            .addComponent(libreRadioButton)
+                            .addComponent(carelinkRadioButton)
+                            .addComponent(jLabel7))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(carelinkPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(carelinkPathBrowseButton))
+                    .addComponent(carelinkPathBrowseButton)
+                    .addComponent(jLabel1))
+                .addGap(18, 18, 18)
+                .addComponent(carelinkRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(googleImportCheckbox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 182, Short.MAX_VALUE)
+                .addComponent(libreRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(googleFitRadioButton)
+                .addGap(30, 30, 30)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(optionsButton)
                     .addComponent(importButton)
@@ -514,20 +536,33 @@ public class MainFrame extends javax.swing.JFrame {
         bolusWizardKeList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane5.setViewportView(bolusWizardKeList);
 
+        bolusWizardDateList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane10.setViewportView(bolusWizardDateList);
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
+                .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(213, 213, 213)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 148, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5))
                 .addContainerGap())
         );
 
@@ -599,7 +634,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         JFileChooser chooser = new JFileChooser(path);
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "Carelink Daten", "csv");
+                "Compatible Data", "csv", "txt");
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -631,14 +666,30 @@ public class MainFrame extends javax.swing.JFrame {
         }
         try {
             // Parse data
-            List<DataEntry> importData = CarelinkCsvImporter.parseCarelinkCsvExport(path);
+            List<RawDataEntry> importData = null;
+            if (carelinkRadioButton.isSelected()) {
+                importData = CarelinkCsvImporter.parseData(path);
+            } else if (libreRadioButton.isSelected()) {
+                importData = LibreTxtImporter.parseData(path);
+            } else if (googleFitRadioButton.isSelected()) {
+                importData = new ArrayList<>();
+                File folder = new File(csvFile.getParent());
+                for (File googleFile : folder.listFiles()) {
+                    GoogleFitCsvImporter.parseData(googleFile.getAbsolutePath());
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Programming Error",
+                        "Error in radio button selection!", JOptionPane.ERROR_MESSAGE);
+                setNormalCursor();
+                return;
+            }
             if (importData == null || importData.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Error while reading file.",
                         "Reading File Error", JOptionPane.ERROR_MESSAGE);
                 setNormalCursor();
                 return;
             }
-            entrys = importData;
+            entrys.addAll(importData);
             updateCarelinkData();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE,
@@ -656,26 +707,29 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_importButtonActionPerformed
 
     private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
-        setWaitCursor();
-        // generate text
-        String text = DataHelper.createInformationMailBody(entrys, primeListData, bolusWizardKeListData,
-                hypoListData, hyperListData, exerciseMarkerListData, currentHypoThreshold,
-                prefs.getInt(Constants.HYPO_MEAL_HISTORY_TIME_KEY, Constants.HYPO_MEAL_HISTORY_TIME_DEFAULT),
-                prefs.getInt(Constants.HYPO_EXERCISE_HISTORY_TIME_KEY, Constants.HYPO_EXERCISE_HISTORY_TIME_DEFAULT),
-                prefs.getInt(Constants.SLEEP_INDICATION_WAKEUP_TIME_KEY, Constants.SLEEP_INDICATION_WAKEUP_TIME_DEFAULT),
-                prefs.getInt(Constants.SLEEP_INDICATION_BED_TIME_KEY, Constants.SLEEP_INDICATION_BED_TIME_DEFAULT),
-                prefs.getInt(Constants.SLEEP_INDICATION_THRESHOLD_KEY, Constants.SLEEP_INDICATION_THRESHOLD_DEFAULT),
-                currentHyperThreshold,
-                prefs.getInt(Constants.HYPER_MEAL_HISTORY_TIME_KEY, Constants.HYPER_MEAL_HISTORY_TIME_DEFAULT));
+//        setWaitCursor();
+//        // generate text
+//        String text = DataHelper.createInformationMailBody(entrys, primeListData, bolusWizardKeListData,
+//                hypoListData, hyperListData, exerciseMarkerListData, currentHypoThreshold,
+//                prefs.getInt(Constants.HYPO_MEAL_HISTORY_TIME_KEY, Constants.HYPO_MEAL_HISTORY_TIME_DEFAULT),
+//                prefs.getInt(Constants.HYPO_EXERCISE_HISTORY_TIME_KEY, Constants.HYPO_EXERCISE_HISTORY_TIME_DEFAULT),
+//                prefs.getInt(Constants.SLEEP_INDICATION_WAKEUP_TIME_KEY, Constants.SLEEP_INDICATION_WAKEUP_TIME_DEFAULT),
+//                prefs.getInt(Constants.SLEEP_INDICATION_BED_TIME_KEY, Constants.SLEEP_INDICATION_BED_TIME_DEFAULT),
+//                prefs.getInt(Constants.SLEEP_INDICATION_THRESHOLD_KEY, Constants.SLEEP_INDICATION_THRESHOLD_DEFAULT),
+//                currentHyperThreshold,
+//                prefs.getInt(Constants.HYPER_MEAL_HISTORY_TIME_KEY, Constants.HYPER_MEAL_HISTORY_TIME_DEFAULT));
+//
+//        StringSelection stringSelection = new StringSelection(text);
+//        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+//        clpbrd.setContents(stringSelection, null);
+//
+//        setNormalCursor();
+//
+//        JOptionPane.showMessageDialog(this, "Text succesfully exported to your clipboard!",
+//                "", JOptionPane.INFORMATION_MESSAGE);
 
-        StringSelection stringSelection = new StringSelection(text);
-        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clpbrd.setContents(stringSelection, null);
 
-        setNormalCursor();
-
-        JOptionPane.showMessageDialog(this, "Text succesfully exported to your clipboard!",
-                "", JOptionPane.INFORMATION_MESSAGE);
+        //create clean entrys
     }//GEN-LAST:event_exportButtonActionPerformed
 
     private void hypoListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hypoListMouseClicked
@@ -689,16 +743,16 @@ public class MainFrame extends javax.swing.JFrame {
             hypoLastMealList.setListData(new String[]{});
             return;
         }
-        DataEntry hypo = hypoListData.get(index);
+        RawDataEntry hypo = hypoListData.get(index);
         // get hypo series
-        List<DataEntry> followingValues = DataHelper.filterFollowingHypoValues(
+        List<RawDataEntry> followingValues = DataHelper.filterFollowingHypoValues(
                 bgListData, hypo.timestamp,
                 prefs.getInt(Constants.HYPO_FOLLOW_TIME_KEY,
                         Constants.HYPO_FOLLOW_TIME_DEFAULT),
                 currentHypoThreshold);
         if (followingValues.isEmpty()) {
             // if no value in range, show info and next available entry
-            DataEntry nextValue = DataHelper.filterNextValue(bgListData,
+            RawDataEntry nextValue = DataHelper.filterNextValue(bgListData,
                     hypo.timestamp);
             String nextValueString = "";
             if (nextValue != null) {
@@ -714,7 +768,7 @@ public class MainFrame extends javax.swing.JFrame {
         hypoFollowingValuesList.repaint();
 
         // find exercise information
-        List<DataEntry> exerciseMarker = DataHelper
+        List<RawDataEntry> exerciseMarker = DataHelper
                 .filterHistoryValues(exerciseMarkerListData, hypo.timestamp,
                         prefs.getInt(Constants.HYPO_EXERCISE_HISTORY_TIME_KEY,
                                 Constants.HYPO_EXERCISE_HISTORY_TIME_DEFAULT));
@@ -729,13 +783,13 @@ public class MainFrame extends javax.swing.JFrame {
         exerciseHistoryList.repaint();
 
         // last meals
-        List<DataEntry> lastMeals = DataHelper
+        List<RawDataEntry> lastMeals = DataHelper
                 .filterHistoryValues(bolusWizardKeListData, hypo.timestamp,
                         prefs.getInt(Constants.HYPO_MEAL_HISTORY_TIME_KEY,
                                 Constants.HYPO_MEAL_HISTORY_TIME_DEFAULT));
         if (lastMeals.isEmpty()) {
             // if no value in range, show info and next available entry
-            DataEntry lastValue = DataHelper.filterLastValue(bolusWizardKeListData,
+            RawDataEntry lastValue = DataHelper.filterLastValue(bolusWizardKeListData,
                     hypo.timestamp);
             String lastValueString = "";
             if (lastValue != null) {
@@ -750,7 +804,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         // sleeping inication
-        DataEntry lastUserAction = DataHelper.filterLastValue(entrys,
+        RawDataEntry lastUserAction = DataHelper.filterLastValue(entrys,
                 hypo.timestamp);
         if (lastUserAction != null) {
             int lastEventMinutes = DataHelper.minutesDiff(lastUserAction.timestamp,
@@ -789,9 +843,9 @@ public class MainFrame extends javax.swing.JFrame {
             setNormalCursor();
             return;
         }
-        DataEntry prime = primeListData.get(index);
+        RawDataEntry prime = primeListData.get(index);
 
-        DataEntry lastPrime = DataHelper.filterLastValue(primeListData,
+        RawDataEntry lastPrime = DataHelper.filterLastValue(primeListData,
                 prime.timestamp);
         if (lastPrime != null) {
             int minutes = DataHelper.minutesDiff(lastPrime.timestamp,
@@ -827,17 +881,17 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
 
-        DataEntry hyper = hyperListData.get(index);
+        RawDataEntry hyper = hyperListData.get(index);
 
         // get hyper series
-        List<DataEntry> followingValues = DataHelper.filterFollowingHyperValues(
+        List<RawDataEntry> followingValues = DataHelper.filterFollowingHyperValues(
                 bgListData, hyper.timestamp,
                 prefs.getInt(Constants.HYPER_FOLLOW_TIME_KEY,
                         Constants.HYPER_FOLLOW_TIME_DEFAULT),
                 currentHyperThreshold);
         if (followingValues.isEmpty()) {
             // if no value in range, show info and next available entry
-            DataEntry nextValue = DataHelper.filterNextValue(bgListData,
+            RawDataEntry nextValue = DataHelper.filterNextValue(bgListData,
                     hyper.timestamp);
             String nextValueString = "";
             if (nextValue != null) {
@@ -852,13 +906,13 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         // last meals
-        List<DataEntry> lastMeals = DataHelper
+        List<RawDataEntry> lastMeals = DataHelper
                 .filterHistoryValues(bolusWizardKeListData, hyper.timestamp,
                         prefs.getInt(Constants.HYPER_MEAL_HISTORY_TIME_KEY,
                                 Constants.HYPER_MEAL_HISTORY_TIME_DEFAULT));
         if (lastMeals.isEmpty()) {
             // if no value in range, show info and next available entry
-            DataEntry lastValue = DataHelper.filterLastValue(bolusWizardKeListData,
+            RawDataEntry lastValue = DataHelper.filterLastValue(bolusWizardKeListData,
                     hyper.timestamp);
             String lastValueString = "";
             if (lastValue != null) {
@@ -880,12 +934,15 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_hyperListKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JList<String> bolusWizardDateList;
     private javax.swing.JList<String> bolusWizardKeList;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton carelinkPathBrowseButton;
     private javax.swing.JTextField carelinkPathField;
+    private javax.swing.JRadioButton carelinkRadioButton;
     private javax.swing.JList<String> exerciseHistoryList;
     private javax.swing.JButton exportButton;
-    private javax.swing.JCheckBox googleImportCheckbox;
+    private javax.swing.JRadioButton googleFitRadioButton;
     private javax.swing.JList<String> hyperFollowingValuesList;
     private javax.swing.JList<String> hyperLastMealList;
     private javax.swing.JList<String> hyperList;
@@ -900,6 +957,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -908,6 +966,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -918,6 +977,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lastPrimeLabel;
+    private javax.swing.JRadioButton libreRadioButton;
     private javax.swing.JRadioButton nnRadioButton;
     private javax.swing.JButton optionsButton;
     private javax.swing.JList<String> primeList;

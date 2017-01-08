@@ -5,7 +5,7 @@
  */
 package de.jhit.openmediavault.app.data;
 
-import de.jhit.openmediavault.app.container.DataEntry;
+import de.jhit.openmediavault.app.container.RawDataEntry;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,8 +21,8 @@ import java.util.Locale;
  */
 public class DataHelper {
 
-    public static boolean dataEntryListContains(List<DataEntry> entryList, DataEntry entry) {
-        for (DataEntry tmp : entryList) {
+    public static boolean dataEntryListContains(List<RawDataEntry> entryList, RawDataEntry entry) {
+        for (RawDataEntry tmp : entryList) {
             if (tmp.isEquivalent(entry)) {
                 return true;
             }
@@ -40,17 +40,17 @@ public class DataHelper {
     // ###################################################################
     // List computations
     // ###################################################################
-    public static List<DataEntry> createCleanBgList(List<DataEntry> data) {
-        List<DataEntry> bgList = new ArrayList<>();
+    public static List<RawDataEntry> createCleanBgList(List<RawDataEntry> data) {
+        List<RawDataEntry> bgList = new ArrayList<>();
 
-        for (DataEntry item : data) {
+        for (RawDataEntry item : data) {
             // stronges is rf bg from measureing device
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[4])) {
                 bgList.add(item);
             }
         }
 
-        for (DataEntry item : data) {
+        for (RawDataEntry item : data) {
             // weaker is user entered values
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[3])) {
                 if (!dataEntryListContains(bgList, item)) {
@@ -58,16 +58,16 @@ public class DataHelper {
                 }
             }
         }
-        bgList.sort(DataEntry.getTimeSortComparator());
+        bgList.sort(RawDataEntry.getTimeSortComparator());
         return bgList;
     }
 
-    public static List<DataEntry> createHypoList(List<DataEntry> cleanBgList,
+    public static List<RawDataEntry> createHypoList(List<RawDataEntry> cleanBgList,
             double threshold, int hypoTimeRange) {
-        List<DataEntry> listEntrys = new ArrayList<>();
-        DataEntry lastItem = null;
+        List<RawDataEntry> listEntrys = new ArrayList<>();
+        RawDataEntry lastItem = null;
 
-        for (DataEntry item : cleanBgList) {
+        for (RawDataEntry item : cleanBgList) {
             if (item.amount < threshold && item.amount > 0) {
                 // check if the item does belong to the same hypo
                 if (lastItem == null
@@ -86,11 +86,11 @@ public class DataHelper {
         return listEntrys;
     }
 
-    public static List<DataEntry> createHyperList(List<DataEntry> cleanBgList,
+    public static List<RawDataEntry> createHyperList(List<RawDataEntry> cleanBgList,
             double threshold, int hyperTimeRange) {
-        List<DataEntry> listEntrys = new ArrayList<>();
+        List<RawDataEntry> listEntrys = new ArrayList<>();
 
-        for (DataEntry item : cleanBgList) {
+        for (RawDataEntry item : cleanBgList) {
             if (item.amount > threshold && item.amount > 0) {
                 listEntrys.add(item);
             }
@@ -99,10 +99,10 @@ public class DataHelper {
         return listEntrys;
     }
 
-    public static List<DataEntry> createExerciseMarkerList(List<DataEntry> entryList) {
-        List<DataEntry> listEntrys = new ArrayList<>();
+    public static List<RawDataEntry> createExerciseMarkerList(List<RawDataEntry> entryList) {
+        List<RawDataEntry> listEntrys = new ArrayList<>();
 
-        for (DataEntry item : entryList) {
+        for (RawDataEntry item : entryList) {
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[2])) {
                 listEntrys.add(item);
             }
@@ -111,10 +111,10 @@ public class DataHelper {
         return listEntrys;
     }
 
-    public static List<DataEntry> createCleanPrimeList(List<DataEntry> data) {
-        List<DataEntry> primeList = new ArrayList<>();
+    public static List<RawDataEntry> createCleanPrimeList(List<RawDataEntry> data) {
+        List<RawDataEntry> primeList = new ArrayList<>();
 
-        for (DataEntry item : data) {
+        for (RawDataEntry item : data) {
             // strongest indicator for prime is rewind
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[0])) {
                 primeList.add(item);
@@ -123,7 +123,7 @@ public class DataHelper {
         }
 
         //TODO check is rewind has an prime bevore, if yes, don't add this
-        for (DataEntry item : data) {
+        for (RawDataEntry item : data) {
             // a little less strong is prime
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[1])) {
                 if (!dataEntryListContains(primeList, item)) {
@@ -132,15 +132,15 @@ public class DataHelper {
             }
         }
 
-        primeList.sort(DataEntry.getTimeSortComparator());
+        primeList.sort(RawDataEntry.getTimeSortComparator());
         return primeList;
     }
 
-    public static List<DataEntry> filterFollowingHypoValues(List<DataEntry> cleanBgList,
+    public static List<RawDataEntry> filterFollowingHypoValues(List<RawDataEntry> cleanBgList,
             Date startTime, int minuteRange, double threshold) {
-        List<DataEntry> listEntrys = new ArrayList<>();
+        List<RawDataEntry> listEntrys = new ArrayList<>();
 
-        for (DataEntry item : cleanBgList) {
+        for (RawDataEntry item : cleanBgList) {
             if (startTime.before(item.timestamp)
                     && minutesDiff(item.timestamp, startTime) < minuteRange) {
                 listEntrys.add(item);
@@ -154,11 +154,11 @@ public class DataHelper {
         return listEntrys;
     }
 
-    public static List<DataEntry> filterFollowingHyperValues(List<DataEntry> cleanBgList,
+    public static List<RawDataEntry> filterFollowingHyperValues(List<RawDataEntry> cleanBgList,
             Date startTime, int minuteRange, double threshold) {
-        List<DataEntry> listEntrys = new ArrayList<>();
+        List<RawDataEntry> listEntrys = new ArrayList<>();
 
-        for (DataEntry item : cleanBgList) {
+        for (RawDataEntry item : cleanBgList) {
             if (startTime.before(item.timestamp)
                     && minutesDiff(item.timestamp, startTime) < minuteRange) {
                 listEntrys.add(item);
@@ -172,11 +172,11 @@ public class DataHelper {
         return listEntrys;
     }
 
-    public static List<DataEntry> filterHistoryValues(List<DataEntry> entryList,
+    public static List<RawDataEntry> filterHistoryValues(List<RawDataEntry> entryList,
             Date startTime, int minuteRange) {
-        List<DataEntry> listEntrys = new ArrayList<>();
+        List<RawDataEntry> listEntrys = new ArrayList<>();
 
-        for (DataEntry item : entryList) {
+        for (RawDataEntry item : entryList) {
             if (startTime.after(item.timestamp)
                     && minutesDiff(item.timestamp, startTime) < minuteRange) {
                 listEntrys.add(item);
@@ -186,10 +186,10 @@ public class DataHelper {
         return listEntrys;
     }
 
-    public static DataEntry filterNextValue(List<DataEntry> cleanBgList,
+    public static RawDataEntry filterNextValue(List<RawDataEntry> cleanBgList,
             Date startTime) {
 
-        for (DataEntry item : cleanBgList) {
+        for (RawDataEntry item : cleanBgList) {
             if (startTime.before(item.timestamp)) {
                 return item;
             }
@@ -198,11 +198,11 @@ public class DataHelper {
         return null;
     }
 
-    public static DataEntry filterLastValue(List<DataEntry> entryList,
+    public static RawDataEntry filterLastValue(List<RawDataEntry> entryList,
             Date startTime) {
 
         for (int i = entryList.size() - 1; i >= 0; i--) {
-            DataEntry item = entryList.get(i);
+            RawDataEntry item = entryList.get(i);
             if (startTime.after(item.timestamp)) {
                 return item;
             }
@@ -211,9 +211,9 @@ public class DataHelper {
         return null;
     }
 
-    public static boolean isUnitMmol(List<DataEntry> cleanBgList) {
+    public static boolean isUnitMmol(List<RawDataEntry> cleanBgList) {
         double avg = 0;
-        for (DataEntry item : cleanBgList) {
+        for (RawDataEntry item : cleanBgList) {
             avg += item.amount;
         }
         return (avg / cleanBgList.size()) < 50;
@@ -232,18 +232,18 @@ public class DataHelper {
 //        bolusList.sort(DataEntry.getTimeSortComparator());
 //        return bolusList;
 //    }
-    public static List<DataEntry> createCleanFoodBolusList(List<DataEntry> data) {
-        List<DataEntry> fullBolusList = new ArrayList<>();
-        List<DataEntry> bolusList = new ArrayList<>();
+    public static List<RawDataEntry> createCleanFoodBolusList(List<RawDataEntry> data) {
+        List<RawDataEntry> fullBolusList = new ArrayList<>();
+        List<RawDataEntry> bolusList = new ArrayList<>();
 
-        for (DataEntry item : data) {
+        for (RawDataEntry item : data) {
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[5])) {
                 fullBolusList.add(item);
             }
         }
 
         // fill up boli without wizard (uuhhh bad guys)
-        for (DataEntry item : data) {
+        for (RawDataEntry item : data) {
             if (item.type.equalsIgnoreCase(Constants.CARELINK_TYPE[6])) {
                 if (!dataEntryListContains(fullBolusList, item)) {
                     if (item.amount > 0.0) {
@@ -254,17 +254,17 @@ public class DataHelper {
         }
 
         //remove correction entrys (needed to exclude boli)
-        for (DataEntry item : fullBolusList) {
+        for (RawDataEntry item : fullBolusList) {
             if (item.amount > 0.0) {
                 bolusList.add(item);
             }
         }
 
-        bolusList.sort(DataEntry.getTimeSortComparator());
+        bolusList.sort(RawDataEntry.getTimeSortComparator());
         return bolusList;
     }
 
-    public static List<DataEntry> filterTimeRange(List<DataEntry> list,
+    public static List<RawDataEntry> filterTimeRange(List<RawDataEntry> list,
             Date fromRagen, Date toRange) {
         //TODO implement
         return list;
@@ -273,10 +273,10 @@ public class DataHelper {
     // ###################################################################
     // GUI Helper
     // ###################################################################
-    public static String[] createGuiList(List<DataEntry> cleanList) {
+    public static String[] createGuiList(List<RawDataEntry> cleanList) {
         List<String> listEntrys = new ArrayList<>();
 
-        for (DataEntry item : cleanList) {
+        for (RawDataEntry item : cleanList) {
             listEntrys.add(item.toGuiListEntry());
         }
 
@@ -286,9 +286,9 @@ public class DataHelper {
     // ###################################################################
     // Export Helper
     // ###################################################################
-    public static String createInformationMailBody(List<DataEntry> completeList,
-            List<DataEntry> primeList, List<DataEntry> bolusWizardList, List<DataEntry> hypoList,
-            List<DataEntry> hyperList, List<DataEntry> exerciseMarkerList,
+    public static String createInformationMailBody(List<RawDataEntry> completeList,
+            List<RawDataEntry> primeList, List<RawDataEntry> bolusWizardList, List<RawDataEntry> hypoList,
+            List<RawDataEntry> hyperList, List<RawDataEntry> exerciseMarkerList,
             double hypoThreshold, int hypoMealHistoryTime, int exerciseHistoryTime,
             int wakupTime, int bedTime, int sleepThreshold, double hyperThreshold,
             int hyperMealHistoryTime) {
@@ -299,23 +299,23 @@ public class DataHelper {
 
         // create Prime text
         sb.append("Infusionsset-Wechsel:\n");
-        for (DataEntry item : primeList) {
+        for (RawDataEntry item : primeList) {
             sb.append(dformat.format(item.timestamp)).append(" routinemäßig\n");
         }
 
         // create hypo text
         sb.append("\n\nHypoglykämien (<").append(hypoThreshold).append("):\n");
-        for (DataEntry item : hypoList) {
+        for (RawDataEntry item : hypoList) {
             sb.append(item.toTextListEntry())
                     .append("\n");
             sb.append("Gabe es Symptome? Ja.\n");
             sb.append("Konnte die Unterzuckerung selbst behandelt werden? Ja.\n");
             // calc last meals
-            List<DataEntry> lastMeals = DataHelper
+            List<RawDataEntry> lastMeals = DataHelper
                     .filterHistoryValues(bolusWizardList, item.timestamp, hypoMealHistoryTime);
             if (lastMeals.isEmpty()) {
                 // if no value in range, show last available value
-                DataEntry lastValue = DataHelper.filterLastValue(bolusWizardList,
+                RawDataEntry lastValue = DataHelper.filterLastValue(bolusWizardList,
                         item.timestamp);
                 if (lastValue != null) {
                     sb.append("Letzte Hauptmahlzeit: ")
@@ -325,14 +325,14 @@ public class DataHelper {
                             .append("ERROR").append("\n");
                 }
             } else {
-                for (DataEntry meal : lastMeals) {
+                for (RawDataEntry meal : lastMeals) {
                     sb.append("Letzte Hauptmahlzeit: ")
                             .append(meal.toTextListEntry()).append("\n");
                 }
             }
             // calc exercise
             sb.append("Stand in Zusammenhang mit körperlicher Aktivität? ");
-            List<DataEntry> exerciseMarker = DataHelper
+            List<RawDataEntry> exerciseMarker = DataHelper
                     .filterHistoryValues(exerciseMarkerList, item.timestamp,
                             exerciseHistoryTime);
             if (exerciseMarker.isEmpty()) {
@@ -345,7 +345,7 @@ public class DataHelper {
 
             // calc sleep
             sb.append("Haben Sie geschlafen, als die Unterzuckerung auftrat? ");
-            DataEntry lastUserAction = DataHelper.filterLastValue(completeList,
+            RawDataEntry lastUserAction = DataHelper.filterLastValue(completeList,
                     item.timestamp);
             if (lastUserAction != null) {
                 int lastEventMinutes = DataHelper.minutesDiff(lastUserAction.timestamp,
@@ -372,14 +372,14 @@ public class DataHelper {
 
         // create hyper text
         sb.append("\n\nUnerklärliche Hyperglykämien (>").append(hyperThreshold).append("):\n");
-        for (DataEntry item : hyperList) {
+        for (RawDataEntry item : hyperList) {
             sb.append(item.toTextListEntry()).append("\n");
             // calc last meals
-            List<DataEntry> lastMeals = DataHelper
+            List<RawDataEntry> lastMeals = DataHelper
                     .filterHistoryValues(bolusWizardList, item.timestamp, hyperMealHistoryTime);
             if (lastMeals.isEmpty()) {
                 // if no value in range, show last available value
-                DataEntry lastValue = DataHelper.filterLastValue(bolusWizardList,
+                RawDataEntry lastValue = DataHelper.filterLastValue(bolusWizardList,
                         item.timestamp);
                 if (lastValue != null) {
                     sb.append("Letzte Hauptmahlzeit: ")
@@ -389,13 +389,13 @@ public class DataHelper {
                             .append("ERROR").append("\n");
                 }
             } else {
-                for (DataEntry meal : lastMeals) {
+                for (RawDataEntry meal : lastMeals) {
                     sb.append("Letzte Hauptmahlzeit: ")
                             .append(meal.toTextListEntry()).append("\n");
                 }
             }
-            sb.append("Ketton im Blut: Nicht verfügbar.\n");
-            sb.append("Ketton im Urin: \n\n");
+            sb.append("Keton im Blut: Nicht verfügbar.\n");
+            sb.append("Keton im Urin: \n\n");
         }
         return sb.toString();
     }

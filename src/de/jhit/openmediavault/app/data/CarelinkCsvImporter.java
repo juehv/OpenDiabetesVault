@@ -6,7 +6,7 @@
 package de.jhit.openmediavault.app.data;
 
 import com.csvreader.CsvReader;
-import de.jhit.openmediavault.app.container.DataEntry;
+import de.jhit.openmediavault.app.container.RawDataEntry;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,9 +32,9 @@ public class CarelinkCsvImporter {
      * @return
      * @throws FileNotFoundException
      */
-    public static List<DataEntry> parseCarelinkCsvExport(String filepath)
+    public static List<RawDataEntry> parseData(String filepath)
             throws FileNotFoundException {
-        List<DataEntry> CarelinkEntry = new ArrayList<>();
+        List<RawDataEntry> CarelinkEntry = new ArrayList<>();
         // read file
         CsvReader creader = new CsvReader(filepath, ';', Charset.forName("UTF-8"));
 
@@ -56,7 +56,7 @@ public class CarelinkCsvImporter {
             // read entries
             while (creader.readRecord()) {
                 // Todo cathegorize entry
-                DataEntry entry = parseEntry(creader);
+                RawDataEntry entry = parseEntry(creader);
                 if (entry != null) {
                     CarelinkEntry.add(entry);
                     Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
@@ -84,9 +84,9 @@ public class CarelinkCsvImporter {
      * @throws IOException
      * @throws ParseException
      */
-    private static DataEntry parseEntry(CsvReader reader)
+    private static RawDataEntry parseEntry(CsvReader reader)
             throws IOException, ParseException {
-        DataEntry entry = null;
+        RawDataEntry entry = null;
         String[] validHeader = Constants.CARELINK_CSV_HEADER[Constants.CARELINK_CSV_LANG_SELECTION];
 
         String type = reader.get(validHeader[2]);
@@ -95,21 +95,21 @@ public class CarelinkCsvImporter {
                 String[] rawValues = reader.get(validHeader[3]).split(",");
                 switch (i) {
                     case 0: // Rewind
-                        entry = new DataEntry();
+                        entry = new RawDataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         break;
                     case 1: // Prime
-                        entry = new DataEntry();
+                        entry = new RawDataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         break;
                     case 2: // exercise marker
-                        entry = new DataEntry();
+                        entry = new RawDataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
@@ -117,7 +117,7 @@ public class CarelinkCsvImporter {
                         entry.amount = 0; // for better loocking values in gui
                         break;
                     case 3: // BGCapturedOnPump
-                        entry = new DataEntry();
+                        entry = new RawDataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
@@ -130,7 +130,7 @@ public class CarelinkCsvImporter {
                         }
                         break;
                     case 4: // BGReceived
-                        entry = new DataEntry();
+                        entry = new RawDataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
@@ -146,7 +146,7 @@ public class CarelinkCsvImporter {
                         }
                         break;
                     case 5: // BolusWizardBolusEstimate
-                        entry = new DataEntry();
+                        entry = new RawDataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
@@ -160,7 +160,7 @@ public class CarelinkCsvImporter {
                         }
                         break;
                     case 6: // BolusNormal
-                        entry = new DataEntry();
+                        entry = new RawDataEntry();
                         entry.type = Constants.CARELINK_TYPE[i];
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
