@@ -15,7 +15,9 @@ import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,48 +88,31 @@ public class LibreTxtImporter {
         String[] validHeader = Constants.LIBRE_CSV_HEADER[0];
         int type = Integer.parseInt(reader.get(validHeader[1]));
 
-        if (type == Constants.LIBRE_TYPE_INTEGER[0]) { // ScanGlucose
-            RuntimeDataVault.getInstance().putGlucouseValue(
-                    new GlucoseEntry(GlucoseEntry.TYPE.CGM_ALERT,
-                            createTimestamp(reader.get(validHeader[0])),
-                            Double.parseDouble(reader.get(validHeader[3]))));
-        } else if (type == Constants.LIBRE_TYPE_INTEGER[1]) { // HistoricGlucose
+        if (type == Constants.LIBRE_TYPE_INTEGER[1]) { // HistoricGlucose
+            Date timestamp = createTimestamp(reader.get(validHeader[0]));
+            double value = Double.parseDouble(reader.get(validHeader[2]));
             RuntimeDataVault.getInstance().putGlucouseValue(
                     new GlucoseEntry(GlucoseEntry.TYPE.CGM,
-                            createTimestamp(reader.get(validHeader[0])),
-                            Double.parseDouble(reader.get(validHeader[2]))));
-        } else if (type == Constants.LIBRE_TYPE_INTEGER[2]) { // BloodGlucose
+                            timestamp, value));
+        } else if (type == Constants.LIBRE_TYPE_INTEGER[0]) { // ScanGlucose
+            Date timestamp = createTimestamp(reader.get(validHeader[0]));
+            double value = Double.parseDouble(reader.get(validHeader[3]));
             RuntimeDataVault.getInstance().putGlucouseValue(
-                    new GlucoseEntry(GlucoseEntry.TYPE.BG,
-                            createTimestamp(reader.get(validHeader[0])),
-                            Double.parseDouble(reader.get(validHeader[4]))));
+                    new GlucoseEntry(GlucoseEntry.TYPE.CGM,
+                            timestamp, value));
+        } else if (type == Constants.LIBRE_TYPE_INTEGER[2]) { // BloodGlucose
+            Date timestamp = createTimestamp(reader.get(validHeader[0]));
+            double value = Double.parseDouble(reader.get(validHeader[4]));
+            RuntimeDataVault.getInstance().putGlucouseValue(
+                    new GlucoseEntry(GlucoseEntry.TYPE.CGM,
+                            timestamp, value));
         } else {
             Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
                     Level.SEVERE, "Error while type checking!");
             return null;
         }
 
-        // ########### OLD
-        RawDataEntry entry = new RawDataEntry();
-
-        entry.timestamp = createTimestamp(reader.get(validHeader[0]));
-
-        if (type == Constants.LIBRE_TYPE_INTEGER[0]) {
-            entry.type = Constants.LIBRE_TYPE[0];
-            entry.amount = Double.parseDouble(reader.get(validHeader[3]));
-        } else if (type == Constants.LIBRE_TYPE_INTEGER[1]) {
-            entry.type = Constants.LIBRE_TYPE[1];
-            entry.amount = Double.parseDouble(reader.get(validHeader[2]));
-        } else if (type == Constants.LIBRE_TYPE_INTEGER[2]) {
-            entry.type = Constants.LIBRE_TYPE[2];
-            entry.amount = Double.parseDouble(reader.get(validHeader[4]));
-        } else {
-            Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
-                    Level.SEVERE, "Error while type checking!");
-            return null;
-        }
-
-        return entry;
+        return null;
 
     }
 
@@ -135,6 +120,13 @@ public class LibreTxtImporter {
         String format = "yyyy.MM.dd HH:mm";
 
         SimpleDateFormat df = new SimpleDateFormat(format);
-        return df.parse(dateTime);
+        Date rawDate = df.parse(dateTime);
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(rawDate);
+
+        int unroundedMinutes = calendar.get(Calendar.MINUTE);
+        int mod = unroundedMinutes % 5;
+        calendar.add(Calendar.MINUTE, mod < 3 ? -mod : (5 - mod));
+        return calendar.getTime();
     }
 }
