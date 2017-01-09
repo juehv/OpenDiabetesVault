@@ -5,8 +5,14 @@
  */
 package de.jhit.openmediavault.app;
 
+import com.j256.ormlite.logger.LocalLog;
+import de.jhit.openmediavault.app.data.VaultDao;
 import de.jhit.openmediavault.app.gui.MainFrame;
 import java.awt.Frame;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -20,7 +26,6 @@ public class Launcher {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
 
         // Until Alpha test:
         // Until Beta Test:
@@ -35,18 +40,45 @@ public class Launcher {
         // * Automatic Data Export?
         // * Help Pages
         // * Donate Button
-        
+        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "INFO");
+        // setup db
+        try {
+            VaultDao.initializeDb();
+        } catch (SQLException ex) {
+            Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
+            // stop without db
+            try {
+                VaultDao.finalizeDb();
+            } catch (IOException ex1) {
+                Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+            System.exit(-1);
+        }
+
         try {
             // Set System L&F
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            // do nothing
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         Frame window = new MainFrame();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+
+        // add shutdown hook to destroy database
+        final Thread mainThread = Thread.currentThread();
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    VaultDao.finalizeDb();
+                } catch (IOException ex) {
+                    Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
     }
 
 }

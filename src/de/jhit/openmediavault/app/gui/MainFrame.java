@@ -8,9 +8,12 @@ package de.jhit.openmediavault.app.gui;
 import de.jhit.openmediavault.app.data.DataHelper;
 import de.jhit.openmediavault.app.Launcher;
 import de.jhit.openmediavault.app.container.RawDataEntry;
+import de.jhit.openmediavault.app.container.VaultCsvEntry;
 import de.jhit.openmediavault.app.data.CarelinkCsvImporter;
 import de.jhit.openmediavault.app.data.GoogleFitCsvImporter;
 import de.jhit.openmediavault.app.data.LibreTxtImporter;
+import de.jhit.openmediavault.app.data.VaultDao;
+import de.jhit.openmediavault.app.plot.VaultCsvPlotter;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.awt.Cursor;
 import java.awt.Dialog;
@@ -21,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -683,7 +687,7 @@ public class MainFrame extends javax.swing.JFrame {
                 setNormalCursor();
                 return;
             }
-            if (importData == null || importData.isEmpty()) {
+            if (importData == null) { //|| importData.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Error while reading file.",
                         "Reading File Error", JOptionPane.ERROR_MESSAGE);
                 setNormalCursor();
@@ -728,8 +732,15 @@ public class MainFrame extends javax.swing.JFrame {
 //        JOptionPane.showMessageDialog(this, "Text succesfully exported to your clipboard!",
 //                "", JOptionPane.INFORMATION_MESSAGE);
 
-
         //create clean entrys
+        List<VaultCsvEntry> entrys = VaultDao.getInstance().queryOdvCsvLinesBetween(
+                new Date(1480550400000L), new Date(1483996861000L));
+
+        for (VaultCsvEntry item : entrys) {
+            System.out.println(item.toCsvString());
+        }
+
+        VaultCsvPlotter.plotVaultCsvComplete(entrys);
     }//GEN-LAST:event_exportButtonActionPerformed
 
     private void hypoListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hypoListMouseClicked

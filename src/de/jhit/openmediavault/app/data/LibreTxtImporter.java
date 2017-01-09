@@ -6,8 +6,9 @@
 package de.jhit.openmediavault.app.data;
 
 import com.csvreader.CsvReader;
-import de.jhit.openmediavault.app.container.GlucoseEntry;
 import de.jhit.openmediavault.app.container.RawDataEntry;
+import de.jhit.openmediavault.app.container.VaultEntry;
+import de.jhit.openmediavault.app.container.VaultEntryType;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -91,20 +92,23 @@ public class LibreTxtImporter {
         if (type == Constants.LIBRE_TYPE_INTEGER[1]) { // HistoricGlucose
             Date timestamp = createTimestamp(reader.get(validHeader[0]));
             double value = Double.parseDouble(reader.get(validHeader[2]));
-            RuntimeDataVault.getInstance().putGlucouseValue(
-                    new GlucoseEntry(GlucoseEntry.TYPE.CGM,
+
+            VaultDao.getInstance().putEntry(
+                    new VaultEntry(VaultEntryType.GLUCOSE_CGM,
                             timestamp, value));
         } else if (type == Constants.LIBRE_TYPE_INTEGER[0]) { // ScanGlucose
             Date timestamp = createTimestamp(reader.get(validHeader[0]));
             double value = Double.parseDouble(reader.get(validHeader[3]));
-            RuntimeDataVault.getInstance().putGlucouseValue(
-                    new GlucoseEntry(GlucoseEntry.TYPE.CGM,
+
+            VaultDao.getInstance().putEntry(
+                    new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT,
                             timestamp, value));
         } else if (type == Constants.LIBRE_TYPE_INTEGER[2]) { // BloodGlucose
             Date timestamp = createTimestamp(reader.get(validHeader[0]));
             double value = Double.parseDouble(reader.get(validHeader[4]));
-            RuntimeDataVault.getInstance().putGlucouseValue(
-                    new GlucoseEntry(GlucoseEntry.TYPE.CGM,
+
+            VaultDao.getInstance().putEntry(
+                    new VaultEntry(VaultEntryType.GLUCOSE_BG,
                             timestamp, value));
         } else {
             Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
@@ -124,9 +128,14 @@ public class LibreTxtImporter {
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(rawDate);
 
-        int unroundedMinutes = calendar.get(Calendar.MINUTE);
-        int mod = unroundedMinutes % 5;
-        calendar.add(Calendar.MINUTE, mod < 3 ? -mod : (5 - mod));
+        // round to 5 minutes
+//        int unroundedMinutes = calendar.get(Calendar.MINUTE);
+//        int mod = unroundedMinutes % 5;
+//        calendar.add(Calendar.MINUTE, mod < 3 ? -mod : (5 - mod));
+        // round to 1 minute
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+
         return calendar.getTime();
     }
 }
