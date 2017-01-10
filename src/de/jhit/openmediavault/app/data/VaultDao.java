@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -99,37 +100,31 @@ public class VaultDao {
         return returnValues;
     }
 
-    public List<VaultCsvEntry> queryOdvCsvLinesBetween(Date from, Date to) {
+    public List<VaultCsvEntry> queryVaultCsvLinesBetween(Date from, Date to) {
         List<VaultCsvEntry> returnValues = new ArrayList<>();
         try {
+            Date fromTimestamp = TimestampUtils.createCleanTimestamp(from);
+            Date toTimestamp = TimestampUtils.createCleanTimestamp(to);
+
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
                     .where()
-                    .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
+                    .between(VaultEntry.TIMESTAMP_FIELD_NAME, fromTimestamp, toTimestamp)
                     .prepare();
             List<VaultEntry> tmpValues = vaultDao.query(query);
 
-            Calendar fromCal = GregorianCalendar.getInstance();
-            fromCal.setTime(from);
-            fromCal.set(Calendar.MILLISECOND, 0);
-            fromCal.set(Calendar.MINUTE, 0);
-
-            Calendar toCal = GregorianCalendar.getInstance();
-            toCal.setTime(to);
-            toCal.set(Calendar.MILLISECOND, 0);
-            toCal.set(Calendar.MINUTE, 0);
-
             if (!tmpValues.isEmpty()) {
                 int i = 0;
-                while (!fromCal.after(toCal)) {
+                while (!fromTimestamp.after(toTimestamp)) {
 
                     VaultCsvEntry tmpCsvEntry = new VaultCsvEntry();
-                    tmpCsvEntry.setTimestamp(fromCal.getTime());
+                    tmpCsvEntry.setTimestamp(fromTimestamp);
 
                     VaultEntry tmpEntry;
-                    while (fromCal.getTime().equals((tmpEntry = tmpValues.get(i)).getTimestamp())) {
-                        i++;
-                        if (i >= tmpValues.size()) {
+                    while (fromTimestamp.equals((tmpEntry = tmpValues.get(i)).getTimestamp())) {
+                        if (i < tmpValues.size() - 1) {
+                            i++;
+                        } else {
                             i--;
                             break;
                         }
@@ -153,6 +148,16 @@ public class VaultDao {
                             case BOLUS_ManualNormal:
                                 tmpCsvEntry.setBolusValue(tmpEntry.getValue());
                                 break;
+                            case MEAL_BolusExpert:
+                            case MEAL_Manual:
+                                tmpCsvEntry.setMealValue(tmpEntry.getValue());
+                                break;
+                            case EXERCISE_GoogleBicycle:
+                            case EXERCISE_GoogleWalk:
+                            case EXERCISE_GoogleRun:
+                            case EXERCISE_Manual:
+                                tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
+                                break;
                             default:
                                 break;
                         }
@@ -162,7 +167,7 @@ public class VaultDao {
                     if (!tmpCsvEntry.isEmpty()) {
                         returnValues.add(tmpCsvEntry);
                     }
-                    fromCal.add(Calendar.MINUTE, 1);
+                    fromTimestamp = TimestampUtils.addMinutesToTimestamp(fromTimestamp, 1);
                 }
             }
         } catch (SQLException ex) {

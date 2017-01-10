@@ -17,6 +17,8 @@ import java.util.Objects;
 @DatabaseTable(tableName = "VaultEntries")
 public class VaultEntry {
 
+    public static final double VALUE_UNUSED = -5.0;
+
     // for QueryBuilder to be able to find the fields
     public static final String TYPE_FIELD_NAME = "type";
     public static final String TIMESTAMP_FIELD_NAME = "timestamp";

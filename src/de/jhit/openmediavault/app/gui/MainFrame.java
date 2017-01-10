@@ -718,14 +718,12 @@ public class MainFrame extends javax.swing.JFrame {
 //                "", JOptionPane.INFORMATION_MESSAGE);
 
         //create clean entrys
-        List<VaultCsvEntry> entrys = VaultDao.getInstance().queryOdvCsvLinesBetween(
+        List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
                 new Date(1480550400000L), new Date(1483996861000L));
 
         for (VaultCsvEntry item : entrys) {
             System.out.println(item.toCsvString());
         }
-
-        VaultCsvPlotter.plotVaultCsvComplete(entrys);
     }//GEN-LAST:event_exportButtonActionPerformed
 
     private void hypoListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hypoListMouseClicked

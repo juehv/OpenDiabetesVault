@@ -28,7 +28,10 @@ public enum VaultEntryType {
     GLUCOSE_BG,
     // Meal
     MEAL_BolusExpert,
-    MEAL_Manual;
+    MEAL_Manual,
+    // Pump Events
+    PUMP_REWIND,
+    PUMP_PRIME;
 
     public boolean isBolusType() {
         switch (this) {

@@ -7,6 +7,8 @@ package de.jhit.openmediavault.app.data;
 
 import com.csvreader.CsvReader;
 import de.jhit.openmediavault.app.container.RawDataEntry;
+import de.jhit.openmediavault.app.container.VaultEntry;
+import de.jhit.openmediavault.app.container.VaultEntryType;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -87,6 +89,8 @@ public class CarelinkCsvImporter {
     private static RawDataEntry parseEntry(CsvReader reader)
             throws IOException, ParseException {
         RawDataEntry entry = null;
+        VaultEntry vEntry = null;
+        double tmpValue = 0.0;
         String[] validHeader = Constants.CARELINK_CSV_HEADER[Constants.CARELINK_CSV_LANG_SELECTION];
 
         String type = reader.get(validHeader[2]);
@@ -100,6 +104,16 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+
+                        vEntry = new VaultEntry(
+                                VaultEntryType.PUMP_REWIND,
+                                TimestampUtils.createCleanTimestamp(
+                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
+                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
+                                VaultEntry.VALUE_UNUSED
+                        );
+                        VaultDao.getInstance().putEntry(vEntry);
+
                         break;
                     case 1: // Prime
                         entry = new RawDataEntry();
@@ -107,6 +121,16 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+
+                        vEntry = new VaultEntry(
+                                VaultEntryType.PUMP_PRIME,
+                                TimestampUtils.createCleanTimestamp(
+                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
+                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
+                                VaultEntry.VALUE_UNUSED //save how mutch
+                        );
+                        VaultDao.getInstance().putEntry(vEntry);
+
                         break;
                     case 2: // exercise marker
                         entry = new RawDataEntry();
@@ -115,6 +139,16 @@ public class CarelinkCsvImporter {
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
                         entry.amount = 0; // for better loocking values in gui
+
+                        vEntry = new VaultEntry(
+                                VaultEntryType.EXERCISE_Manual,
+                                TimestampUtils.createCleanTimestamp(
+                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
+                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
+                                30.0 // default time for exercise
+                        );
+                        VaultDao.getInstance().putEntry(vEntry);
+
                         break;
                     case 3: // BGCapturedOnPump
                         entry = new RawDataEntry();
@@ -122,12 +156,27 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+                        tmpValue = 0.0;
                         for (String value : rawValues) {
                             if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
-                                entry.amount = Double.
-                                        parseDouble(value.split("=")[1]);
+                                tmpValue = Double.
+                                        parseDouble(value.split("=")[1]); //TODO make this more robust
+                                entry.amount = tmpValue;
                             }
                         }
+                        if (tmpValue == 0.0) {
+                            break;
+                        }
+
+                        vEntry = new VaultEntry(
+                                VaultEntryType.GLUCOSE_BG,
+                                TimestampUtils.createCleanTimestamp(
+                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
+                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
+                                tmpValue
+                        );
+                        VaultDao.getInstance().putEntry(vEntry);
+
                         break;
                     case 4: // BGReceived
                         entry = new RawDataEntry();
@@ -135,15 +184,30 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+                        tmpValue = 0.0;
                         for (String value : rawValues) {
                             if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
-                                entry.amount = Double.
+                                tmpValue = Double.
                                         parseDouble(value.split("=")[1]);
+                                entry.amount = tmpValue;
                             } else if (value.contains(
                                     Constants.CARELINK_RAW_VALUE_BG_LINK_ID)) {
                                 entry.linkId = "#" + value.split("=")[1];
                             }
                         }
+                        if (tmpValue == 0.0) {
+                            break;
+                        }
+
+                        vEntry = new VaultEntry(
+                                VaultEntryType.GLUCOSE_BG,
+                                TimestampUtils.createCleanTimestamp(
+                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
+                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
+                                tmpValue
+                        );
+                        VaultDao.getInstance().putEntry(vEntry);
+
                         break;
                     case 5: // BolusWizardBolusEstimate
                         entry = new RawDataEntry();
@@ -151,13 +215,28 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+                        tmpValue = 0.0;
                         for (String value : rawValues) {
                             if (value.contains(Constants.CARELINK_RAW_VALUE_CARB_INPUT)) {
-                                entry.amount = Double.
+                                tmpValue = Double.
                                         parseDouble(value.split("=")[1]);
+                                entry.amount = tmpValue;
                                 break;
                             }
                         }
+                        if (tmpValue == 0.0) {
+                            break;
+                        }
+
+                        vEntry = new VaultEntry(
+                                VaultEntryType.MEAL_BolusExpert,
+                                TimestampUtils.createCleanTimestamp(
+                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
+                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
+                                tmpValue
+                        );
+                        VaultDao.getInstance().putEntry(vEntry);
+
                         break;
                     case 6: // BolusNormal
                         entry = new RawDataEntry();
@@ -165,13 +244,29 @@ public class CarelinkCsvImporter {
                         entry.timestamp
                                 = createTimestamp(reader.get(validHeader[0]),
                                         reader.get(validHeader[1]));
+                        tmpValue = 0.0;
                         for (String value : rawValues) {
                             if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
-                                entry.amount = Double.
+                                tmpValue = Double.
                                         parseDouble(value.split("=")[1]);
+                                entry.amount = tmpValue;
                                 break;
                             }
                         }
+
+                        if (tmpValue == 0.0) {
+                            break;
+                        }
+
+                        vEntry = new VaultEntry(
+                                VaultEntryType.BOLUS_BolusExpertNormal,
+                                TimestampUtils.createCleanTimestamp(
+                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
+                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
+                                tmpValue
+                        );
+                        VaultDao.getInstance().putEntry(vEntry);
+
                         break;
                     default:
                         Logger.getLogger(CarelinkCsvImporter.class.getName()).log(

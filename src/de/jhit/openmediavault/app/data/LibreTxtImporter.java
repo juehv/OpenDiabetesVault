@@ -14,11 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,21 +87,24 @@ public class LibreTxtImporter {
         int type = Integer.parseInt(reader.get(validHeader[1]));
 
         if (type == Constants.LIBRE_TYPE_INTEGER[1]) { // HistoricGlucose
-            Date timestamp = createTimestamp(reader.get(validHeader[0]));
+            Date timestamp = TimestampUtils.createCleanTimestamp(reader.get(validHeader[0]),
+                    TimestampUtils.TIME_FORMAT_LIBRE_DE);
             double value = Double.parseDouble(reader.get(validHeader[2]));
 
             VaultDao.getInstance().putEntry(
                     new VaultEntry(VaultEntryType.GLUCOSE_CGM,
                             timestamp, value));
         } else if (type == Constants.LIBRE_TYPE_INTEGER[0]) { // ScanGlucose
-            Date timestamp = createTimestamp(reader.get(validHeader[0]));
+            Date timestamp = TimestampUtils.createCleanTimestamp(reader.get(validHeader[0]),
+                    TimestampUtils.TIME_FORMAT_LIBRE_DE);
             double value = Double.parseDouble(reader.get(validHeader[3]));
 
             VaultDao.getInstance().putEntry(
                     new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT,
                             timestamp, value));
         } else if (type == Constants.LIBRE_TYPE_INTEGER[2]) { // BloodGlucose
-            Date timestamp = createTimestamp(reader.get(validHeader[0]));
+            Date timestamp = TimestampUtils.createCleanTimestamp(reader.get(validHeader[0]),
+                    TimestampUtils.TIME_FORMAT_LIBRE_DE);
             double value = Double.parseDouble(reader.get(validHeader[4]));
 
             VaultDao.getInstance().putEntry(
@@ -120,22 +120,4 @@ public class LibreTxtImporter {
 
     }
 
-    private static Date createTimestamp(String dateTime) throws ParseException {
-        String format = "yyyy.MM.dd HH:mm";
-
-        SimpleDateFormat df = new SimpleDateFormat(format);
-        Date rawDate = df.parse(dateTime);
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(rawDate);
-
-        // round to 5 minutes
-//        int unroundedMinutes = calendar.get(Calendar.MINUTE);
-//        int mod = unroundedMinutes % 5;
-//        calendar.add(Calendar.MINUTE, mod < 3 ? -mod : (5 - mod));
-        // round to 1 minute
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.SECOND, 0);
-
-        return calendar.getTime();
-    }
 }
