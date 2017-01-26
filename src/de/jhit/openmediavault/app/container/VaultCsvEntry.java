@@ -18,6 +18,7 @@ public class VaultCsvEntry {
     private double bgValue;
     private double cgmValue;
     private double cgmAlertValue;
+    private double basalValue;
     private double bolusValue;
     private double mealValue;
     private double exerciseTimeValue;
@@ -54,6 +55,14 @@ public class VaultCsvEntry {
     public void setCgmAlertValue(double cgmAlertValue) {
         this.cgmAlertValue = cgmAlertValue;
     }
+
+    public double getBasalValue() {
+        return basalValue;
+    }
+
+    public void setBasalValue(double basalValue) {
+        this.basalValue = basalValue;
+    }    
 
     public double getBolusValue() {
         return bolusValue;
@@ -92,6 +101,7 @@ public class VaultCsvEntry {
                 && cgmValue == 0.0
                 && cgmAlertValue == 0.0
                 && bolusValue == 0.0
+                && basalValue == 0.0
                 && mealValue == 0.0
                 && exerciseTimeValue == 0.0
                 && exerciseTypeValue == null;
@@ -113,6 +123,10 @@ public class VaultCsvEntry {
             sb.append(cgmAlertValue);
         }
         sb.append(", ");
+        if (basalValue > 0.0) {
+            sb.append(basalValue);
+        }
+        sb.append(", ");
         if (bolusValue > 0.0) {
             sb.append(bolusValue);
         }
@@ -132,6 +146,6 @@ public class VaultCsvEntry {
     }
 
     public static String getCsvHeaderString() {
-        return "date, time, bgValue, cgmValue, cgmAlertValue, bolusValue, mealValue, exerciseTimeValue, exerciseTypeValue";
+        return "date, time, bgValue, cgmValue, cgmAlertValue, basalValue, bolusValue, mealValue, exerciseTimeValue, exerciseTypeValue";
     }
 }

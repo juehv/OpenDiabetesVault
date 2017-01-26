@@ -17,6 +17,9 @@ public enum VaultEntryType {
     BOLUS_ManualNormal,
     BOLUS_ManualSquare,
     BOLUS_ManualDual,
+    // Basal
+    BASAL_Profile,
+    BASAL_Manual,
     // Exercise
     EXERCISE_Manual,
     EXERCISE_GoogleRun,

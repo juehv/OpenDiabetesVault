@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -260,6 +262,30 @@ public class CarelinkCsvImporter {
 
                         vEntry = new VaultEntry(
                                 VaultEntryType.BOLUS_BolusExpertNormal,
+                                TimestampUtils.createCleanTimestamp(
+                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
+                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
+                                tmpValue
+                        );
+                        VaultDao.getInstance().putEntry(vEntry);
+
+                        break;
+                    case 7: //BasalProfileStart
+                        tmpValue = 0.0;
+                        String rawString = reader.get(validHeader[3]);
+                        Pattern p = Pattern.compile(".*RATE=(\\d+,\\d+),.*"); //TODO check english version
+                        Matcher m = p.matcher(rawString);
+                        if (m.matches()) {
+                            String numString = m.group(1).replace(",", ".");
+                            tmpValue = Double.parseDouble(numString);
+                        }
+
+                        if (tmpValue == 0.0) {
+                            break;
+                        }
+
+                        vEntry = new VaultEntry(
+                                VaultEntryType.BASAL_Profile,
                                 TimestampUtils.createCleanTimestamp(
                                         reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
                                         TimestampUtils.TIME_FORMAT_CARELINK_DE),

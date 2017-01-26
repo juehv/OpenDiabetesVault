@@ -721,6 +721,7 @@ public class MainFrame extends javax.swing.JFrame {
         List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
                 new Date(1480550400000L), new Date(1483996861000L));
 
+        System.out.println(VaultCsvEntry.getCsvHeaderString());
         for (VaultCsvEntry item : entrys) {
             System.out.println(item.toCsvString());
         }

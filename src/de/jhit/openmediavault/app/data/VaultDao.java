@@ -140,6 +140,10 @@ public class VaultDao {
                             case GLUCOSE_BG:
                                 tmpCsvEntry.setBgValue(tmpEntry.getValue());
                                 break;
+                            case BASAL_Manual:
+                            case BASAL_Profile:
+                                tmpCsvEntry.setBasalValue(tmpEntry.getValue());
+                                break;
                             case BOLUS_BolusExpertNormal:
                             case BOLUS_BolusExpertSquare:
                             case BOLUS_BolusExpertDual:
