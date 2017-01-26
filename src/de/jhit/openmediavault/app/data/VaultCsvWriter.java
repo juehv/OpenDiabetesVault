@@ -5,30 +5,31 @@
  */
 package de.jhit.openmediavault.app.data;
 
-import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
-import de.jhit.openmediavault.app.container.RawDataEntry;
-import de.jhit.openmediavault.app.container.VaultEntry;
-import de.jhit.openmediavault.app.preferences.Constants;
+import de.jhit.openmediavault.app.container.VaultCsvEntry;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author mswin
  */
-public class OpenDiabetesVaultCsvWriter {
-    
-    public static void writeData(String filepath, List<VaultEntry> cgmEntries)
-            throws FileNotFoundException {
+public class VaultCsvWriter {
+
+    public static void writeData(String filepath, List<VaultCsvEntry> csvEntries)
+            throws FileNotFoundException, IOException {
         CsvWriter cwriter = new CsvWriter(filepath, ',', Charset.forName("UTF-8"));
+
+        cwriter.writeRecord(VaultCsvEntry.getCsvHeaderRecord());
+        //cwriter.write("\n");
+        for (VaultCsvEntry item : csvEntries) {
+            cwriter.writeRecord(item.toCsvRecord());
+            //cwriter.write("\n");
+        }
+        cwriter.flush();
+        cwriter.close();
 
 //        try {
 //            // validate header

@@ -12,6 +12,7 @@ import de.jhit.openmediavault.app.container.VaultCsvEntry;
 import de.jhit.openmediavault.app.data.CarelinkCsvImporter;
 import de.jhit.openmediavault.app.data.GoogleFitCsvImporter;
 import de.jhit.openmediavault.app.data.LibreTxtImporter;
+import de.jhit.openmediavault.app.data.VaultCsvWriter;
 import de.jhit.openmediavault.app.data.VaultDao;
 import de.jhit.openmediavault.app.plot.VaultCsvPlotter;
 import de.jhit.openmediavault.app.preferences.Constants;
@@ -22,6 +23,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -720,6 +722,12 @@ public class MainFrame extends javax.swing.JFrame {
         //create clean entrys
         List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
                 new Date(1480550400000L), new Date(1483996861000L));
+        
+        try {
+            VaultCsvWriter.writeData("./export-v2.csv", entrys);
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         System.out.println(VaultCsvEntry.getCsvHeaderString());
         for (VaultCsvEntry item : entrys) {

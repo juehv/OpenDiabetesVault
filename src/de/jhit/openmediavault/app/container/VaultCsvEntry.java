@@ -6,6 +6,7 @@
 package de.jhit.openmediavault.app.container;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -14,15 +15,17 @@ import java.util.Date;
  */
 public class VaultCsvEntry {
 
+    public final double UNINITIALIZED_DOUBLE = -1.0;
+
     private Date timestamp;
-    private double bgValue;
-    private double cgmValue;
-    private double cgmAlertValue;
-    private double basalValue;
-    private double bolusValue;
-    private double mealValue;
+    private double bgValue = UNINITIALIZED_DOUBLE;
+    private double cgmValue = UNINITIALIZED_DOUBLE;
+    private double cgmAlertValue = UNINITIALIZED_DOUBLE;
+    private double basalValue = UNINITIALIZED_DOUBLE;
+    private double bolusValue = UNINITIALIZED_DOUBLE;
+    private double mealValue = UNINITIALIZED_DOUBLE;
     private String pumpAnnotation;
-    private double exerciseTimeValue;
+    private double exerciseTimeValue = UNINITIALIZED_DOUBLE;
     private String exerciseTypeValue;
 
     public Date getTimestamp() {
@@ -63,7 +66,7 @@ public class VaultCsvEntry {
 
     public void setBasalValue(double basalValue) {
         this.basalValue = basalValue;
-    }    
+    }
 
     public double getBolusValue() {
         return bolusValue;
@@ -106,60 +109,107 @@ public class VaultCsvEntry {
     }
 
     public boolean isEmpty() {
-        return bgValue == 0.0
-                && cgmValue == 0.0
-                && cgmAlertValue == 0.0
-                && bolusValue == 0.0
-                && basalValue == 0.0
-                && mealValue == 0.0
+        return bgValue == UNINITIALIZED_DOUBLE
+                && cgmValue == UNINITIALIZED_DOUBLE
+                && cgmAlertValue == UNINITIALIZED_DOUBLE
+                && bolusValue == UNINITIALIZED_DOUBLE
+                && basalValue == UNINITIALIZED_DOUBLE
+                && mealValue == UNINITIALIZED_DOUBLE
                 && pumpAnnotation == null
-                && exerciseTimeValue == 0.0
+                && exerciseTimeValue == UNINITIALIZED_DOUBLE
                 && exerciseTypeValue == null;
     }
 
     public String toCsvString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(new SimpleDateFormat("dd.MM.yy").format(timestamp)).append(", ");
-        sb.append(new SimpleDateFormat("HH:mm").format(timestamp)).append(", ");
-        if (bgValue > 0.0) {
-            sb.append(bgValue);
+        
+        String[] record = this.toCsvRecord();
+        for (String item: record){
+            sb.append(item).append(",");
         }
-        sb.append(", ");
-        if (cgmValue > 0.0) {
-            sb.append(cgmValue);
-        }
-        sb.append(", ");
-        if (cgmAlertValue > 0.0) {
-            sb.append(cgmAlertValue);
-        }
-        sb.append(", ");
-        if (basalValue > 0.0) {
-            sb.append(basalValue);
-        }
-        sb.append(", ");
-        if (bolusValue > 0.0) {
-            sb.append(bolusValue);
-        }
-        sb.append(", ");
-        if (mealValue > 0.0) {
-            sb.append(mealValue);
-        }
-        sb.append(", ");
-        if (pumpAnnotation != null && !pumpAnnotation.isEmpty()) {
-            sb.append(pumpAnnotation);
-        }
-        sb.append(", ");
-        if (exerciseTimeValue > 0.0) {
-            sb.append(exerciseTimeValue);
-        }
-        sb.append(", ");
-        if (exerciseTypeValue != null && !exerciseTypeValue.isEmpty()) {
-            sb.append(exerciseTypeValue);
-        }
+        sb.deleteCharAt(sb.length()-1);
+
         return sb.toString();
     }
 
+    public String[] toCsvRecord() {
+        ArrayList<String> sb = new ArrayList<>();
+        sb.add(new SimpleDateFormat("dd.MM.yy").format(timestamp));
+        sb.add(new SimpleDateFormat("HH:mm").format(timestamp));
+        if (bgValue > 0.0) {
+            sb.add(String.valueOf(bgValue));
+        } else {
+            sb.add("");
+        }
+        if (cgmValue > UNINITIALIZED_DOUBLE) {
+            sb.add(String.valueOf(cgmValue));
+        } else {
+            sb.add("");
+        }
+        if (cgmAlertValue > UNINITIALIZED_DOUBLE) {
+            sb.add(String.valueOf(cgmAlertValue));
+        } else {
+            sb.add("");
+        }
+        if (basalValue > UNINITIALIZED_DOUBLE) {
+            sb.add(String.valueOf(basalValue));
+        } else {
+            sb.add("");
+        }
+        if (bolusValue > UNINITIALIZED_DOUBLE) {
+            sb.add(String.valueOf(bolusValue));
+        } else {
+            sb.add("");
+        }
+        if (mealValue > UNINITIALIZED_DOUBLE) {
+            sb.add(String.valueOf(mealValue));
+        } else {
+            sb.add("");
+        }
+        if (pumpAnnotation != null) {
+            sb.add(pumpAnnotation);
+        } else {
+            sb.add("");
+        }
+        if (exerciseTimeValue > UNINITIALIZED_DOUBLE) {
+            sb.add(String.valueOf(exerciseTimeValue));
+        } else {
+            sb.add("");
+        }
+        if (exerciseTypeValue != null) {
+            sb.add(exerciseTypeValue);
+        } else {
+            sb.add("");
+        }
+
+        return sb.toArray(new String[]{});
+    }
+
     public static String getCsvHeaderString() {
-        return "date, time, bgValue, cgmValue, cgmAlertValue, basalValue, bolusValue, mealValue, exerciseTimeValue, exerciseTypeValue";
+        StringBuilder sb = new StringBuilder();
+        
+        String[] header = getCsvHeaderRecord();
+        for (String item: header){
+            sb.append(item).append(",");
+        }
+        sb.deleteCharAt(sb.length()-1);
+
+        return sb.toString();
+    }
+
+    public static String[] getCsvHeaderRecord() {
+        return new String[]{
+            "date",
+            "time",
+            "bgValue",
+            "cgmValue",
+            "cgmAlertValue",
+            "basalValue",
+            "bolusValue",
+            "mealValue",
+            "pumpAnnotation",
+            "exerciseTimeValue",
+            "exerciseTypeValue"
+        };
     }
 }
