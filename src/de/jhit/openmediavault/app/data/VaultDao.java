@@ -162,6 +162,9 @@ public class VaultDao {
                             case EXERCISE_Manual:
                                 tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
                                 break;
+                            case PUMP_REWIND:
+                                tmpCsvEntry.setPumpAnnotation(tmpEntry.getType().toString());
+                                break;
                             default:
                                 break;
                         }

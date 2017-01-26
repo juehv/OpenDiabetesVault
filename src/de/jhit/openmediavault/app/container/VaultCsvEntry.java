@@ -21,6 +21,7 @@ public class VaultCsvEntry {
     private double basalValue;
     private double bolusValue;
     private double mealValue;
+    private String pumpAnnotation;
     private double exerciseTimeValue;
     private String exerciseTypeValue;
 
@@ -80,6 +81,14 @@ public class VaultCsvEntry {
         this.mealValue = mealValue;
     }
 
+    public String getPumpAnnotation() {
+        return pumpAnnotation;
+    }
+
+    public void setPumpAnnotation(String pumpAnnotation) {
+        this.pumpAnnotation = pumpAnnotation;
+    }
+
     public double getExerciseTimeValue() {
         return exerciseTimeValue;
     }
@@ -103,6 +112,7 @@ public class VaultCsvEntry {
                 && bolusValue == 0.0
                 && basalValue == 0.0
                 && mealValue == 0.0
+                && pumpAnnotation == null
                 && exerciseTimeValue == 0.0
                 && exerciseTypeValue == null;
     }
@@ -133,6 +143,10 @@ public class VaultCsvEntry {
         sb.append(", ");
         if (mealValue > 0.0) {
             sb.append(mealValue);
+        }
+        sb.append(", ");
+        if (pumpAnnotation != null && !pumpAnnotation.isEmpty()) {
+            sb.append(pumpAnnotation);
         }
         sb.append(", ");
         if (exerciseTimeValue > 0.0) {
