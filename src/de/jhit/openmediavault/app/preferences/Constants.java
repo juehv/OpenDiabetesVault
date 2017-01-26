@@ -66,7 +66,7 @@ public final class Constants {
     public static final String[] CARELINK_TYPE
             = {"Rewind", "Prime", "JournalEntryExerciseMarker",
                 "BGCapturedOnPump", "BGReceived",
-                "BolusWizardBolusEstimate", "BolusNormal"};
+                "BolusWizardBolusEstimate", "BolusNormal", "BasalProfileStart"};
     public static final String CARELINK_RAW_VALUE_AMOUNT = "AMOUNT";
     public static final String CARELINK_RAW_VALUE_CARB_INPUT = "CARB_INPUT";
     public static final String CARELINK_RAW_VALUE_BG_LINK_ID = "PARADIGM_LINK_ID";
