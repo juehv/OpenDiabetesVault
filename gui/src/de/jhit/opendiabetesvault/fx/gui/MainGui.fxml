@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="369.0" prefWidth="431.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.jhit.opendiabetesvault.fx.gui.MainGuiController">
+   <children>
+      <TabPane prefHeight="403.0" prefWidth="431.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Import">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="372.0" prefWidth="431.0">
+                     <children>
+                        <CheckBox layoutX="14.0" layoutY="210.0" mnemonicParsing="false" text="Google Tracks TODO" />
+                        <CheckBox layoutX="14.0" layoutY="150.0" mnemonicParsing="false" text="Google Fit CSV Folder" />
+                        <CheckBox layoutX="14.0" layoutY="87.0" mnemonicParsing="false" text="Abbot FreestyleLibre TXT" />
+                        <CheckBox layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Medtronic Carelink CSV" />
+                        <Button fx:id="button" layoutX="362.0" layoutY="38.0" onAction="#handleButtonAction" text="Browse" />
+                        <Button layoutX="362.0" layoutY="108.0" mnemonicParsing="false" text="Browse" />
+                        <Button layoutX="362.0" layoutY="172.0" mnemonicParsing="false" text="Browse" />
+                        <Button layoutX="362.0" layoutY="237.0" mnemonicParsing="false" text="Browse" />
+                        <Button defaultButton="true" layoutX="352.0" layoutY="336.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="Import" textAlignment="CENTER" />
+                        <DatePicker layoutX="243.0" layoutY="295.0" />
+                        <DatePicker layoutX="14.0" layoutY="295.0" />
+                        <Label layoutX="19.0" layoutY="340.0" text="TODO: Help Button (How To Get Data&quot; --&gt; Website Link" />
+                        <TextField layoutX="14.0" layoutY="38.0" prefHeight="25.0" prefWidth="339.0" />
+                        <TextField layoutX="14.0" layoutY="108.0" prefHeight="25.0" prefWidth="339.0" />
+                        <TextField layoutX="14.0" layoutY="172.0" prefHeight="25.0" prefWidth="339.0" />
+                        <TextField layoutX="14.0" layoutY="237.0" prefHeight="25.0" prefWidth="339.0" />
+                        <Label layoutX="14.0" layoutY="278.0" text="From:" />
+                        <Label layoutX="243.0" layoutY="278.0" text="To:" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Export">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <CheckBox layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="CSV File Export" />
+                        <CheckBox layoutX="14.0" layoutY="78.0" mnemonicParsing="false" text="Plot" />
+                        <DatePicker layoutX="14.0" layoutY="158.0" />
+                        <DatePicker layoutX="20.0" layoutY="254.0" />
+                        <Button layoutX="345.0" layoutY="301.0" mnemonicParsing="false" text="Button" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Interpreter Options">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+            <Tab text="About">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea editable="false" prefHeight="196.0" prefWidth="431.0" text="OpenDiabetesVault is free software and comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. OpenDiabetesVault is completely free of charge! You are welcome to redistribute it under certain conditions. See links above for more details.&#10;&#10;OpenDiabetesVault is a collaborative project with many contributors. If you are interested in contribute to the project, see links above.&#10;&#10;You are always welcome to buy us a free beer for our work!" wrapText="true" />
+                        <Hyperlink layoutX="14.0" layoutY="207.0" text="License information" />
+                        <Hyperlink layoutX="14.0" layoutY="253.0" text="List of contributers" />
+                        <Hyperlink layoutX="14.0" layoutY="230.0" text="Redistribution conditions" />
+                        <Hyperlink layoutX="14.0" layoutY="276.0" text="How to contribute" />
+                        <Hyperlink layoutX="14.0" layoutY="299.0" text="Donate" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
