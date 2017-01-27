@@ -15,7 +15,7 @@ import java.util.Date;
  */
 public class VaultCsvEntry {
 
-    public final double UNINITIALIZED_DOUBLE = -1.0;
+    public final static double UNINITIALIZED_DOUBLE = -1.0;
 
     private Date timestamp;
     private double bgValue = UNINITIALIZED_DOUBLE;

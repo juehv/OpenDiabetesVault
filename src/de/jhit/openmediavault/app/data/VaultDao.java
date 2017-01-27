@@ -10,8 +10,6 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.HsqldbDatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import de.jhit.openmediavault.app.container.VaultCsvEntry;
@@ -20,11 +18,8 @@ import de.jhit.openmediavault.app.container.VaultEntryType;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -133,7 +128,8 @@ public class VaultDao {
                             case GLUCOSE_CGM_ALERT:
                                 tmpCsvEntry.setCgmAlertValue(tmpEntry.getValue());
                             case GLUCOSE_CGM:
-                                if (tmpCsvEntry.getCgmValue() == 0.0) {
+                                if (tmpCsvEntry.getCgmValue() == 
+                                        VaultCsvEntry.UNINITIALIZED_DOUBLE) { // TODO y is this if statement here ??
                                     tmpCsvEntry.setCgmValue(tmpEntry.getValue());
                                 }
                                 break;
