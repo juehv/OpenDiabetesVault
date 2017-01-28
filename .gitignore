@@ -1,4 +1,5 @@
-nbproject/private/
+/engine/nbproject/private/
+/gui/nbproject/private/
 build/
 dist/
 export*.csv
