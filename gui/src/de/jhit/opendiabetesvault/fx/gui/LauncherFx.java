@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  *
  * @author mswin
  */
-public class OpenDiabetesVaultGUI extends Application {
+public class LauncherFx extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
