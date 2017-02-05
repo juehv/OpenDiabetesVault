@@ -5,15 +5,24 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
+import de.jhit.openmediavault.app.data.CarelinkCsvImporter;
+import de.jhit.openmediavault.app.data.GoogleFitCsvImporter;
+import de.jhit.openmediavault.app.data.LibreTxtImporter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
@@ -95,6 +104,11 @@ public class MainGuiController implements Initializable {
                 filter,
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
+    }
+
+    private static boolean checkIfFileExists(String path) {
+        File checkPath = new File(path);
+        return checkPath.exists() && checkPath.isFile() && checkPath.canRead();
     }
 
     // #########################################################################################
@@ -216,24 +230,137 @@ public class MainGuiController implements Initializable {
 //        dialog.getDialogPane().setEffect(ds);
 //        dialog.showAndWait();
 //        --> try this http://docs.oracle.com/javafx/2/ui_controls/progress.htm
+        // check if sth is selected
+        if (!medtronicCheckBox.isSelected()
+                && !abbottCheckBox.isSelected()
+                && !googleFitCheckBox.isSelected()
+                && !googleTracksCheckBox.isSelected()
+                && !rocheCheckBox.isSelected()
+                && !odvCheckBox.isSelected()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING,
+                    "No data selected.\nPlease select a dataset and try again.",
+                    ButtonType.CLOSE);
+            alert.setHeaderText(null);
+            alert.showAndWait();
+            return;
+        }
 
-        // import Data
-        
+        Task bgTask = new Task() {
+            @Override
+            protected Void call() throws Exception {
+                // set wait cursor
+                Cursor cursorBackup = ap.getScene().getCursor();
+                ap.getScene().setCursor(Cursor.WAIT);
+
+                // import Data
+                try {
+                    if (medtronicCheckBox.isSelected()) {
+                        if (checkIfFileExists(medtronicTextField.getText())) {
+                            CarelinkCsvImporter.parseData(medtronicTextField.getText());
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "File \"" + medtronicTextField.getText()
+                                    + "\" does not exist.\nNothing imported for this type.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        }
+                    } else if (abbottCheckBox.isSelected()) {
+                        if (checkIfFileExists(abbottTextField.getText())) {
+                            LibreTxtImporter.parseData(abbottTextField.getText());
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "File \"" + abbottTextField.getText()
+                                    + "\" does not exist.\nNothing imported for this type.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        }
+                    } else if (googleFitCheckBox.isSelected()) {
+                        if (checkIfFileExists(googleFitTextField.getText())) {
+                            GoogleFitCsvImporter.parseData(googleFitTextField.getText());
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "File \"" + googleFitTextField.getText()
+                                    + "\" does not exist.\nNothing imported for this type.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        }
+                    } else if (googleTracksCheckBox.isSelected()) {
+                        if (checkIfFileExists(googleTracksTextField.getText())) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "Not Implemented Yet.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "File \"" + googleTracksTextField.getText()
+                                    + "\" does not exist.\nNothing imported for this type.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        }
+                    } else if (rocheCheckBox.isSelected()) {
+                        if (checkIfFileExists(rocheTextField.getText())) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "Not Implemented Yet.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "File \"" + rocheTextField.getText()
+                                    + "\" does not exist.\nNothing imported for this type.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        }
+                    } else if (odvCheckBox.isSelected()) {
+                        if (checkIfFileExists(odvTextField.getText())) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "Not Implemented Yet.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "File \"" + odvTextField.getText()
+                                    + "\" does not exist.\nNothing imported for this type.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        }
+                    }
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                // reset cursor
+                ap.getScene().setCursor(cursorBackup);
+                return null;
+            }
+        };
+        Thread th = new Thread(bgTask);
+        th.setDaemon(true);
+        th.start();
+
         // set import Options if import was succesfull
         prefs.putBoolean(Constants.IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
         prefs.put(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY, medtronicTextField.getText());
-        prefs.putBoolean(Constants.IMPORTER_ABBOTT_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
+        prefs.putBoolean(Constants.IMPORTER_ABBOTT_IMPORT_CHECKBOX_KEY, abbottCheckBox.isSelected());
         prefs.put(Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY, abbottTextField.getText());
-        prefs.putBoolean(Constants.IMPORTER_GOOGLE_FIT_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
+        prefs.putBoolean(Constants.IMPORTER_GOOGLE_FIT_IMPORT_CHECKBOX_KEY, googleFitCheckBox.isSelected());
         prefs.put(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY, googleFitTextField.getText());
-        prefs.putBoolean(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
-        prefs.put(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY, googleFitTextField.getText());
-        prefs.putBoolean(Constants.IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
-        prefs.put(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY, googleFitTextField.getText());
-        prefs.putBoolean(Constants.IMPORTER_ODV_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
+        prefs.putBoolean(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY, googleTracksCheckBox.isSelected());
+        prefs.put(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY, googleTracksTextField.getText());
+        prefs.putBoolean(Constants.IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY, rocheCheckBox.isSelected());
+        prefs.put(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY, rocheTextField.getText());
+        prefs.putBoolean(Constants.IMPORTER_ODV_IMPORT_CHECKBOX_KEY, odvCheckBox.isSelected());
         prefs.put(Constants.IMPORTER_ODV_IMPORT_PATH_KEY, odvTextField.getText());
 
         prefs.putBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, periodCheckbox.isSelected());
+
     }
 
     @FXML
@@ -279,12 +406,31 @@ public class MainGuiController implements Initializable {
         // TODO
 
         // IMPORTER
-        // Medtronic
-        File lastPathMedtronic = new File(prefs.get(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY, ""));
-        medtronicTextField.setText(lastPathMedtronic.getAbsolutePath());
-        medtronicCheckBox.setSelected(prefs.getBoolean(Constants.IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY, false));
+        medtronicTextField.setText(prefs.get(
+                Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY, ""));
+        medtronicCheckBox.setSelected(prefs.getBoolean(
+                Constants.IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY, false));
+        abbottTextField.setText(prefs.get(
+                Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY, ""));
+        abbottCheckBox.setSelected(prefs.getBoolean(
+                Constants.IMPORTER_ABBOTT_IMPORT_CHECKBOX_KEY, false));
+        googleFitTextField.setText(prefs.get(
+                Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY, ""));
+        googleFitCheckBox.setSelected(prefs.getBoolean(
+                Constants.IMPORTER_GOOGLE_FIT_IMPORT_CHECKBOX_KEY, false));
+        googleTracksTextField.setText(prefs.get(
+                Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY, ""));
+        googleTracksCheckBox.setSelected(prefs.getBoolean(
+                Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY, false));
+        rocheTextField.setText(prefs.get(
+                Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY, ""));
+        rocheCheckBox.setSelected(prefs.getBoolean(
+                Constants.IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY, false));
+        odvTextField.setText(prefs.get(
+                Constants.IMPORTER_ODV_IMPORT_PATH_KEY, ""));
+        odvCheckBox.setSelected(prefs.getBoolean(
+                Constants.IMPORTER_ODV_IMPORT_CHECKBOX_KEY, false));
 
-        // Period
         periodToPicker.setValue(LocalDate.now());
         periodFromPicker.setValue(LocalDate.now().minusWeeks(4));
         boolean periodAll = prefs.getBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, false);

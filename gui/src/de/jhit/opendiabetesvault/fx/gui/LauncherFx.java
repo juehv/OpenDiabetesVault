@@ -5,6 +5,7 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
+import de.jhit.openmediavault.app.data.VaultDao;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,13 +17,17 @@ import javafx.stage.Stage;
  * @author mswin
  */
 public class LauncherFx extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
+        // Init DB
+        VaultDao.initializeDb();
+
+        // Setup Gui
         Parent root = FXMLLoader.load(getClass().getResource("MainGui.fxml"));
-        
+
         Scene scene = new Scene(root);
-        
+
         stage.setScene(scene);
         stage.show();
     }
@@ -33,5 +38,5 @@ public class LauncherFx extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }
