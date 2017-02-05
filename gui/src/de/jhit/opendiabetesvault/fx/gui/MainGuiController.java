@@ -405,7 +405,7 @@ public class MainGuiController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
 
-        // IMPORTER
+        // IMPORT
         medtronicTextField.setText(prefs.get(
                 Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY, ""));
         medtronicCheckBox.setSelected(prefs.getBoolean(
@@ -438,6 +438,8 @@ public class MainGuiController implements Initializable {
         periodToPicker.setDisable(periodAll);
         periodFromPicker.setDisable(periodAll);
 
+        // EXPORT
+        
         // INTERPRETER
         cooldownTimeSpinner.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 300,
