@@ -104,6 +104,7 @@ public class GoogleFitCsvImporter {
         timeOfAction = Math.round(timeOfAction / 60000);
 
         // create timestamp
+        try{
         Date timestamp = TimestampUtils.createCleanTimestamp(
                 dateString + " " + reader.get(validHeader[0]).replaceAll(":", ""),
                 TimestampUtils.TIME_FORMAT_GOOGLE_DE);
@@ -112,6 +113,7 @@ public class GoogleFitCsvImporter {
                 new VaultEntry(VaultEntryType.EXERCISE_GoogleBicycle,
                         timestamp, (double) timeOfAction));
 
+        } catch (Exception ex){}
         return null;
 
     }
