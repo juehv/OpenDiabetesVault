@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.HsqldbDatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.logger.LocalLog;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -41,7 +42,7 @@ public class VaultDao {
 
     public static VaultDao getInstance() {
         if (INSTANCE == null) {
-            LOG.severe("Database is not initialized. Call initializeDb first!");
+            LOG.severe("Database is not initialized. Call VaultDao.initializeDb first!");
             System.exit(-1);
         }
         return INSTANCE;
@@ -52,6 +53,8 @@ public class VaultDao {
     }
 
     public static void initializeDb() throws SQLException {
+        //TODO combine logging
+        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "INFO");
         INSTANCE = new VaultDao();
         INSTANCE.initDb();
     }
@@ -80,14 +83,14 @@ public class VaultDao {
         try {
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
-                    .where()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_BG)
-                    .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM)
-                    .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM_ALERT)
-                    .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
-                    .prepare();
+                            .where()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_BG)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM_ALERT)
+                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
+                            .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error while db query", ex);
@@ -103,9 +106,9 @@ public class VaultDao {
 
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
-                    .where()
-                    .between(VaultEntry.TIMESTAMP_FIELD_NAME, fromTimestamp, toTimestamp)
-                    .prepare();
+                            .where()
+                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, fromTimestamp, toTimestamp)
+                            .prepare();
             List<VaultEntry> tmpValues = vaultDao.query(query);
 
             if (!tmpValues.isEmpty()) {
@@ -128,8 +131,8 @@ public class VaultDao {
                             case GLUCOSE_CGM_ALERT:
                                 tmpCsvEntry.setCgmAlertValue(tmpEntry.getValue());
                             case GLUCOSE_CGM:
-                                if (tmpCsvEntry.getCgmValue() == 
-                                        VaultCsvEntry.UNINITIALIZED_DOUBLE) { // TODO y is this if statement here ??
+                                if (tmpCsvEntry.getCgmValue()
+                                        == VaultCsvEntry.UNINITIALIZED_DOUBLE) { // TODO y is this if statement here ??
                                     tmpCsvEntry.setCgmValue(tmpEntry.getValue());
                                 }
                                 break;
