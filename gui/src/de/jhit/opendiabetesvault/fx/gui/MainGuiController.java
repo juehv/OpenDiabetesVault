@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,6 +26,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
@@ -77,6 +79,8 @@ public class MainGuiController implements Initializable {
     private DatePicker periodToPicker;
     @FXML
     private CheckBox periodCheckbox;
+    @FXML
+    private ProgressBar importPorgressBar;
 
     // Export
     // Interpreter
@@ -230,6 +234,7 @@ public class MainGuiController implements Initializable {
 //        dialog.getDialogPane().setEffect(ds);
 //        dialog.showAndWait();
 //        --> try this http://docs.oracle.com/javafx/2/ui_controls/progress.htm
+
         // check if sth is selected
         if (!medtronicCheckBox.isSelected()
                 && !abbottCheckBox.isSelected()
@@ -245,6 +250,60 @@ public class MainGuiController implements Initializable {
             return;
         }
 
+        // check path
+        StringBuilder sb = new StringBuilder();
+        if (medtronicCheckBox.isSelected() && !checkIfFileExists(medtronicTextField.getText())) {
+            sb.append(medtronicTextField.getText());
+        }
+        if (abbottCheckBox.isSelected() && !checkIfFileExists(abbottTextField.getText())) {
+            if (sb.length() > 0) {
+                sb.append("\",\n\"");
+            }
+            sb.append(abbottTextField.getText());
+        }
+        if (googleFitCheckBox.isSelected()) {
+            File check = new File(googleFitTextField.getText());
+            if (!check.exists()
+                    || !check.isDirectory()
+                    || !check.canRead()
+                    || check.listFiles().length <= 0) {
+                if (sb.length() > 0) {
+                    sb.append("\",\n\"");
+                }
+                sb.append(googleFitTextField.getText());
+            }
+        }
+        if (googleTracksCheckBox.isSelected() && !checkIfFileExists(googleTracksTextField.getText())) {
+            if (sb.length() > 0) {
+                sb.append("\",\n\"");
+            }
+            sb.append(googleTracksTextField.getText());
+        }
+        if (rocheCheckBox.isSelected() && !checkIfFileExists(rocheTextField.getText())) {
+            if (sb.length() > 0) {
+                sb.append("\",\n\"");
+            }
+            sb.append(rocheTextField.getText());
+        }
+        if (odvCheckBox.isSelected() && !checkIfFileExists(odvTextField.getText())) {
+            if (sb.length() > 0) {
+                sb.append("\",\n\"");
+            }
+            sb.append(odvTextField.getText());
+        }
+        if (sb.length() > 0) {
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                    "There is an error with the path(s):\n\"" + sb.toString()
+                    + "\"\nNothing imported for this type(s).",
+                    ButtonType.CLOSE);
+            alert.setHeaderText(null);
+            alert.show();
+            return;
+        }
+
+        // do the work
+        importPorgressBar.setProgress(
+                -1.0);
         Task bgTask = new Task() {
             @Override
             protected Void call() throws Exception {
@@ -254,88 +313,71 @@ public class MainGuiController implements Initializable {
 
                 // import Data
                 try {
+                    Platform.runLater(() -> {
+                        importPorgressBar.setProgress(0.05);
+                    });
                     if (medtronicCheckBox.isSelected()) {
-                        if (checkIfFileExists(medtronicTextField.getText())) {
-                            CarelinkCsvImporter.parseData(medtronicTextField.getText());
-                        } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "File \"" + medtronicTextField.getText()
-                                    + "\" does not exist.\nNothing imported for this type.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        }
-                    } else if (abbottCheckBox.isSelected()) {
-                        if (checkIfFileExists(abbottTextField.getText())) {
-                            LibreTxtImporter.parseData(abbottTextField.getText());
-                        } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "File \"" + abbottTextField.getText()
-                                    + "\" does not exist.\nNothing imported for this type.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        }
-                    } else if (googleFitCheckBox.isSelected()) {
-                        if (checkIfFileExists(googleFitTextField.getText())) {
-                            GoogleFitCsvImporter.parseData(googleFitTextField.getText());
-                        } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "File \"" + googleFitTextField.getText()
-                                    + "\" does not exist.\nNothing imported for this type.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        }
-                    } else if (googleTracksCheckBox.isSelected()) {
-                        if (checkIfFileExists(googleTracksTextField.getText())) {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "Not Implemented Yet.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "File \"" + googleTracksTextField.getText()
-                                    + "\" does not exist.\nNothing imported for this type.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        }
-                    } else if (rocheCheckBox.isSelected()) {
-                        if (checkIfFileExists(rocheTextField.getText())) {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "Not Implemented Yet.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "File \"" + rocheTextField.getText()
-                                    + "\" does not exist.\nNothing imported for this type.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        }
-                    } else if (odvCheckBox.isSelected()) {
-                        if (checkIfFileExists(odvTextField.getText())) {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "Not Implemented Yet.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "File \"" + odvTextField.getText()
-                                    + "\" does not exist.\nNothing imported for this type.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
+                        CarelinkCsvImporter.parseData(medtronicTextField.getText());
+                    }
+                    Platform.runLater(() -> {
+                        importPorgressBar.setProgress(0.2);
+                    });
+                    if (abbottCheckBox.isSelected()) {
+                        LibreTxtImporter.parseData(abbottTextField.getText());
+                    }
+                    Platform.runLater(() -> {
+                        importPorgressBar.setProgress(0.35);
+                    });
+                    if (googleFitCheckBox.isSelected()) {
+                        File folder = new File(googleFitTextField.getText());
+                        for (File googleFile : folder.listFiles()) {
+                            GoogleFitCsvImporter.parseData(googleFile.getAbsolutePath());
                         }
                     }
+                    Platform.runLater(() -> {
+                        importPorgressBar.setProgress(0.50);
+                    });
+                    if (googleTracksCheckBox.isSelected()) {
+                        Platform.runLater(() -> {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "Google Tracks import is not implemented yet.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        });
+                    }
+                    Platform.runLater(() -> {
+                        importPorgressBar.setProgress(0.65);
+                    });
+                    if (rocheCheckBox.isSelected()) {
+                        Platform.runLater(() -> {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "Roche import is not implemented yet.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        });
+                    }
+                    Platform.runLater(() -> {
+                        importPorgressBar.setProgress(0.80);
+                    });
+                    if (odvCheckBox.isSelected()) {
+                        Platform.runLater(() -> {
+                            Alert alert = new Alert(Alert.AlertType.ERROR,
+                                    "ODV import is not implemented yet.",
+                                    ButtonType.CLOSE);
+                            alert.setHeaderText(null);
+                            alert.show();
+                        });
+                    }
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE,
+                            "Error while importing files.", ex);
                 }
+                Platform.runLater(() -> {
+                    importPorgressBar.setProgress(1.0);
+                });
+
                 // reset cursor
                 ap.getScene().setCursor(cursorBackup);
                 return null;
@@ -344,6 +386,8 @@ public class MainGuiController implements Initializable {
         Thread th = new Thread(bgTask);
         th.setDaemon(true);
         th.start();
+        
+        //TODO show progress dialog and wait here for execution finish
 
         // set import Options if import was succesfull
         prefs.putBoolean(Constants.IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
@@ -439,7 +483,6 @@ public class MainGuiController implements Initializable {
         periodFromPicker.setDisable(periodAll);
 
         // EXPORT
-        
         // INTERPRETER
         cooldownTimeSpinner.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 300,

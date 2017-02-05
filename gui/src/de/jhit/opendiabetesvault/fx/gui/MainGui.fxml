@@ -5,6 +5,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -13,13 +14,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="ap" prefHeight="589.0" prefWidth="431.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.jhit.opendiabetesvault.fx.gui.MainGuiController">
+<AnchorPane id="AnchorPane" fx:id="ap" prefHeight="507.0" prefWidth="431.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.jhit.opendiabetesvault.fx.gui.MainGuiController">
    <children>
       <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="Import">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="372.0" prefWidth="431.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="474.0" prefWidth="431.0">
                      <children>
                         <CheckBox fx:id="odvCheckBox" layoutX="14.0" layoutY="329.0" mnemonicParsing="false" text="OpenDiabetesVault CSV TODO" />
                         <CheckBox fx:id="rocheCheckBox" layoutX="14.0" layoutY="266.0" mnemonicParsing="false" text="Roche Accu-Check CSV TODO" />
@@ -34,22 +35,23 @@
                         <Button layoutX="362.0" layoutY="290.0" mnemonicParsing="false" onAction="#handleButtonBrowseRoche" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
                         <Button layoutX="362.0" layoutY="353.0" mnemonicParsing="false" onAction="#handleButtonBrowseOpenDiabetesVault" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
                         <Button defaultButton="true" mnemonicParsing="false" onAction="#handleButtonImport" text="Import" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-                        <CheckBox fx:id="periodCheckbox" layoutX="270.0" layoutY="525.0" mnemonicParsing="true" onAction="#handlePeriodCheckboxClicked" text="All" AnchorPane.bottomAnchor="18.0" />
-                        <DatePicker fx:id="periodToPicker" layoutX="149.0" layoutY="521.0" prefWidth="110.0" AnchorPane.bottomAnchor="14.0" />
-                        <DatePicker fx:id="periodFromPicker" layoutX="14.0" layoutY="521.0" prefWidth="110.0" AnchorPane.bottomAnchor="14.0" />
+                        <CheckBox fx:id="periodCheckbox" layoutX="272.0" layoutY="396.0" mnemonicParsing="true" onAction="#handlePeriodCheckboxClicked" text="All" />
+                        <DatePicker fx:id="periodToPicker" layoutX="151.0" layoutY="392.0" prefWidth="110.0" />
+                        <DatePicker fx:id="periodFromPicker" layoutX="14.0" layoutY="392.0" prefWidth="110.0" />
                         <TextField fx:id="medtronicTextField" layoutX="14.0" layoutY="38.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                         <TextField fx:id="abbottTextField" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                         <TextField fx:id="googleFitTextField" layoutX="14.0" layoutY="164.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                         <TextField fx:id="googleTracksTextField" layoutX="14.0" layoutY="227.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                         <TextField fx:id="rocheTextField" layoutX="14.0" layoutY="290.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                         <TextField fx:id="odvTextField" layoutX="14.0" layoutY="353.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                        <Label layoutX="134.0" layoutY="525.0" text="-" AnchorPane.bottomAnchor="18.0" />
+                        <Label layoutX="136.0" layoutY="396.0" text="-" />
                         <Hyperlink layoutX="165.0" layoutY="11.0" text="?" />
                         <Hyperlink layoutX="177.0" layoutY="74.0" text="?" />
                         <Hyperlink layoutX="158.0" layoutY="137.0" text="?" />
                         <Hyperlink layoutX="184.0" layoutY="200.0" text="?" />
                         <Hyperlink layoutX="197.0" layoutY="263.0" text="?" />
                         <Hyperlink layoutX="204.0" layoutY="326.0" text="?" />
+                        <ProgressBar fx:id="importPorgressBar" layoutX="16.0" layoutY="443.0" prefHeight="18.0" prefWidth="338.0" progress="0.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                      </children>
                   </AnchorPane>
             </content>
