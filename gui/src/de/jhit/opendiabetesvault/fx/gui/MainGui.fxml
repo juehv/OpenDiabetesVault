@@ -5,6 +5,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -20,27 +21,28 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="372.0" prefWidth="431.0">
                      <children>
-                        <CheckBox layoutX="14.0" layoutY="329.0" mnemonicParsing="false" text="OpenDiabetesVault CSV TODO" />
-                        <CheckBox layoutX="14.0" layoutY="266.0" mnemonicParsing="false" text="Roche Accu-Check CSV TODO" />
-                        <CheckBox layoutX="14.0" layoutY="203.0" mnemonicParsing="false" text="Google Tracks JSON TODO" />
-                        <CheckBox layoutX="14.0" layoutY="140.0" mnemonicParsing="false" text="Google Fit CSV Folder" />
-                        <CheckBox layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Abbott FreestyleLibre TXT" />
+                        <CheckBox fx:id="odvCheckBox" layoutX="14.0" layoutY="329.0" mnemonicParsing="false" text="OpenDiabetesVault CSV TODO" />
+                        <CheckBox fx:id="rocheCheckBox" layoutX="14.0" layoutY="266.0" mnemonicParsing="false" text="Roche Accu-Check CSV TODO" />
+                        <CheckBox fx:id="googleTracksCheckBox" layoutX="14.0" layoutY="203.0" mnemonicParsing="false" text="Google Tracks JSON TODO" />
+                        <CheckBox fx:id="googleFitCheckBox" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" text="Google Fit CSV Folder" />
+                        <CheckBox fx:id="abbottCheckBox" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Abbott FreestyleLibre TXT" />
                         <CheckBox fx:id="medtronicCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Medtronic Carelink CSV" />
                         <Button layoutX="362.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleButtonBrowseMedtronic" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
-                        <Button layoutX="362.0" layoutY="101.0" mnemonicParsing="false" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
-                        <Button layoutX="362.0" layoutY="164.0" mnemonicParsing="false" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
-                        <Button layoutX="362.0" layoutY="227.0" mnemonicParsing="false" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
-                        <Button layoutX="362.0" layoutY="290.0" mnemonicParsing="false" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
-                        <Button layoutX="362.0" layoutY="353.0" mnemonicParsing="false" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                        <Button layoutX="362.0" layoutY="101.0" mnemonicParsing="false" onAction="#handleButtonBrowseAbbott" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                        <Button layoutX="362.0" layoutY="164.0" mnemonicParsing="false" onAction="#handleButtonBrowseGoogleFit" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                        <Button layoutX="362.0" layoutY="227.0" mnemonicParsing="false" onAction="#handleButtonBrowseGoogleTracks" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                        <Button layoutX="362.0" layoutY="290.0" mnemonicParsing="false" onAction="#handleButtonBrowseRoche" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                        <Button layoutX="362.0" layoutY="353.0" mnemonicParsing="false" onAction="#handleButtonBrowseOpenDiabetesVault" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
                         <Button defaultButton="true" mnemonicParsing="false" onAction="#handleButtonImport" text="Import" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-                        <DatePicker layoutX="149.0" layoutY="521.0" prefWidth="110.0" AnchorPane.bottomAnchor="14.0" />
-                        <DatePicker layoutX="14.0" layoutY="521.0" prefWidth="110.0" AnchorPane.bottomAnchor="14.0" />
+                        <CheckBox fx:id="periodCheckbox" layoutX="270.0" layoutY="525.0" mnemonicParsing="true" onAction="#handlePeriodCheckboxClicked" text="All" AnchorPane.bottomAnchor="18.0" />
+                        <DatePicker fx:id="periodToPicker" layoutX="149.0" layoutY="521.0" prefWidth="110.0" AnchorPane.bottomAnchor="14.0" />
+                        <DatePicker fx:id="periodFromPicker" layoutX="14.0" layoutY="521.0" prefWidth="110.0" AnchorPane.bottomAnchor="14.0" />
                         <TextField fx:id="medtronicTextField" layoutX="14.0" layoutY="38.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                        <TextField layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                        <TextField layoutX="14.0" layoutY="164.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                        <TextField layoutX="14.0" layoutY="227.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                        <TextField layoutX="14.0" layoutY="290.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                        <TextField layoutX="14.0" layoutY="353.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                        <TextField fx:id="abbottTextField" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                        <TextField fx:id="googleFitTextField" layoutX="14.0" layoutY="164.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                        <TextField fx:id="googleTracksTextField" layoutX="14.0" layoutY="227.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                        <TextField fx:id="rocheTextField" layoutX="14.0" layoutY="290.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                        <TextField fx:id="odvTextField" layoutX="14.0" layoutY="353.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                         <Label layoutX="134.0" layoutY="525.0" text="-" AnchorPane.bottomAnchor="18.0" />
                         <Hyperlink layoutX="165.0" layoutY="11.0" text="?" />
                         <Hyperlink layoutX="177.0" layoutY="74.0" text="?" />
@@ -67,7 +69,13 @@
           </Tab>
             <Tab text="Interpreter Options">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <CheckBox fx:id="fillAsNewKathederCheckbox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleFillAsNewKathederClicked" text="Interpret fill canula as new katheder" />
+                        <Label layoutX="14.0" layoutY="42.0" text="Cool down time [min]" />
+                        <Spinner fx:id="cooldownTimeSpinner" layoutX="136.0" layoutY="38.0" onMouseClicked="#handleCooldownTimeClicked" prefHeight="25.0" prefWidth="65.0" />
+                        <Button layoutX="14.0" layoutY="521.0" mnemonicParsing="false" onAction="#handleSetToDefaultButton" text="Set to default" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
+                     </children></AnchorPane>
               </content>
             </Tab>
             <Tab text="About">

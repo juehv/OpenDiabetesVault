@@ -12,16 +12,38 @@ import javafx.stage.FileChooser;
  * @author mswin
  */
 public final class Constants {
+
+
+
     private Constants() {
     }
     
     // File Filter
     public static final FileChooser.ExtensionFilter CSV_EXTENSION_FILTER = new FileChooser.ExtensionFilter("CSV", "*.csv");
     public static final FileChooser.ExtensionFilter TXT_EXTENSION_FILTER = new FileChooser.ExtensionFilter("TXT", "*.txt");
+    public static final FileChooser.ExtensionFilter JSON_EXTENSION_FILTER = new FileChooser.ExtensionFilter("JSON", "*.json");
 
-    // Prefs
-    public static final String MEDTRONIC_IMPORT_PATH_KEY = "medtronicImportPath";
-    public static final String MEDTRONIC_IMPORT_CHECKBOX_KEY = "medtronicImportCheckbox";
+    // Importer
+    public static final String IMPORTER_MEDTRONIC_IMPORT_PATH_KEY = "medtronicImportPath";
+    public static final String IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY = "medtronicImportCheckbox";
+    public static final String IMPORTER_ABBOTT_IMPORT_PATH_KEY = "abbottImportPath";
+    public static final String IMPORTER_ABBOTT_IMPORT_CHECKBOX_KEY = "abbottImportCheckbox";
+    public static final String IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY = "googleFitImportPath";
+    public static final String IMPORTER_GOOGLE_FIT_IMPORT_CHECKBOX_KEY = "googleFitImportCheckbox";
+    public static final String IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY = "googleTracksImportPath";
+    public static final String IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY = "googleTracksImportCheckbox";
+    public static final String IMPORTER_ROCHE_IMPORT_PATH_KEY = "rocheImportPath";
+    public static final String IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY = "rocheImportCheckbox";
+    public static final String IMPORTER_ODV_IMPORT_PATH_KEY = "odvImportPath";
+    public static final String IMPORTER_ODV_IMPORT_CHECKBOX_KEY = "odvImportCheckbox";
+    
+    public static final String IMPORTER_PERIOD_ALL_KEY = "periodAllCheckbox";
+    
+    // Exporter
+    
+    // Interpreter
+    public static final String INTERPRETER_FILL_AS_KAT_KEY = "interpreterFillAsKat";
+    public static final String INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY = "interpreterFillAsKatCooldown";
     
     // unused
     public static final String CARELINK_USER_KEY = "carelinkUser";
