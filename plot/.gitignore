@@ -3,6 +3,7 @@
 *.png
 *.csv
 plotList.tex
+header.tex
 *.aux
 
 # Byte-compiled / optimized / DLL files

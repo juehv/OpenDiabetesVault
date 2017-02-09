@@ -310,11 +310,12 @@ def plot(data,config,plotList):
 
     fileName = config.filenamePrefix + dates.num2date(data[0][0], tz=None).strftime(config.filenameDateFormatString) + config.fileExtension
     plt.savefig(fileName)
+    #plt.show()
+    plt.close()
     #plotList.write("\\vfill\n\\centerline{\\includegraphics[width=\\textwidth,height=\\textheight,keepaspectratio]{" + fileName + "}}\
     if divmod(plotCount, 3)[1] == 0:
         plotList.write("\\newpage\n\\input{header}\n")
-    plotList.write("\\vfill\n\\centerline{\\includegraphics[scale=0.57,keepaspectratio]{" + fileName + "}}\n")
-    #plt.show()
+    plotList.write("\\vspace{0.3em}\n\\centerline{\\includegraphics[scale=0.57,keepaspectratio]{" + fileName + "}}\n")
     plotCount+=1
 
 def main():
@@ -405,7 +406,7 @@ def main():
 
         filenamePrefix = 'Plot'
         filenameDateFormatString = '%d_%m_%y'
-        fileExtension = '.pdf'
+        fileExtension = '.png'
 
         plotListFile = 'plotList.tex'
         headerFile = 'header.tex'
@@ -431,14 +432,16 @@ def main():
     bbox = transforms.Bbox(np.array(((x0, y0), (x1, y1))));
 
     plt.savefig(Config().legendFile, bbox_inches=bbox)
-    days = str(int(divmod((lastDate - firstDate).total_seconds(),86400)[0]) + 1)
+    plt.close()
 
     ## tex header file ##
+    days = str(int(divmod((lastDate - firstDate).total_seconds(),86400)[0]) + 1)
     headLine = "Daily Log " + firstDate.strftime('%d.%m.') + "-" + lastDate.strftime('%d.%m.%y') + " (" + days + " days)"
     fileHeader = open(Config().headerFile, 'w')
 
     fileHeader.write("\\noindent \\large{\\textbf{" + headLine + "}} \\hfill \\small{Page \\thepage/\\pageref{LastPage}}\n\n\\vspace{0.5em}\n")
-    fileHeader.write("\centerline{\\includegraphics[width=200pt,height=200pt,keepaspectratio]{" + Config().legendFile + "}}\n\\vspace{0.1em}")
+    fileHeader.write("\centerline{\\includegraphics[width=200pt,height=200pt,keepaspectratio]{" + Config().legendFile + "}}\n\\vspace{0.1em}")    
+    fileHeader.close()
 
     ## tex file ##
     filePlotList = open(Config().plotListFile, 'w')
@@ -447,7 +450,6 @@ def main():
         plot(d, Config(), filePlotList)
 
     filePlotList.close()
-    fileHeader.close()
 
 if __name__ == '__main__':
     main()
