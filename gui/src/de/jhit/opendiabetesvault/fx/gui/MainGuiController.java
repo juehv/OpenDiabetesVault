@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +31,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
@@ -74,9 +74,9 @@ public class MainGuiController implements Initializable {
     @FXML
     private CheckBox odvCheckBox;
     @FXML
-    private DatePicker periodFromPicker;
+    private DatePicker importPeriodFromPicker;
     @FXML
-    private DatePicker periodToPicker;
+    private DatePicker importPeriodToPicker;
     @FXML
     private CheckBox periodCheckbox;
     @FXML
@@ -115,6 +115,38 @@ public class MainGuiController implements Initializable {
         return checkPath.exists() && checkPath.isFile() && checkPath.canRead();
     }
 
+    private static boolean checkIfFilesExists(String paths) {
+        for (String item : paths.split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+            if (item != null && !item.isEmpty()) {
+                if (!checkIfFileExists(item)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void saveMultiFileSelection(String pathKey, String countKey, String multifileString) {
+        String[] paths = multifileString.split(Constants.MULTI_FILE_PATH_DELIMITER);
+        prefs.putInt(countKey, paths.length);
+        for (int i = 0; i < paths.length; i++) {
+            prefs.put(pathKey + i, paths[i]);
+        }
+    }
+
+    private String loadMultiFileSelection(String pathKey, String countKey) {
+        StringBuilder sb = new StringBuilder();
+        int max = prefs.getInt(countKey, 0);
+        for (int i = 0; i < max; i++) {
+            String path = prefs.get(pathKey + i, "");
+            if (path != null && !path.isEmpty()) {
+                sb.append(path).append(";");
+            }
+        }
+        return sb.length() > 0 ? sb.toString().substring(0, sb.length() - 1) : "";
+
+    }
+
     // #########################################################################################
     // Import
     // #########################################################################################
@@ -125,10 +157,14 @@ public class MainGuiController implements Initializable {
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
-        File file = fileChooser.showOpenDialog(stage);
+        List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
-        if (file != null) {
-            medtronicTextField.setText(file.getAbsolutePath());
+        if (files != null && !files.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            files.forEach((item) -> {
+                sb.append(item.getAbsolutePath()).append(Constants.MULTI_FILE_PATH_DELIMITER);
+            });
+            medtronicTextField.setText(sb.toString().substring(0, sb.length() - 1));
             medtronicCheckBox.setSelected(true);
         }
     }
@@ -140,10 +176,14 @@ public class MainGuiController implements Initializable {
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.TXT_EXTENSION_FILTER);
-        File file = fileChooser.showOpenDialog(stage);
+        List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
-        if (file != null) {
-            abbottTextField.setText(file.getAbsolutePath());
+        if (files != null && !files.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            files.forEach((item) -> {
+                sb.append(item.getAbsolutePath()).append(Constants.MULTI_FILE_PATH_DELIMITER);
+            });
+            abbottTextField.setText(sb.toString().substring(0, sb.length() - 1));
             abbottCheckBox.setSelected(true);
         }
     }
@@ -151,23 +191,18 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseGoogleFit(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File initDir = new File(prefs.get(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY, ""));
 
-        DirectoryChooser chooser = new DirectoryChooser();
-        if (initDir.exists()) {
-            if (initDir.isDirectory()) {
-                chooser.setInitialDirectory(initDir);
-            } else {
-                chooser.setInitialDirectory(initDir.getParentFile());
-            }
-        } else {
-            chooser.setInitialDirectory(
-                    new File(System.getProperty("user.home")));
-        }
-        File selectedDirectory = chooser.showDialog(stage);
+        FileChooser fileChooser = new FileChooser();
+        configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
+        List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
-        if (selectedDirectory != null) {
-            googleFitTextField.setText(selectedDirectory.getAbsolutePath());
+        if (files != null && !files.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            files.forEach((item) -> {
+                sb.append(item.getAbsolutePath()).append(Constants.MULTI_FILE_PATH_DELIMITER);
+            });
+            googleFitTextField.setText(sb.toString().substring(0, sb.length() - 1));
             googleFitCheckBox.setSelected(true);
         }
     }
@@ -179,10 +214,14 @@ public class MainGuiController implements Initializable {
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.JSON_EXTENSION_FILTER);
-        File file = fileChooser.showOpenDialog(stage);
+        List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
-        if (file != null) {
-            googleTracksTextField.setText(file.getAbsolutePath());
+        if (files != null && !files.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            files.forEach((item) -> {
+                sb.append(item.getAbsolutePath()).append(Constants.MULTI_FILE_PATH_DELIMITER);
+            });
+            googleTracksTextField.setText(sb.toString().substring(0, sb.length() - 1));
             googleTracksCheckBox.setSelected(true);
         }
     }
@@ -194,10 +233,14 @@ public class MainGuiController implements Initializable {
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
-        File file = fileChooser.showOpenDialog(stage);
+        List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
-        if (file != null) {
-            rocheTextField.setText(file.getAbsolutePath());
+        if (files != null && !files.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            files.forEach((item) -> {
+                sb.append(item.getAbsolutePath()).append(Constants.MULTI_FILE_PATH_DELIMITER);
+            });
+            rocheTextField.setText(sb.toString().substring(0, sb.length() - 1));
             rocheCheckBox.setSelected(true);
         }
     }
@@ -209,10 +252,14 @@ public class MainGuiController implements Initializable {
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
-        File file = fileChooser.showOpenDialog(stage);
+        List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
-        if (file != null) {
-            odvTextField.setText(file.getAbsolutePath());
+        if (files != null && !files.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            files.forEach((item) -> {
+                sb.append(item.getAbsolutePath()).append(Constants.MULTI_FILE_PATH_DELIMITER);
+            });
+            odvTextField.setText(sb.toString().substring(0, sb.length() - 1));
             odvCheckBox.setSelected(true);
         }
     }
@@ -250,42 +297,37 @@ public class MainGuiController implements Initializable {
             return;
         }
 
-        // check path
+        // check paths
         StringBuilder sb = new StringBuilder();
-        if (medtronicCheckBox.isSelected() && !checkIfFileExists(medtronicTextField.getText())) {
+        if (medtronicCheckBox.isSelected() && !checkIfFilesExists(medtronicTextField.getText())) {
             sb.append(medtronicTextField.getText());
         }
-        if (abbottCheckBox.isSelected() && !checkIfFileExists(abbottTextField.getText())) {
+        if (abbottCheckBox.isSelected() && !checkIfFilesExists(abbottTextField.getText())) {
             if (sb.length() > 0) {
                 sb.append("\",\n\"");
             }
             sb.append(abbottTextField.getText());
         }
-        if (googleFitCheckBox.isSelected()) {
-            File check = new File(googleFitTextField.getText());
-            if (!check.exists()
-                    || !check.isDirectory()
-                    || !check.canRead()
-                    || check.listFiles().length <= 0) {
-                if (sb.length() > 0) {
-                    sb.append("\",\n\"");
-                }
-                sb.append(googleFitTextField.getText());
+        if (googleFitCheckBox.isSelected() && !checkIfFilesExists(googleFitTextField.getText())) {
+            if (sb.length() > 0) {
+                sb.append("\",\n\"");
             }
+            sb.append(googleFitTextField.getText());
+
         }
-        if (googleTracksCheckBox.isSelected() && !checkIfFileExists(googleTracksTextField.getText())) {
+        if (googleTracksCheckBox.isSelected() && !checkIfFilesExists(googleTracksTextField.getText())) {
             if (sb.length() > 0) {
                 sb.append("\",\n\"");
             }
             sb.append(googleTracksTextField.getText());
         }
-        if (rocheCheckBox.isSelected() && !checkIfFileExists(rocheTextField.getText())) {
+        if (rocheCheckBox.isSelected() && !checkIfFilesExists(rocheTextField.getText())) {
             if (sb.length() > 0) {
                 sb.append("\",\n\"");
             }
             sb.append(rocheTextField.getText());
         }
-        if (odvCheckBox.isSelected() && !checkIfFileExists(odvTextField.getText())) {
+        if (odvCheckBox.isSelected() && !checkIfFilesExists(odvTextField.getText())) {
             if (sb.length() > 0) {
                 sb.append("\",\n\"");
             }
@@ -317,27 +359,40 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.05);
                     });
                     if (medtronicCheckBox.isSelected()) {
-                        CarelinkCsvImporter.parseData(medtronicTextField.getText());
+                        for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                            if (filePath != null && !filePath.isEmpty()) {
+                                CarelinkCsvImporter.parseData(filePath);
+                            }
+                        }
                     }
                     Platform.runLater(() -> {
                         importPorgressBar.setProgress(0.2);
                     });
                     if (abbottCheckBox.isSelected()) {
-                        LibreTxtImporter.parseData(abbottTextField.getText());
+                        for (String filePath : abbottTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                            if (filePath != null && !filePath.isEmpty()) {
+                                LibreTxtImporter.parseData(filePath);
+                            }
+                        }
                     }
                     Platform.runLater(() -> {
                         importPorgressBar.setProgress(0.35);
                     });
                     if (googleFitCheckBox.isSelected()) {
-                        File folder = new File(googleFitTextField.getText());
-                        for (File googleFile : folder.listFiles()) {
-                            GoogleFitCsvImporter.parseData(googleFile.getAbsolutePath());
+                        for (String filePath : googleFitTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                            if (filePath != null && !filePath.isEmpty()) {
+                                GoogleFitCsvImporter.parseData(filePath);
+                            }
                         }
                     }
                     Platform.runLater(() -> {
                         importPorgressBar.setProgress(0.50);
                     });
                     if (googleTracksCheckBox.isSelected()) {
+                        for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                            if (filePath != null && !filePath.isEmpty()) {//TODO
+                            }
+                        }
                         Platform.runLater(() -> {
                             Alert alert = new Alert(Alert.AlertType.ERROR,
                                     "Google Tracks import is not implemented yet.",
@@ -350,6 +405,10 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.65);
                     });
                     if (rocheCheckBox.isSelected()) {
+                        for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                            if (filePath != null && !filePath.isEmpty()) {//TODO
+                            }
+                        }
                         Platform.runLater(() -> {
                             Alert alert = new Alert(Alert.AlertType.ERROR,
                                     "Roche import is not implemented yet.",
@@ -362,6 +421,10 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.80);
                     });
                     if (odvCheckBox.isSelected()) {
+                        for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                            if (filePath != null && !filePath.isEmpty()) {//TODO
+                            }
+                        }
                         Platform.runLater(() -> {
                             Alert alert = new Alert(Alert.AlertType.ERROR,
                                     "ODV import is not implemented yet.",
@@ -376,6 +439,11 @@ public class MainGuiController implements Initializable {
                 }
                 Platform.runLater(() -> {
                     importPorgressBar.setProgress(1.0);
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Import finished.",
+                            ButtonType.CLOSE);
+                    alert.setHeaderText(null);
+                    alert.show();
                 });
 
                 // reset cursor
@@ -386,22 +454,33 @@ public class MainGuiController implements Initializable {
         Thread th = new Thread(bgTask);
         th.setDaemon(true);
         th.start();
-        
-        //TODO show progress dialog and wait here for execution finish
 
+        //TODO show progress dialog and wait here for execution finish
         // set import Options if import was succesfull
         prefs.putBoolean(Constants.IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
-        prefs.put(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY, medtronicTextField.getText());
+        saveMultiFileSelection(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY,
+                Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_COUNT_KEY,
+                medtronicTextField.getText());
         prefs.putBoolean(Constants.IMPORTER_ABBOTT_IMPORT_CHECKBOX_KEY, abbottCheckBox.isSelected());
-        prefs.put(Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY, abbottTextField.getText());
+        saveMultiFileSelection(Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY,
+                Constants.IMPORTER_ABBOTT_IMPORT_PATH_COUNT_KEY,
+                abbottTextField.getText());
         prefs.putBoolean(Constants.IMPORTER_GOOGLE_FIT_IMPORT_CHECKBOX_KEY, googleFitCheckBox.isSelected());
-        prefs.put(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY, googleFitTextField.getText());
+        saveMultiFileSelection(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY,
+                Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_COUNT_KEY,
+                googleFitTextField.getText());
         prefs.putBoolean(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY, googleTracksCheckBox.isSelected());
-        prefs.put(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY, googleTracksTextField.getText());
+        saveMultiFileSelection(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY,
+                Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_COUNT_KEY,
+                googleTracksTextField.getText());
         prefs.putBoolean(Constants.IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY, rocheCheckBox.isSelected());
-        prefs.put(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY, rocheTextField.getText());
+        saveMultiFileSelection(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY,
+                Constants.IMPORTER_ROCHE_IMPORT_PATH_COUNT_KEY,
+                rocheTextField.getText());
         prefs.putBoolean(Constants.IMPORTER_ODV_IMPORT_CHECKBOX_KEY, odvCheckBox.isSelected());
-        prefs.put(Constants.IMPORTER_ODV_IMPORT_PATH_KEY, odvTextField.getText());
+        saveMultiFileSelection(Constants.IMPORTER_ODV_IMPORT_PATH_KEY,
+                Constants.IMPORTER_ODV_IMPORT_PATH_COUNT_KEY,
+                odvTextField.getText());
 
         prefs.putBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, periodCheckbox.isSelected());
 
@@ -410,8 +489,8 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handlePeriodCheckboxClicked(ActionEvent event) {
         boolean periodAll = periodCheckbox.isSelected();
-        periodToPicker.setDisable(periodAll);
-        periodFromPicker.setDisable(periodAll);
+        importPeriodToPicker.setDisable(periodAll);
+        importPeriodFromPicker.setDisable(periodAll);
     }
 
     // #########################################################################################
@@ -450,37 +529,43 @@ public class MainGuiController implements Initializable {
         // TODO
 
         // IMPORT
-        medtronicTextField.setText(prefs.get(
-                Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY, ""));
+        medtronicTextField.setText(loadMultiFileSelection(
+                Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY,
+                Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_COUNT_KEY));
         medtronicCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY, false));
-        abbottTextField.setText(prefs.get(
-                Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY, ""));
+        abbottTextField.setText(loadMultiFileSelection(
+                Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY,
+                Constants.IMPORTER_ABBOTT_IMPORT_PATH_COUNT_KEY));
         abbottCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_ABBOTT_IMPORT_CHECKBOX_KEY, false));
-        googleFitTextField.setText(prefs.get(
-                Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY, ""));
+        googleFitTextField.setText(loadMultiFileSelection(
+                Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY,
+                Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_COUNT_KEY));
         googleFitCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_GOOGLE_FIT_IMPORT_CHECKBOX_KEY, false));
-        googleTracksTextField.setText(prefs.get(
-                Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY, ""));
+        googleTracksTextField.setText(loadMultiFileSelection(
+                Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY,
+                Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_COUNT_KEY));
         googleTracksCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY, false));
-        rocheTextField.setText(prefs.get(
-                Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY, ""));
+        rocheTextField.setText(loadMultiFileSelection(
+                Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY,
+                Constants.IMPORTER_ROCHE_IMPORT_PATH_COUNT_KEY));
         rocheCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY, false));
-        odvTextField.setText(prefs.get(
-                Constants.IMPORTER_ODV_IMPORT_PATH_KEY, ""));
+        odvTextField.setText(loadMultiFileSelection(
+                Constants.IMPORTER_ODV_IMPORT_PATH_KEY,
+                Constants.IMPORTER_ODV_IMPORT_PATH_COUNT_KEY));
         odvCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_ODV_IMPORT_CHECKBOX_KEY, false));
 
-        periodToPicker.setValue(LocalDate.now());
-        periodFromPicker.setValue(LocalDate.now().minusWeeks(4));
+        importPeriodToPicker.setValue(LocalDate.now());
+        importPeriodFromPicker.setValue(LocalDate.now().minusWeeks(4));
         boolean periodAll = prefs.getBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, false);
         periodCheckbox.setSelected(periodAll);
-        periodToPicker.setDisable(periodAll);
-        periodFromPicker.setDisable(periodAll);
+        importPeriodToPicker.setDisable(periodAll);
+        importPeriodFromPicker.setDisable(periodAll);
 
         // EXPORT
         // INTERPRETER
