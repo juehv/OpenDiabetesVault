@@ -27,14 +27,18 @@ public enum VaultEntryType {
     EXERCISE_GoogleBicycle,
     // Glucose
     GLUCOSE_CGM,
+    GLUCOSE_CGM_RAW,
     GLUCOSE_CGM_ALERT,
+    GLUCOSE_CGM_CALIBRATION,
     GLUCOSE_BG,
     // Meal
     MEAL_BolusExpert,
     MEAL_Manual,
     // Pump Events
     PUMP_REWIND,
-    PUMP_PRIME;
+    PUMP_PRIME,
+    PUMP_NO_DELIVERY,
+    PUMP_UNKNOWN_ERROR;
 
     public boolean isBolusType() {
         switch (this) {

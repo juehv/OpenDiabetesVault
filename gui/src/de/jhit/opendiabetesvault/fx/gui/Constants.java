@@ -13,38 +13,49 @@ import javafx.stage.FileChooser;
  */
 public final class Constants {
 
-
-
     private Constants() {
     }
-    
+
     // File Filter
     public static final FileChooser.ExtensionFilter CSV_EXTENSION_FILTER = new FileChooser.ExtensionFilter("CSV", "*.csv");
     public static final FileChooser.ExtensionFilter TXT_EXTENSION_FILTER = new FileChooser.ExtensionFilter("TXT", "*.txt");
     public static final FileChooser.ExtensionFilter JSON_EXTENSION_FILTER = new FileChooser.ExtensionFilter("JSON", "*.json");
+    public static final String MULTI_FILE_PATH_DELIMITER = ";";
 
     // Importer
+    public static final String IMPORTER_MEDTRONIC_IMPORT_PATH_COUNT_KEY = "medtronicImportPathCount";
     public static final String IMPORTER_MEDTRONIC_IMPORT_PATH_KEY = "medtronicImportPath";
     public static final String IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY = "medtronicImportCheckbox";
+    public static final String IMPORTER_ABBOTT_IMPORT_PATH_COUNT_KEY = "abbottImportPathCount";
     public static final String IMPORTER_ABBOTT_IMPORT_PATH_KEY = "abbottImportPath";
     public static final String IMPORTER_ABBOTT_IMPORT_CHECKBOX_KEY = "abbottImportCheckbox";
+    public static final String IMPORTER_GOOGLE_FIT_IMPORT_PATH_COUNT_KEY = "googleFitImportPathCount";
     public static final String IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY = "googleFitImportPath";
     public static final String IMPORTER_GOOGLE_FIT_IMPORT_CHECKBOX_KEY = "googleFitImportCheckbox";
+    public static final String IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_COUNT_KEY = "googleTracksImportPathCount";
     public static final String IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY = "googleTracksImportPath";
     public static final String IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY = "googleTracksImportCheckbox";
+    public static final String IMPORTER_ROCHE_IMPORT_PATH_COUNT_KEY = "rocheImportPathCount";
     public static final String IMPORTER_ROCHE_IMPORT_PATH_KEY = "rocheImportPath";
     public static final String IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY = "rocheImportCheckbox";
+    public static final String IMPORTER_ODV_IMPORT_PATH_COUNT_KEY = "odvImportPathCount";
     public static final String IMPORTER_ODV_IMPORT_PATH_KEY = "odvImportPath";
     public static final String IMPORTER_ODV_IMPORT_CHECKBOX_KEY = "odvImportCheckbox";
-    
-    public static final String IMPORTER_PERIOD_ALL_KEY = "periodAllCheckbox";
-    
-    // Exporter
+
+    public static final String IMPORTER_PERIOD_ALL_KEY = "importerPeriodAllCheckbox";
+
+    // Exporter    
+    public static final String EXPORTER_ODV_CHECKBOX_KEY = "odvExportCheckbox";
+    public static final String EXPORTER_ODV_PATH_KEY = "odvExportPath";
+    public static final String EXPORTER_PLOT_DAILY_CHECKBOX_KEY = "plotDailyExportCheckbox";
+    public static final String EXPORTER_PLOT_DAILY_PATH_KEY = "plotDailyExportPath";
+
+    public static final String EXPORTER_PERIOD_ALL_KEY = "exporterPeriodAllCheckbox";
     
     // Interpreter
     public static final String INTERPRETER_FILL_AS_KAT_KEY = "interpreterFillAsKat";
     public static final String INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY = "interpreterFillAsKatCooldown";
-    
+
     // unused
     public static final String CARELINK_USER_KEY = "carelinkUser";
     public static final String CARELINK_PW_KEY = "carelinkPw";

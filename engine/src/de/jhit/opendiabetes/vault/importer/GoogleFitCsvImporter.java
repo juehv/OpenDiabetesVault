@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.jhit.openmediavault.app.data;
+package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
 import de.jhit.openmediavault.app.container.RawDataEntry;
 import de.jhit.openmediavault.app.container.VaultEntry;
 import de.jhit.openmediavault.app.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.openmediavault.app.data.VaultDao;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,7 +50,7 @@ public class GoogleFitCsvImporter {
                 // Todo cathegorize entry
                 RawDataEntry entry = parseEntry(creader, dateString);
                 if (entry != null) {
-                    Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+                    Logger.getLogger(MedtronicCsvImporter.class.getName()).log(
                             Level.INFO, "Got Entry: {0}", entry.toString());
                 } else {
 //                    Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
@@ -58,7 +60,7 @@ public class GoogleFitCsvImporter {
             }
 
         } catch (IOException | ParseException ex) {
-            Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+            Logger.getLogger(MedtronicCsvImporter.class.getName()).log(
                     Level.SEVERE, "Error while parsing Careling CSV", ex);
         } finally {
             creader.close();
