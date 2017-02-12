@@ -721,7 +721,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         //create clean entrys
         List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
-                new Date(1480550400000L), new Date(1483996861000L));
+                new Date(1477094400000L), new Date(1484006399000L));
         
         try {
             VaultCsvWriter.writeData("./export-v2.csv", entrys);
