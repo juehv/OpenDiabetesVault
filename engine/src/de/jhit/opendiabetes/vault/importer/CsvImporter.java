@@ -57,7 +57,7 @@ public abstract class CsvImporter extends FileImporter {
                 if (entryList != null && !entryList.isEmpty()) {
                     for (VaultEntry item : entryList) {
                         entrys.add(item);
-                        LOG.log(Level.INFO, "Got Entry: {0}", entryList.toString());
+                       // LOG.log(Level.INFO, "Got Entry: {0}", entryList.toString());
                     }
                 }
             }

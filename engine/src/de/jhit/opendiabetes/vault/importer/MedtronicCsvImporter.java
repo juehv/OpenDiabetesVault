@@ -42,7 +42,7 @@ public class MedtronicCsvImporter extends CsvImporter {
     }
 
     public MedtronicCsvImporter() {
-        super(new MedtronicCsvValidator(), ';');
+        super(new MedtronicCsvValidator(), ',');
     }
 
     public MedtronicCsvImporter(char delimiter) {
@@ -118,18 +118,18 @@ public class MedtronicCsvImporter extends CsvImporter {
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
                 }
-                // bg information
+                // bg information --> TODO new data line (s.th. like user informed /user view)
                 tmpEntry = extractEntry(timestamp,
                         VaultEntryType.GLUCOSE_CGM_ALERT, rawValues,
                         BG_INPUT_PATTERN, creader.getValues());
-                if (tmpEntry != null) {
-                    retVal.add(tmpEntry);
+                if (tmpEntry != null && tmpEntry.getValue() > 0.0) {
+                   // retVal.add(tmpEntry); //<-- comment out for better plot
                 }
                 break;
             case BOLUS: // TODO check other bolus types
                 tmpEntry = extractEntry(timestamp,
                         VaultEntryType.BOLUS_ManualNormal, rawValues,
-                        BG_INPUT_PATTERN, creader.getValues());
+                        AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
                 }
