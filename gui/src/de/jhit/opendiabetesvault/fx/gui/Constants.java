@@ -42,9 +42,16 @@ public final class Constants {
     public static final String IMPORTER_ODV_IMPORT_PATH_KEY = "odvImportPath";
     public static final String IMPORTER_ODV_IMPORT_CHECKBOX_KEY = "odvImportCheckbox";
 
-    public static final String IMPORTER_PERIOD_ALL_KEY = "periodAllCheckbox";
+    public static final String IMPORTER_PERIOD_ALL_KEY = "importerPeriodAllCheckbox";
 
-    // Exporter
+    // Exporter    
+    public static final String EXPORTER_ODV_CHECKBOX_KEY = "odvExportCheckbox";
+    public static final String EXPORTER_ODV_PATH_KEY = "odvExportPath";
+    public static final String EXPORTER_PLOT_DAILY_CHECKBOX_KEY = "plotDailyExportCheckbox";
+    public static final String EXPORTER_PLOT_DAILY_PATH_KEY = "plotDailyExportPath";
+
+    public static final String EXPORTER_PERIOD_ALL_KEY = "exporterPeriodAllCheckbox";
+    
     // Interpreter
     public static final String INTERPRETER_FILL_AS_KAT_KEY = "interpreterFillAsKat";
     public static final String INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY = "interpreterFillAsKatCooldown";

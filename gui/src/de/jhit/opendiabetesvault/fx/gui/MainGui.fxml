@@ -35,7 +35,7 @@
                                 <Button layoutX="362.0" layoutY="290.0" mnemonicParsing="false" onAction="#handleButtonBrowseRoche" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
                                 <Button layoutX="362.0" layoutY="353.0" mnemonicParsing="false" onAction="#handleButtonBrowseOpenDiabetesVault" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
                                 <Button defaultButton="true" mnemonicParsing="false" onAction="#handleButtonImport" text="Import" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-                                <CheckBox fx:id="periodCheckbox" layoutX="272.0" layoutY="396.0" mnemonicParsing="true" onAction="#handlePeriodCheckboxClicked" text="All" />
+                                <CheckBox fx:id="importPeriodAllCheckbox" layoutX="272.0" layoutY="396.0" mnemonicParsing="true" onAction="#handlePeriodCheckboxClicked" text="All" />
                                 <DatePicker fx:id="importPeriodToPicker" layoutX="151.0" layoutY="392.0" prefWidth="110.0" />
                                 <DatePicker fx:id="importPeriodFromPicker" layoutX="14.0" layoutY="392.0" prefWidth="110.0" />
                                 <TextField fx:id="medtronicTextField" layoutX="14.0" layoutY="38.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
@@ -60,17 +60,17 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <CheckBox fx:id="exportPlotCheckBox" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Plot Daily Report" />
+                                <CheckBox fx:id="exportPlotDailyCheckBox" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Plot Daily Report" />
                                 <CheckBox fx:id="exportOdvCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="ODV CSV File" />
-                                <Button layoutX="362.0" layoutY="38.0" mnemonicParsing="false" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
-                                <Button layoutX="362.0" layoutY="101.0" mnemonicParsing="false" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button layoutX="362.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleExportButtonBrowseOpenDiabetesVaultClicked" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button layoutX="362.0" layoutY="101.0" mnemonicParsing="false" onAction="#handleExportButtonBrowsePlotDailyClicked" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
                                 <TextField fx:id="exportOdvTextField" layoutX="14.0" layoutY="38.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                                <TextField fx:id="exportPlotTextField" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="exportPlotDailyTextField" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                                 <DatePicker fx:id="exportPeriodFromPicker" layoutX="14.0" layoutY="392.0" prefWidth="110.0" />
                                 <DatePicker fx:id="exportPeriodToPicker" layoutX="151.0" layoutY="392.0" prefWidth="110.0" />
-                                <Button layoutX="365.0" layoutY="439.0" mnemonicParsing="false" text="Export" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-                                <ProgressBar layoutX="20.0" layoutY="443.0" prefHeight="18.0" prefWidth="334.0" progress="0.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                                <CheckBox layoutX="272.0" layoutY="396.0" mnemonicParsing="false" text="All" />
+                                <Button layoutX="365.0" layoutY="439.0" mnemonicParsing="false" onAction="#handleButtonExportClicked" text="Export" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                                <ProgressBar fx:id="exportPorgressBar" layoutX="20.0" layoutY="443.0" prefHeight="18.0" prefWidth="334.0" progress="0.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <CheckBox fx:id="exportPeriodAllCheckbox" layoutX="272.0" layoutY="396.0" mnemonicParsing="false" onAction="#handleExportPeriodCheckboxClicked" text="All" />
                                 <Label layoutX="136.0" layoutY="396.0" text="-" />
                             </children>
                         </AnchorPane>

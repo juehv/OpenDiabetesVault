@@ -11,7 +11,7 @@ import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.openmediavault.app.data.DataHelper;
 import de.jhit.openmediavault.app.Launcher;
 import de.jhit.openmediavault.app.container.RawDataEntry;
-import de.jhit.openmediavault.app.container.VaultCsvEntry;
+import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
 import de.jhit.openmediavault.app.data.VaultCsvWriter;
 import de.jhit.openmediavault.app.data.VaultDao;
 import de.jhit.openmediavault.app.preferences.Constants;

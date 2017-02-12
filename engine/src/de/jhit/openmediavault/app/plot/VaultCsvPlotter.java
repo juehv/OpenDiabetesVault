@@ -5,7 +5,7 @@
  */
 package de.jhit.openmediavault.app.plot;
 
-import de.jhit.openmediavault.app.container.VaultCsvEntry;
+import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
 import java.util.List;
 
 /**

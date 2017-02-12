@@ -14,7 +14,7 @@ import com.j256.ormlite.logger.LocalLog;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import de.jhit.openmediavault.app.container.VaultCsvEntry;
+import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
 import de.jhit.openmediavault.app.container.VaultEntry;
 import de.jhit.openmediavault.app.container.VaultEntryType;
 import java.io.IOException;

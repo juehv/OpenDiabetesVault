@@ -5,16 +5,23 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
+import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
 import de.jhit.opendiabetes.vault.interpreter.InterpreterOptions;
 import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreter;
+import de.jhit.opendiabetes.vault.util.FileCopyUtil;
+import de.jhit.openmediavault.app.data.VaultCsvWriter;
 import de.jhit.openmediavault.app.data.VaultDao;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -81,11 +88,28 @@ public class MainGuiController implements Initializable {
     @FXML
     private DatePicker importPeriodToPicker;
     @FXML
-    private CheckBox periodCheckbox;
+    private CheckBox importPeriodAllCheckbox;
     @FXML
     private ProgressBar importPorgressBar;
 
     // Export
+    @FXML
+    private TextField exportOdvTextField;
+    @FXML
+    private CheckBox exportOdvCheckBox;
+    @FXML
+    private TextField exportPlotDailyTextField;
+    @FXML
+    private CheckBox exportPlotDailyCheckBox;
+    @FXML
+    private DatePicker exportPeriodFromPicker;
+    @FXML
+    private DatePicker exportPeriodToPicker;
+    @FXML
+    private CheckBox exportPeriodAllCheckbox;
+    @FXML
+    private ProgressBar exportPorgressBar;
+
     // Interpreter
     @FXML
     private CheckBox fillAsNewKathederCheckbox;
@@ -113,6 +137,23 @@ public class MainGuiController implements Initializable {
         );
     }
 
+    private static DirectoryChooser configureDirectoryChooser(File initDir) {
+        // fileChooser.setTitle("View Pictures");
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        if (initDir != null && initDir.exists()) {
+            if (initDir.isDirectory()) {
+                dirChooser.setInitialDirectory(initDir);
+            } else {
+                dirChooser.setInitialDirectory(initDir.getParentFile());
+            }
+        } else {
+            dirChooser.setInitialDirectory(
+                    new File(System.getProperty("user.home")));
+        }
+
+        return dirChooser;
+    }
+
     private static boolean checkIfFileExists(String path) {
         File checkPath = new File(path);
         return checkPath.exists() && checkPath.isFile() && checkPath.canRead();
@@ -127,6 +168,11 @@ public class MainGuiController implements Initializable {
             }
         }
         return true;
+    }
+
+    private static boolean checkIfFolderExists(String paths) {
+        File checkPath = new File(paths);
+        return checkPath.exists() && checkPath.isDirectory() && checkPath.canWrite();
     }
 
     private void saveMultiFileSelection(String pathKey, String countKey, String multifileString) {
@@ -465,8 +511,9 @@ public class MainGuiController implements Initializable {
         Thread th = new Thread(bgTask);
         th.setDaemon(true);
         th.start();
+        //th.join();
+        // join will block the gui --> seperate progress dialog
 
-        //TODO show progress dialog and wait here for execution finish
         // set import Options if import was succesfull
         prefs.putBoolean(Constants.IMPORTER_MEDRTONIC_IMPORT_CHECKBOX_KEY, medtronicCheckBox.isSelected());
         saveMultiFileSelection(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY,
@@ -493,13 +540,13 @@ public class MainGuiController implements Initializable {
                 Constants.IMPORTER_ODV_IMPORT_PATH_COUNT_KEY,
                 odvTextField.getText());
 
-        prefs.putBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, periodCheckbox.isSelected());
+        prefs.putBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, importPeriodAllCheckbox.isSelected());
 
     }
 
     @FXML
     private void handlePeriodCheckboxClicked(ActionEvent event) {
-        boolean periodAll = periodCheckbox.isSelected();
+        boolean periodAll = importPeriodAllCheckbox.isSelected();
         importPeriodToPicker.setDisable(periodAll);
         importPeriodFromPicker.setDisable(periodAll);
     }
@@ -507,6 +554,189 @@ public class MainGuiController implements Initializable {
     // #########################################################################################
     // Export
     // #########################################################################################
+    @FXML
+    private void handleExportButtonBrowseOpenDiabetesVaultClicked(ActionEvent event) {
+        Stage stage = (Stage) ap.getScene().getWindow();
+        File lastPath = new File(prefs.get(Constants.EXPORTER_ODV_PATH_KEY, ""));
+
+        DirectoryChooser dirChooser = configureDirectoryChooser(lastPath);
+        File file = dirChooser.showDialog(stage);
+
+        if (checkIfFolderExists(file.getAbsolutePath())) {
+            exportOdvTextField.setText(file.getAbsolutePath());
+            exportOdvCheckBox.setSelected(true);
+        }
+    }
+
+    @FXML
+    private void handleExportButtonBrowsePlotDailyClicked(ActionEvent event) {
+        Stage stage = (Stage) ap.getScene().getWindow();
+        File lastPath = new File(prefs.get(Constants.EXPORTER_PLOT_DAILY_PATH_KEY, ""));
+
+        DirectoryChooser dirChooser = configureDirectoryChooser(lastPath);
+        File file = dirChooser.showDialog(stage);
+
+        if (checkIfFolderExists(file.getAbsolutePath())) {
+            exportPlotDailyTextField.setText(file.getAbsolutePath());
+            exportPlotDailyCheckBox.setSelected(true);
+        }
+    }
+
+    @FXML
+    private void handleButtonExportClicked(ActionEvent event) {
+        // check if sth is selected
+        if (!exportOdvCheckBox.isSelected()
+                && !exportPlotDailyCheckBox.isSelected()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING,
+                    "No export method selected.\nPlease select a exporter and try again.",
+                    ButtonType.CLOSE);
+            alert.setHeaderText(null);
+            alert.showAndWait();
+            return;
+        }
+
+        // check paths
+        StringBuilder sb = new StringBuilder();
+        if (exportOdvCheckBox.isSelected() && !checkIfFolderExists(exportOdvTextField.getText())) {
+            sb.append(exportOdvTextField.getText());
+        }
+        if (exportPlotDailyCheckBox.isSelected() && !checkIfFolderExists(exportPlotDailyTextField.getText())) {
+            if (sb.length() > 0) {
+                sb.append("\",\n\"");
+            }
+            sb.append(exportPlotDailyTextField.getText());
+        }
+        if (sb.length() > 0) {
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                    "There is an error with the path(s):\n\"" + sb.toString()
+                    + "\"\nExport stopped.",
+                    ButtonType.CLOSE);
+            alert.setHeaderText(null);
+            alert.show();
+            return;
+        }
+
+        // do the work
+        exportPorgressBar.setProgress(
+                -1.0);
+        Task bgTask = new Task() {
+            @Override
+            protected Void call() throws Exception {
+                // set wait cursor
+                Cursor cursorBackup = ap.getScene().getCursor();
+                ap.getScene().setCursor(Cursor.WAIT);
+
+                // import Data
+                try {
+                    Platform.runLater(() -> {
+                        exportPorgressBar.setProgress(0.05);
+                    });
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMss-HHmm");
+                    String odvExpotFileName = "export-"
+                            + formatter.format(new Date())
+                            + ".csv"; //TODO read format from options
+                    if (exportOdvCheckBox.isSelected() || exportPlotDailyCheckBox.isSelected()) {
+                        String path;
+                        if (exportOdvCheckBox.isSelected()) {
+                            path = exportOdvTextField.getText();
+                        } else {
+                            path = System.getProperty("java.io.tmpdir");
+                        }
+                        odvExpotFileName = new File(path).getAbsolutePath()
+                                + "/" + odvExpotFileName;
+
+                        // TOOD move following into engine
+                        //create clean entrys
+                        List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
+                                new Date(1480550400000L), new Date(1483996861000L)); // TODO read gui properties
+
+                        try {
+                            VaultCsvWriter.writeData(odvExpotFileName, entrys);
+                        } catch (IOException ex) {
+                            System.err.println("too bad ;)");
+                        }
+                    }
+                    Platform.runLater(() -> {
+                        exportPorgressBar.setProgress(0.5);
+                    });
+                    if (exportPlotDailyCheckBox.isSelected()) {
+                        //TODO move to engine
+                        String tmpPath = System.getProperty("java.io.tmpdir");
+                        // kill old dir
+                        File tmpDir = new File(tmpPath + "/plot");
+                        if (tmpDir.exists()) {
+                            tmpDir.delete();
+                        }
+                        FileCopyUtil.copyDirectory(new File("../plot"),
+                                new File(tmpPath));
+
+                        //Plot single days
+                        String cmd = "python ./plot.py " + odvExpotFileName;
+                        ProcessBuilder pb = new ProcessBuilder(cmd);
+                        pb.directory(new File(tmpPath + "/plot"));
+                        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+                        Process p = pb.start();
+                        synchronized (p) {
+                            p.wait();
+                        }
+                        // create sheet
+                        cmd = "pdflatex buildPDF.tex";
+                        pb = new ProcessBuilder(cmd);
+                        pb.directory(new File(tmpPath + "/plot"));
+                        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+                        p = pb.start();
+                        synchronized (p) {
+                            p.wait();
+                        }
+
+                        // copy result
+                        FileCopyUtil.copyFile(
+                                new File(tmpPath + "/plot/buildPDF.pdf"),
+                                new File(exportPlotDailyTextField.getText()
+                                        + "/export-" + formatter.format(new Date()) + ".pdf"));
+                    }
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE,
+                            "Error while exporting files.", ex);
+                }
+                Platform.runLater(() -> {
+                    exportPorgressBar.setProgress(1.0);
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Export finished.",
+                            ButtonType.CLOSE);
+                    alert.setHeaderText(null);
+                    alert.show();
+                });
+
+                // reset cursor
+                ap.getScene().setCursor(cursorBackup);
+                return null;
+            }
+        };
+        Thread th = new Thread(bgTask);
+        th.setDaemon(true);
+        th.start();
+        //th.join();
+        // join will block the gui --> seperate progress dialog
+
+        // set import Options if import was succesfull
+        prefs.putBoolean(Constants.EXPORTER_ODV_CHECKBOX_KEY, exportOdvCheckBox.isSelected());
+        prefs.put(Constants.EXPORTER_ODV_PATH_KEY, exportOdvTextField.getText());
+        prefs.putBoolean(Constants.EXPORTER_PLOT_DAILY_CHECKBOX_KEY, exportPlotDailyCheckBox.isSelected());
+        prefs.put(Constants.EXPORTER_PLOT_DAILY_PATH_KEY, exportPlotDailyTextField.getText());
+
+        prefs.putBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, exportPeriodAllCheckbox.isSelected());
+    }
+
+    @FXML
+    private void handleExportPeriodCheckboxClicked(ActionEvent event) {
+        boolean periodAll = exportPeriodAllCheckbox.isSelected();
+        exportPeriodToPicker.setDisable(periodAll);
+        exportPeriodFromPicker.setDisable(periodAll);
+    }
+
     // #########################################################################################
     // Interpreter
     // #########################################################################################
@@ -574,11 +804,23 @@ public class MainGuiController implements Initializable {
         importPeriodToPicker.setValue(LocalDate.now());
         importPeriodFromPicker.setValue(LocalDate.now().minusWeeks(4));
         boolean periodAll = prefs.getBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, false);
-        periodCheckbox.setSelected(periodAll);
+        importPeriodAllCheckbox.setSelected(periodAll);
         importPeriodToPicker.setDisable(periodAll);
         importPeriodFromPicker.setDisable(periodAll);
 
         // EXPORT
+        exportOdvCheckBox.setSelected(prefs.getBoolean(Constants.EXPORTER_ODV_CHECKBOX_KEY, false));
+        exportPlotDailyCheckBox.setSelected(prefs.getBoolean(Constants.EXPORTER_PLOT_DAILY_CHECKBOX_KEY, false));
+        exportOdvTextField.setText(prefs.get(Constants.EXPORTER_ODV_PATH_KEY, ""));
+        exportPlotDailyTextField.setText(prefs.get(Constants.EXPORTER_PLOT_DAILY_PATH_KEY, ""));
+
+        exportPeriodToPicker.setValue(LocalDate.now());
+        exportPeriodFromPicker.setValue(LocalDate.now().minusWeeks(4));
+        periodAll = prefs.getBoolean(Constants.EXPORTER_PERIOD_ALL_KEY, false);
+        exportPeriodAllCheckbox.setSelected(periodAll);
+        exportPeriodToPicker.setDisable(periodAll);
+        exportPeriodFromPicker.setDisable(periodAll);
+
         // INTERPRETER
         cooldownTimeSpinner.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 300,
