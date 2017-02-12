@@ -5,9 +5,12 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
-import de.jhit.openmediavault.app.data.CarelinkCsvImporter;
-import de.jhit.openmediavault.app.data.GoogleFitCsvImporter;
-import de.jhit.openmediavault.app.data.LibreTxtImporter;
+import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
+import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
+import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
+import de.jhit.opendiabetes.vault.interpreter.InterpreterOptions;
+import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreter;
+import de.jhit.openmediavault.app.data.VaultDao;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -343,6 +346,10 @@ public class MainGuiController implements Initializable {
             return;
         }
 
+        // read interpreter options
+        InterpreterOptions iOptions = new InterpreterOptions(
+                prefs.getBoolean(Constants.INTERPRETER_FILL_AS_KAT_KEY, false),
+                prefs.getInt(Constants.INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY, 60));
         // do the work
         importPorgressBar.setProgress(
                 -1.0);
@@ -359,9 +366,13 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.05);
                     });
                     if (medtronicCheckBox.isSelected()) {
+                        SimplePumpInterpreter interpreter
+                                = new SimplePumpInterpreter(
+                                        new MedtronicCsvImporter(),
+                                        iOptions, VaultDao.getInstance());
                         for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {
-                                CarelinkCsvImporter.parseData(filePath);
+                                interpreter.importAndInterpretFromFile(filePath);
                             }
                         }
                     }

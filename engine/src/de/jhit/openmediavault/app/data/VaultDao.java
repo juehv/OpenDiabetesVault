@@ -5,6 +5,7 @@
  */
 package de.jhit.openmediavault.app.data;
 
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.HsqldbDatabaseType;

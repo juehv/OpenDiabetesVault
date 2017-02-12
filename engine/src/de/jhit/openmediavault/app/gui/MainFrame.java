@@ -5,22 +5,18 @@
  */
 package de.jhit.openmediavault.app.gui;
 
+import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
+import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
+import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.openmediavault.app.data.DataHelper;
 import de.jhit.openmediavault.app.Launcher;
 import de.jhit.openmediavault.app.container.RawDataEntry;
 import de.jhit.openmediavault.app.container.VaultCsvEntry;
-import de.jhit.openmediavault.app.data.CarelinkCsvImporter;
-import de.jhit.openmediavault.app.data.GoogleFitCsvImporter;
-import de.jhit.openmediavault.app.data.LibreTxtImporter;
 import de.jhit.openmediavault.app.data.VaultCsvWriter;
 import de.jhit.openmediavault.app.data.VaultDao;
-import de.jhit.openmediavault.app.plot.VaultCsvPlotter;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.awt.Cursor;
 import java.awt.Dialog;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -659,7 +655,7 @@ public class MainFrame extends javax.swing.JFrame {
             // Parse data
             List<RawDataEntry> importData = null;
             if (carelinkRadioButton.isSelected()) {
-                importData = CarelinkCsvImporter.parseData(path);
+                importData = null;// MedtronicCsvImporter.parseData(path);
             } else if (libreRadioButton.isSelected()) {
                 importData = LibreTxtImporter.parseData(path);
             } else if (googleFitRadioButton.isSelected()) {

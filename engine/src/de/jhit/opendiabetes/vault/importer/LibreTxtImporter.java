@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.jhit.openmediavault.app.data;
+package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
 import de.jhit.openmediavault.app.container.RawDataEntry;
 import de.jhit.openmediavault.app.container.VaultEntry;
 import de.jhit.openmediavault.app.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.openmediavault.app.data.VaultDao;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -55,7 +57,7 @@ public class LibreTxtImporter {
                 RawDataEntry entry = parseEntry(creader);
                 if (entry != null) {
                     libreEntrys.add(entry);
-                    Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+                    Logger.getLogger(MedtronicCsvImporter.class.getName()).log(
                             Level.INFO, "Got Entry: {0}", entry.toString());
                 } else {
 //                    Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
@@ -65,7 +67,7 @@ public class LibreTxtImporter {
             }
 
         } catch (IOException | ParseException ex) {
-            Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+            Logger.getLogger(MedtronicCsvImporter.class.getName()).log(
                     Level.SEVERE, "Error while parsing Careling CSV", ex);
         } finally {
             creader.close();
@@ -111,7 +113,7 @@ public class LibreTxtImporter {
                     new VaultEntry(VaultEntryType.GLUCOSE_BG,
                             timestamp, value));
         } else {
-            Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
+            Logger.getLogger(MedtronicCsvImporter.class.getName()).log(
                     Level.SEVERE, "Error while type checking!");
             return null;
         }

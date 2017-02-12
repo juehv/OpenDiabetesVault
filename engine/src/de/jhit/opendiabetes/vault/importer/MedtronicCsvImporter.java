@@ -3,16 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.jhit.openmediavault.app.data;
+package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
-import de.jhit.openmediavault.app.container.RawDataEntry;
 import de.jhit.openmediavault.app.container.VaultEntry;
 import de.jhit.openmediavault.app.container.VaultEntryType;
 import de.jhit.openmediavault.app.preferences.Constants;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +16,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,294 +23,207 @@ import java.util.regex.Pattern;
  *
  * @author Jens
  */
-public class CarelinkCsvImporter {
+public class MedtronicCsvImporter extends CsvImporter {
 
-    /**
-     *
-     * @param filepath
-     * @return
-     * @throws FileNotFoundException
-     */
-    public static List<RawDataEntry> parseData(String filepath)
-            throws FileNotFoundException {
-        List<RawDataEntry> CarelinkEntry = new ArrayList<>();
-        // read file
-        CsvReader creader = new CsvReader(filepath, ';', Charset.forName("UTF-8"));
-
-        try {
-            // validate header
-            for (int i = 0; i < Constants.CARELINK_CSV_EMPTY_LINES; i++) {
-                creader.readHeaders();
-                //TODO compute meta data
-            }
-            if (!CsvValidator.validateCarelinkHeader(creader)) {
-                Logger.getLogger(CarelinkCsvImporter.class.getName()).
-                        log(Level.SEVERE,
-                                "Stop parser because of unvalid header:\n"
-                                + Arrays.toString(Constants.CARELINK_CSV_HEADER[0])
-                                + "\n{0}", creader.getRawRecord());
-                return null;
-            }
-
-            // read entries
-            while (creader.readRecord()) {
-                // Todo cathegorize entry
-                RawDataEntry entry = parseEntry(creader);
-                if (entry != null) {
-                    CarelinkEntry.add(entry);
-                    Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
-                            Level.INFO, "Got Entry: {0}", entry.toString());
-                } else {
-//                    Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
-//                            Level.FINE, "Drop Entry: {0}", creader.getRawRecord());
-                }
-
-            }
-
-        } catch (IOException | ParseException ex) {
-            Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
-                    Level.SEVERE, "Error while parsing Careling CSV", ex);
-        } finally {
-            creader.close();
-        }
-        return CarelinkEntry;
-    }
-
-    /**
-     *
-     * @param reader
-     * @return
-     * @throws IOException
-     * @throws ParseException
-     */
-    private static RawDataEntry parseEntry(CsvReader reader)
-            throws IOException, ParseException {
-        RawDataEntry entry = null;
-        VaultEntry vEntry = null;
-        double tmpValue = 0.0;
-        String[] validHeader = Constants.CARELINK_CSV_HEADER[Constants.CARELINK_CSV_LANG_SELECTION];
-
-        String type = reader.get(validHeader[2]);
-        for (int i = 0; i < Constants.CARELINK_TYPE.length; i++) {
-            if (type.equalsIgnoreCase(Constants.CARELINK_TYPE[i])) {
-                String[] rawValues = reader.get(validHeader[3]).split(",");
-                switch (i) {
-                    case 0: // Rewind
-                        entry = new RawDataEntry();
-                        entry.type = Constants.CARELINK_TYPE[i];
-                        entry.timestamp
-                                = createTimestamp(reader.get(validHeader[0]),
-                                        reader.get(validHeader[1]));
-
-                        vEntry = new VaultEntry(
-                                VaultEntryType.PUMP_REWIND,
-                                TimestampUtils.createCleanTimestamp(
-                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
-                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
-                                VaultEntry.VALUE_UNUSED
-                        );
-                        VaultDao.getInstance().putEntry(vEntry);
-
-                        break;
-                    case 1: // Prime
-                        entry = new RawDataEntry();
-                        entry.type = Constants.CARELINK_TYPE[i];
-                        entry.timestamp
-                                = createTimestamp(reader.get(validHeader[0]),
-                                        reader.get(validHeader[1]));
-
-                        vEntry = new VaultEntry(
-                                VaultEntryType.PUMP_PRIME,
-                                TimestampUtils.createCleanTimestamp(
-                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
-                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
-                                VaultEntry.VALUE_UNUSED //save how mutch
-                        );
-                        VaultDao.getInstance().putEntry(vEntry);
-
-                        break;
-                    case 2: // exercise marker
-                        entry = new RawDataEntry();
-                        entry.type = Constants.CARELINK_TYPE[i];
-                        entry.timestamp
-                                = createTimestamp(reader.get(validHeader[0]),
-                                        reader.get(validHeader[1]));
-                        entry.amount = 0; // for better loocking values in gui
-
-                        vEntry = new VaultEntry(
-                                VaultEntryType.EXERCISE_Manual,
-                                TimestampUtils.createCleanTimestamp(
-                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
-                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
-                                30.0 // default time for exercise
-                        );
-                        VaultDao.getInstance().putEntry(vEntry);
-
-                        break;
-                    case 3: // BGCapturedOnPump
-                        entry = new RawDataEntry();
-                        entry.type = Constants.CARELINK_TYPE[i];
-                        entry.timestamp
-                                = createTimestamp(reader.get(validHeader[0]),
-                                        reader.get(validHeader[1]));
-                        tmpValue = 0.0;
-                        for (String value : rawValues) {
-                            if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
-                                tmpValue = Double.
-                                        parseDouble(value.split("=")[1]); //TODO make this more robust
-                                entry.amount = tmpValue;
-                            }
-                        }
-                        if (tmpValue == 0.0) {
-                            break;
-                        }
-
-                        vEntry = new VaultEntry(
-                                VaultEntryType.GLUCOSE_BG,
-                                TimestampUtils.createCleanTimestamp(
-                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
-                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
-                                tmpValue
-                        );
-                        VaultDao.getInstance().putEntry(vEntry);
-
-                        break;
-                    case 4: // BGReceived
-                        entry = new RawDataEntry();
-                        entry.type = Constants.CARELINK_TYPE[i];
-                        entry.timestamp
-                                = createTimestamp(reader.get(validHeader[0]),
-                                        reader.get(validHeader[1]));
-                        tmpValue = 0.0;
-                        for (String value : rawValues) {
-                            if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
-                                tmpValue = Double.
-                                        parseDouble(value.split("=")[1]);
-                                entry.amount = tmpValue;
-                            } else if (value.contains(
-                                    Constants.CARELINK_RAW_VALUE_BG_LINK_ID)) {
-                                entry.linkId = "#" + value.split("=")[1];
-                            }
-                        }
-                        if (tmpValue == 0.0) {
-                            break;
-                        }
-
-                        vEntry = new VaultEntry(
-                                VaultEntryType.GLUCOSE_BG,
-                                TimestampUtils.createCleanTimestamp(
-                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
-                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
-                                tmpValue
-                        );
-                        VaultDao.getInstance().putEntry(vEntry);
-
-                        break;
-                    case 5: // BolusWizardBolusEstimate
-                        entry = new RawDataEntry();
-                        entry.type = Constants.CARELINK_TYPE[i];
-                        entry.timestamp
-                                = createTimestamp(reader.get(validHeader[0]),
-                                        reader.get(validHeader[1]));
-                        tmpValue = 0.0;
-                        for (String value : rawValues) {
-                            if (value.contains(Constants.CARELINK_RAW_VALUE_CARB_INPUT)) {
-                                tmpValue = Double.
-                                        parseDouble(value.split("=")[1]);
-                                entry.amount = tmpValue;
-                                break;
-                            }
-                        }
-                        if (tmpValue == 0.0) {
-                            break;
-                        }
-
-                        vEntry = new VaultEntry(
-                                VaultEntryType.MEAL_BolusExpert,
-                                TimestampUtils.createCleanTimestamp(
-                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
-                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
-                                tmpValue
-                        );
-                        VaultDao.getInstance().putEntry(vEntry);
-
-                        break;
-                    case 6: // BolusNormal
-                        entry = new RawDataEntry();
-                        entry.type = Constants.CARELINK_TYPE[i];
-                        entry.timestamp
-                                = createTimestamp(reader.get(validHeader[0]),
-                                        reader.get(validHeader[1]));
-                        tmpValue = 0.0;
-                        for (String value : rawValues) {
-                            if (value.contains(Constants.CARELINK_RAW_VALUE_AMOUNT)) {
-                                tmpValue = Double.
-                                        parseDouble(value.split("=")[1]);
-                                entry.amount = tmpValue;
-                                break;
-                            }
-                        }
-
-                        if (tmpValue == 0.0) {
-                            break;
-                        }
-
-                        vEntry = new VaultEntry(
-                                VaultEntryType.BOLUS_BolusExpertNormal,
-                                TimestampUtils.createCleanTimestamp(
-                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
-                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
-                                tmpValue
-                        );
-                        VaultDao.getInstance().putEntry(vEntry);
-
-                        break;
-                    case 7: //BasalProfileStart
-                        tmpValue = 0.0;
-                        String rawString = reader.get(validHeader[3]);
-                        Pattern p = Pattern.compile(".*RATE=(\\d+,\\d+),.*"); //TODO check english version
-                        Matcher m = p.matcher(rawString);
-                        if (m.matches()) {
-                            String numString = m.group(1).replace(",", ".");
-                            tmpValue = Double.parseDouble(numString);
-                        }
-
-                        if (tmpValue == 0.0) {
-                            break;
-                        }
-
-                        vEntry = new VaultEntry(
-                                VaultEntryType.BASAL_Profile,
-                                TimestampUtils.createCleanTimestamp(
-                                        reader.get(validHeader[0]) + " " + reader.get(validHeader[1]),
-                                        TimestampUtils.TIME_FORMAT_CARELINK_DE),
-                                tmpValue
-                        );
-                        VaultDao.getInstance().putEntry(vEntry);
-
-                        break;
-                    default:
-                        Logger.getLogger(CarelinkCsvImporter.class.getName()).log(
-                                Level.SEVERE, "Error while type checking!");
-                        break;
-
-                }
-            }
-        }
-        // get time
-//        String date = reader.get(Constants.THEADER_DATE);
-//        String startT = reader.get(Constants.THEADER_TIME_START);
-//        String endT = reader.get(Constants.THEADER_TIME_END);
-
-        return entry;
-
-    }
+    private static final Pattern AMOUNT_PATTERN = Pattern.compile(".*AMOUNT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ISIG_PATTERN = Pattern.compile(".*ISIG=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RATE_PATTERN = Pattern.compile(".*RATE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CARB_INPUT_PATTERN = Pattern.compile(".*CARB_INPUT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern BG_INPUT_PATTERN = Pattern.compile(".*BG_INPUT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DURATION_PATTERN = Pattern.compile(".*DURATION=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RAW_TYPE_PATTERN = Pattern.compile(".*RAW_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ALARM_TYPE_PATTERN = Pattern.compile(".*ALARM_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
 
     private static Date createTimestamp(String date, String time) throws ParseException {
         String format = Constants.CARELINK_CSV_DATETIME_FORMAT[Constants.CARELINK_CSV_LANG_SELECTION];
 
         SimpleDateFormat df = new SimpleDateFormat(format);
         return df.parse(time + date);
+    }
+
+    public MedtronicCsvImporter() {
+        super(new MedtronicCsvValidator(), ';');
+    }
+
+    public MedtronicCsvImporter(char delimiter) {
+        super(new MedtronicCsvValidator(), delimiter);
+    }
+
+    private static VaultEntry extractEntry(Date timestamp, VaultEntryType type,
+            String rawValues, Pattern pattern, String[] fullEntry) {
+        if (rawValues != null && !rawValues.isEmpty()) {
+            Matcher m = pattern.matcher(rawValues);
+            if (m.matches()) {
+                String matchedString = m.group(1).replace(",", ".");
+                try {
+                    double value = Double.parseDouble(matchedString);
+                    return new VaultEntry(type,
+                            timestamp,
+                            value);
+                } catch (NumberFormatException ex) {
+                    LOG.log(Level.WARNING, "{0} -- Record: {1}",
+                            new Object[]{ex.getMessage(), Arrays.toString(fullEntry)});
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected List<VaultEntry> parseEntry(CsvReader creader) throws Exception {
+        List<VaultEntry> retVal = new ArrayList<>();
+        MedtronicCsvValidator parseValidator = (MedtronicCsvValidator) validator;
+
+        MedtronicCsvValidator.TYPE type = parseValidator.getCarelinkType(creader);
+        if (type == null) {
+            return null;
+        }
+        Date timestamp;
+        try {
+            timestamp = parseValidator.getTimestamp(creader);
+        } catch (ParseException ex) {
+            // maybe old format without good timestamp
+            // try again with seperated fields
+            timestamp = parseValidator.getManualTimestamp(creader);
+        }
+        if (timestamp == null) {
+            return null;
+        }
+        String rawValues = parseValidator.getRawValues(creader);
+        VaultEntry tmpEntry;
+
+        switch (type) {
+            case BASAL:
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.BASAL_Profile, rawValues,
+                        RATE_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+                break;
+            case BG_MANUAL:
+            case BG_RECEIVED:
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.GLUCOSE_BG, rawValues,
+                        AMOUNT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+                break;
+            case BOLUS_WIZARD: // TODO store bolus suggestion somewhere   
+                // meal information
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.MEAL_BolusExpert, rawValues,
+                        CARB_INPUT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+                // bg information
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.GLUCOSE_CGM_ALERT, rawValues,
+                        BG_INPUT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+                break;
+            case BOLUS: // TODO check other bolus types
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.BOLUS_ManualNormal, rawValues,
+                        BG_INPUT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+                break;
+            case EXERCICE:
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.EXERCISE_Manual, rawValues,
+                        DURATION_PATTERN, creader.getValues());
+
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                } else {
+                    // add marker without duration for old pumps
+                    retVal.add(new VaultEntry(VaultEntryType.EXERCISE_Manual,
+                            timestamp, VaultEntry.VALUE_UNUSED));
+                }
+                break;
+            case PRIME:
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.PUMP_PRIME, rawValues,
+                        AMOUNT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+
+                break;
+            case PUMP_ALERT:
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.PUMP_NO_DELIVERY, rawValues,
+                        RAW_TYPE_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    if (tmpEntry.getValue() != 4.0) {
+                        tmpEntry = new VaultEntry(VaultEntryType.PUMP_UNKNOWN_ERROR,
+                                timestamp, tmpEntry.getValue());
+                    }
+                    retVal.add(tmpEntry);
+                }
+
+                break;
+            case REWIND:
+                retVal.add(new VaultEntry(VaultEntryType.PUMP_REWIND, timestamp,
+                        VaultEntry.VALUE_UNUSED));
+                break;
+            case SENSOR_ALERT:
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.GLUCOSE_CGM_ALERT, rawValues,
+                        AMOUNT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    // check if it is really a cgm-bg-alert
+                    Matcher m = ALARM_TYPE_PATTERN.matcher(rawValues);
+                    if (m.matches()) {
+                        if (m.group(1).equalsIgnoreCase("102")
+                                || m.group(1).equalsIgnoreCase("101")) {
+                            retVal.add(tmpEntry);
+                        }
+                    }
+                }
+
+                break;
+            case SENSOR_CAL_BG:
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.GLUCOSE_CGM_CALIBRATION, rawValues,
+                        AMOUNT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+
+                break;
+            case SENSOR_CAL_FACTOR:
+                // not interesting right now --> drop
+
+                break;
+            case SENSOR_VALUE:
+                // calibrated cgm value
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.GLUCOSE_CGM, rawValues,
+                        AMOUNT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+
+                // measured raw value
+                tmpEntry = extractEntry(timestamp,
+                        VaultEntryType.GLUCOSE_CGM_RAW, rawValues,
+                        ISIG_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+                break;
+            default:
+                throw new AssertionError();
+        }
+
+        return retVal;
     }
 
 }
