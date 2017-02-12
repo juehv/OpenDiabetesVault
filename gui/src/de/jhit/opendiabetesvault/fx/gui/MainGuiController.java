@@ -400,7 +400,7 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.50);
                     });
                     if (googleTracksCheckBox.isSelected()) {
-                        for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                        for (String filePath : googleTracksTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {//TODO
                             }
                         }
@@ -416,7 +416,7 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.65);
                     });
                     if (rocheCheckBox.isSelected()) {
-                        for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                        for (String filePath : rocheTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {//TODO
                             }
                         }
@@ -432,7 +432,7 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.80);
                     });
                     if (odvCheckBox.isSelected()) {
-                        for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                        for (String filePath : odvCheckBox.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {//TODO
                             }
                         }
