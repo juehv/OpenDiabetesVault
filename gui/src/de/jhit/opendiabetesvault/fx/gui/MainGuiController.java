@@ -648,7 +648,7 @@ public class MainGuiController implements Initializable {
                         // TOOD move following into engine
                         //create clean entrys
                         List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
-                                new Date(1480550400000L), new Date(1483996861000L)); // TODO read gui properties
+                                new Date(1475280000000L), new Date(1486339140000L)); // TODO read gui properties
 
                         try {
                             VaultCsvWriter.writeData(odvExpotFileName, entrys);

@@ -165,6 +165,9 @@ public class VaultDao {
                             case PUMP_REWIND:
                                 tmpCsvEntry.setPumpAnnotation(tmpEntry.getType().toString());
                                 break;
+                            case PUMP_NO_DELIVERY:
+                                tmpCsvEntry.setPumpAnnotation("PUMP_KATERR");
+                                break;
                             default:
                                 break;
                         }
