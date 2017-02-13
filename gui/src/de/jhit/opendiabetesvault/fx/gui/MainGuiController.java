@@ -727,7 +727,7 @@ public class MainGuiController implements Initializable {
         prefs.putBoolean(Constants.EXPORTER_PLOT_DAILY_CHECKBOX_KEY, exportPlotDailyCheckBox.isSelected());
         prefs.put(Constants.EXPORTER_PLOT_DAILY_PATH_KEY, exportPlotDailyTextField.getText());
 
-        prefs.putBoolean(Constants.IMPORTER_PERIOD_ALL_KEY, exportPeriodAllCheckbox.isSelected());
+        prefs.putBoolean(Constants.EXPORTER_PERIOD_ALL_KEY, exportPeriodAllCheckbox.isSelected());
     }
 
     @FXML
