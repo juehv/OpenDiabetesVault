@@ -668,12 +668,12 @@ public class MainGuiController implements Initializable {
                             tmpDir.delete();
                         }
                         FileCopyUtil.copyDirectory(new File("../plot"),
-                                new File(tmpPath));
+                                tmpDir);
 
                         //Plot single days
                         String cmd = "python ./plot.py " + odvExpotFileName;
                         ProcessBuilder pb = new ProcessBuilder(cmd);
-                        pb.directory(new File(tmpPath + "/plot"));
+                        pb.directory(tmpDir);
                         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
                         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
                         Process p = pb.start();
@@ -683,7 +683,7 @@ public class MainGuiController implements Initializable {
                         // create sheet
                         cmd = "pdflatex buildPDF.tex";
                         pb = new ProcessBuilder(cmd);
-                        pb.directory(new File(tmpPath + "/plot"));
+                        pb.directory(tmpDir);
                         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
                         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
                         p = pb.start();
