@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -395,7 +397,12 @@ public class MainGuiController implements Initializable {
         // read interpreter options
         InterpreterOptions iOptions = new InterpreterOptions(
                 prefs.getBoolean(Constants.INTERPRETER_FILL_AS_KAT_KEY, false),
-                prefs.getInt(Constants.INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY, 60));
+                prefs.getInt(Constants.INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY, 60),
+                importPeriodAllCheckbox.isSelected(),
+                Date.from(Instant.from(importPeriodFromPicker.getValue()
+                        .atStartOfDay(ZoneId.systemDefault()))),
+                Date.from(Instant.from(importPeriodToPicker.getValue()
+                        .atStartOfDay(ZoneId.systemDefault()))));
         // do the work
         importPorgressBar.setProgress(
                 -1.0);
@@ -647,8 +654,12 @@ public class MainGuiController implements Initializable {
 
                         // TOOD move following into engine
                         //create clean entrys
+                        Date fromDate = Date.from(Instant.from(
+                        exportPeriodFromPicker.getValue().atStartOfDay(ZoneId.systemDefault())));                        
+                        Date toDate = Date.from(Instant.from(
+                        exportPeriodToPicker.getValue().atStartOfDay(ZoneId.systemDefault())));
                         List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
-                                new Date(1475280000000L), new Date(1486339140000L)); // TODO read gui properties
+                                fromDate, toDate); // TODO read gui properties
 
                         try {
                             VaultCsvWriter.writeData(odvExpotFileName, entrys);
