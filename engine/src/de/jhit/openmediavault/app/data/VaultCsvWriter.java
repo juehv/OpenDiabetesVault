@@ -6,7 +6,7 @@
 package de.jhit.openmediavault.app.data;
 
 import com.csvreader.CsvWriter;
-import de.jhit.openmediavault.app.container.VaultCsvEntry;
+import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
