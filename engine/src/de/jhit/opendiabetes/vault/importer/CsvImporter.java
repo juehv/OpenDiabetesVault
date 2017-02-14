@@ -6,11 +6,8 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
-import de.jhit.openmediavault.app.container.RawDataEntry;
 import de.jhit.openmediavault.app.container.VaultEntry;
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,7 +19,7 @@ import java.util.logging.Level;
 public abstract class CsvImporter extends FileImporter {
 
     protected final CsvValidator validator;
-    protected final char delimiter;
+    protected char delimiter;
 
     public CsvImporter(CsvValidator validator, char delimiter) {
         this.validator = validator;
@@ -31,6 +28,8 @@ public abstract class CsvImporter extends FileImporter {
 
     @Override
     public List<VaultEntry> importFile(String filePath) {
+        preprocessingIfNeeded(filePath);
+        
         List<VaultEntry> entrys = new ArrayList<>();
         List<String[]> metaEntrys = new ArrayList<>();
 
@@ -57,7 +56,7 @@ public abstract class CsvImporter extends FileImporter {
                 if (entryList != null && !entryList.isEmpty()) {
                     for (VaultEntry item : entryList) {
                         entrys.add(item);
-                       // LOG.log(Level.INFO, "Got Entry: {0}", entryList.toString());
+                        // LOG.log(Level.INFO, "Got Entry: {0}", entryList.toString());
                     }
                 }
             }
@@ -74,5 +73,7 @@ public abstract class CsvImporter extends FileImporter {
     }
 
     protected abstract List<VaultEntry> parseEntry(CsvReader creader) throws Exception;
+
+    protected abstract void preprocessingIfNeeded(String filePath);
 
 }

@@ -6,9 +6,12 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
+import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
 import de.jhit.openmediavault.app.container.VaultEntry;
 import de.jhit.openmediavault.app.container.VaultEntryType;
 import de.jhit.openmediavault.app.preferences.Constants;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,6 +70,39 @@ public class MedtronicCsvImporter extends CsvImporter {
             }
         }
         return null;
+    }
+    
+    @Override
+    protected void preprocessingIfNeeded(String filePath){
+        // test for delimiter
+         CsvReader creader = null;
+        try {
+            // test for , delimiter
+            creader = new CsvReader(filePath, ',', Charset.forName("UTF-8"));
+            for (int i =0; i< 15; i++){ // just scan the first 15 lines for a valid header
+                if (creader.readHeaders()){
+                    if (validator.validateHeader(creader.getHeaders())){                    
+                        // found valid header --> finish
+                        delimiter = ',';
+                        creader.close();
+                        LOG.log(Level.INFO, "Found ',' as delimiter for Carelink CSV: {0}", filePath);
+                        return;
+                    }
+                }
+            }
+            // if you end up here there was no valid header within the range
+            // try the other delimiter in normal operation
+            delimiter = ';';
+            LOG.log(Level.INFO, "Found ';' as delimiter for Carelink CSV: {0}", filePath);
+                
+        } catch (IOException ex) {
+            LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter checkF: "
+                    + filePath, ex);
+        } finally {
+            if (creader != null) {
+                creader.close();
+            }
+        }
     }
 
     @Override

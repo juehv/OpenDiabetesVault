@@ -29,9 +29,15 @@ public abstract class VaultInterpreter {
     public void importAndInterpretFromFile(String filePath) {
         // parse file
         List<VaultEntry> result = importer.importFile(filePath);
-
+        if (result == null){
+            return;
+        }
+        
         // interpret stuff
         result = interpret(result);
+        if (result == null){
+            return;
+        }
 
         // update DB
         for (VaultEntry item : result) {
