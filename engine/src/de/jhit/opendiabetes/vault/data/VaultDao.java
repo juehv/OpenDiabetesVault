@@ -5,9 +5,11 @@
  */
 package de.jhit.opendiabetes.vault.data;
 
+import com.j256.ormlite.dao.CloseableIterator;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.HsqldbDatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.LocalLog;
@@ -19,6 +21,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -68,24 +71,59 @@ public class VaultDao {
         TableUtils.createTableIfNotExists(connectionSource, VaultEntry.class);
     }
 
-    public boolean putEntryIfNotExist(VaultEntry entry) {
+    public boolean putEntry(VaultEntry entry) {
         try {
-            PreparedQuery<VaultEntry> query = vaultDao.queryBuilder()
-                    .where()
-                    .eq(VaultEntry.TIMESTAMP_FIELD_NAME, entry.getTimestamp())
-                    .prepare();
-            List<VaultEntry> dublicates = vaultDao.query(query);
-            for (VaultEntry item : dublicates) {
-                if (item.equals(entry)) {
-                    return true;
-                }
-            }
-            // not found --> put it in
             vaultDao.createIfNotExists(entry);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error saving entry:\n" + entry.toString(), ex);
             return false;
         }
+        return true;
+    }
+
+    public boolean removeDublicates() throws SQLException {
+        // DELETE FROM MyTable WHERE RowId NOT IN (SELECT MIN(RowId) FROM MyTable GROUP BY Col1, Col2, Col3);
+        // but we need a workaround for the or mapper
+        try {
+            PreparedQuery<VaultEntry> query
+                    = vaultDao.queryBuilder().orderBy("timestamp", true)
+                            .prepare();
+            CloseableIterator<VaultEntry> iterator = vaultDao.iterator(query);
+
+            Date startGenerationTimestamp = null;
+            List<VaultEntry> tmpList = new ArrayList<>();
+            List<Long> dublicateId = new ArrayList<>();
+            while (iterator.hasNext()) {
+                VaultEntry entry = iterator.next();
+                if (startGenerationTimestamp == null) {
+                    // start up
+                    startGenerationTimestamp = entry.getTimestamp();
+                    tmpList.add(entry);
+                } else if (!startGenerationTimestamp
+                        .equals(entry.getTimestamp())) {
+                    // not same timestamp --> new line generation
+                    startGenerationTimestamp = entry.getTimestamp();
+                    tmpList.clear();
+                    tmpList.add(entry);
+                } else {
+                    // same timestamp --> check if it is a dublicate
+                    for (VaultEntry item : tmpList){
+                        if (item.equals(entry)){
+                            // dublicate --> delete and move on
+                            dublicateId.add(entry.getId());
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // delete dublicates
+            int lines = vaultDao.deleteIds(dublicateId);
+            LOG.log(Level.INFO, "Removed {0} dublicates", lines);
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, "Error while db query", ex);
+        }
+
         return true;
     }
 
@@ -139,11 +177,5 @@ public class VaultDao {
             LOG.log(Level.SEVERE, "Error while db query", ex);
         }
         return returnValues;
-    }
-
-    public void doit() throws SQLException {
-
-// retrieve the account
-//        Account account2 = accountDao.queryForId(name);
     }
 }
