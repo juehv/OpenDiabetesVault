@@ -77,25 +77,24 @@ public class MedtronicCsvImporter extends CsvImporter {
         // test for delimiter
          CsvReader creader = null;
         try {
-            boolean headerValid = true;
             // test for , delimiter
             creader = new CsvReader(filePath, ',', Charset.forName("UTF-8"));
-            do {
-                if (!creader.readHeaders()) {
-                    // no more lines --> no valid header
-                    headerValid = false;
+            for (int i =0; i< 15; i++){ // just scan the first 15 lines for a valid header
+                if (creader.readHeaders()){
+                    if (validator.validateHeader(creader.getHeaders())){                    
+                        // found valid header --> finish
+                        delimiter = ',';
+                        creader.close();
+                        LOG.log(Level.INFO, "Found ',' as delimiter for Carelink CSV: {0}", filePath);
+                        return;
+                    }
                 }
-            } while (!validator.validateHeader(creader.getHeaders()));
-            creader.close();
-            
-            // did it work ?
-            if (headerValid){
-                delimiter = ',';
-            } else {
-                // did not work --> use ; as delimiter
-                // normal header check will try if it works
-                delimiter = ';';
             }
+            // if you end up here there was no valid header within the range
+            // try the other delimiter in normal operation
+            delimiter = ';';
+            LOG.log(Level.INFO, "Found ';' as delimiter for Carelink CSV: {0}", filePath);
+                
         } catch (IOException ex) {
             LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter checkF: "
                     + filePath, ex);

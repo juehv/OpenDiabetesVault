@@ -29,6 +29,7 @@ public abstract class CsvImporter extends FileImporter {
     @Override
     public List<VaultEntry> importFile(String filePath) {
         preprocessingIfNeeded(filePath);
+        
         List<VaultEntry> entrys = new ArrayList<>();
         List<String[]> metaEntrys = new ArrayList<>();
 
