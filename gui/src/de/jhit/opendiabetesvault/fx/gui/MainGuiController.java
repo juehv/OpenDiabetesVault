@@ -204,7 +204,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseMedtronic(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY+0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
@@ -223,7 +223,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseAbbott(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY+0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.TXT_EXTENSION_FILTER);
@@ -242,7 +242,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseGoogleFit(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY+0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
@@ -261,7 +261,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseGoogleTracks(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY+0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.JSON_EXTENSION_FILTER);
@@ -280,7 +280,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseRoche(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY+0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
@@ -299,7 +299,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseOpenDiabetesVault(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_ODV_IMPORT_PATH_KEY, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_ODV_IMPORT_PATH_KEY+0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
