@@ -18,6 +18,7 @@ import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -491,6 +492,13 @@ public class MainGuiController implements Initializable {
                     alert.setHeaderText(null);
                     alert.show();
                 });
+
+                // clean db
+                try {
+                    VaultDao.getInstance().removeDublicates();
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
                 // reset cursor
                 ap.getScene().setCursor(cursorBackup);
