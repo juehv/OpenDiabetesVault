@@ -7,10 +7,10 @@ package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
 import de.jhit.openmediavault.app.container.RawDataEntry;
-import de.jhit.openmediavault.app.container.VaultEntry;
-import de.jhit.openmediavault.app.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import de.jhit.openmediavault.app.data.VaultDao;
+import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.io.FileNotFoundException;
 import java.io.IOException;

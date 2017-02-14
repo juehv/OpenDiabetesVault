@@ -7,22 +7,16 @@ package de.jhit.openmediavault.app.gui;
 
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
-import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.openmediavault.app.data.DataHelper;
 import de.jhit.openmediavault.app.Launcher;
 import de.jhit.openmediavault.app.container.RawDataEntry;
-import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
-import de.jhit.openmediavault.app.data.VaultCsvWriter;
-import de.jhit.openmediavault.app.data.VaultDao;
 import de.jhit.openmediavault.app.preferences.Constants;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -716,19 +710,19 @@ public class MainFrame extends javax.swing.JFrame {
 //                "", JOptionPane.INFORMATION_MESSAGE);
 
         //create clean entrys
-        List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
-                new Date(1477094400000L), new Date(1484006399000L));
-        
-        try {
-            VaultCsvWriter.writeData("./export-v2.csv", entrys);
-        } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultEntrysBetween(
+//                new Date(1477094400000L), new Date(1484006399000L));
+//        
+//        try {
+//            VaultCsvWriter.writeData("./export-v2.csv", entrys);
+//        } catch (IOException ex) {
+//            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
-        System.out.println(VaultCsvEntry.getCsvHeaderString());
-        for (VaultCsvEntry item : entrys) {
-            System.out.println(item.toCsvString());
-        }
+//        System.out.println(VaultCsvEntry.getCsvHeaderString());
+//        for (VaultCsvEntry item : entrys) {
+//            System.out.println(item.toCsvString());
+//        }
     }//GEN-LAST:event_exportButtonActionPerformed
 
     private void hypoListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hypoListMouseClicked

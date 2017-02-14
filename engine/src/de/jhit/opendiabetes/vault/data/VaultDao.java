@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.jhit.openmediavault.app.data;
+package de.jhit.opendiabetes.vault.data;
 
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import com.j256.ormlite.dao.Dao;
@@ -14,9 +14,8 @@ import com.j256.ormlite.logger.LocalLog;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
-import de.jhit.openmediavault.app.container.VaultEntry;
-import de.jhit.openmediavault.app.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -99,8 +98,22 @@ public class VaultDao {
         return returnValues;
     }
 
-    public List<VaultCsvEntry> queryVaultCsvLinesBetween(Date from, Date to) {
-        List<VaultCsvEntry> returnValues = new ArrayList<>();
+    public List<VaultEntry> queryAllVaultEntrys() {
+        List<VaultEntry> returnValues = new ArrayList<>();
+        try {
+
+            PreparedQuery<VaultEntry> query
+                    = vaultDao.queryBuilder().orderBy("timestamp", true)
+                            .prepare();
+            returnValues = vaultDao.query(query);
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, "Error while db query", ex);
+        }
+        return returnValues;
+    }
+
+    public List<VaultEntry> queryVaultEntrysBetween(Date from, Date to) {
+        List<VaultEntry> returnValues = new ArrayList<>();
         try {
             Date fromTimestamp = TimestampUtils.createCleanTimestamp(from);
             Date toTimestamp = TimestampUtils.createCleanTimestamp(to);
@@ -110,76 +123,7 @@ public class VaultDao {
                             .where()
                             .between(VaultEntry.TIMESTAMP_FIELD_NAME, fromTimestamp, toTimestamp)
                             .prepare();
-            List<VaultEntry> tmpValues = vaultDao.query(query);
-
-            if (!tmpValues.isEmpty()) {
-                int i = 0;
-                while (!fromTimestamp.after(toTimestamp)) {
-
-                    VaultCsvEntry tmpCsvEntry = new VaultCsvEntry();
-                    tmpCsvEntry.setTimestamp(fromTimestamp);
-
-                    VaultEntry tmpEntry;
-                    while (fromTimestamp.equals((tmpEntry = tmpValues.get(i)).getTimestamp())) {
-                        if (i < tmpValues.size() - 1) {
-                            i++;
-                        } else {
-                            i--;
-                            break;
-                        }
-
-                        switch (tmpEntry.getType()) {
-                            case GLUCOSE_CGM_ALERT:
-                                tmpCsvEntry.setCgmAlertValue(tmpEntry.getValue());
-                            case GLUCOSE_CGM:
-                                if (tmpCsvEntry.getCgmValue()
-                                        == VaultCsvEntry.UNINITIALIZED_DOUBLE) { // TODO y is this if statement here ??
-                                    tmpCsvEntry.setCgmValue(tmpEntry.getValue());
-                                }
-                                break;
-                            case GLUCOSE_BG:
-                                tmpCsvEntry.setBgValue(tmpEntry.getValue());
-                                break;
-                            case BASAL_Manual:
-                            case BASAL_Profile:
-                                tmpCsvEntry.setBasalValue(tmpEntry.getValue());
-                                break;
-                            case BOLUS_BolusExpertNormal:
-                            case BOLUS_BolusExpertSquare:
-                            case BOLUS_BolusExpertDual:
-                            case BOLUS_ManualSquare:
-                            case BOLUS_ManualDual:
-                            case BOLUS_ManualNormal:
-                                tmpCsvEntry.setBolusValue(tmpEntry.getValue());
-                                break;
-                            case MEAL_BolusExpert:
-                            case MEAL_Manual:
-                                tmpCsvEntry.setMealValue(tmpEntry.getValue());
-                                break;
-                            case EXERCISE_GoogleBicycle:
-                            case EXERCISE_GoogleWalk:
-                            case EXERCISE_GoogleRun:
-                            case EXERCISE_Manual:
-                                tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
-                                break;
-                            case PUMP_REWIND:
-                                tmpCsvEntry.setPumpAnnotation(tmpEntry.getType().toString());
-                                break;
-                            case PUMP_NO_DELIVERY:
-                                tmpCsvEntry.setPumpAnnotation("PUMP_KATERR");
-                                break;
-                            default:
-                                break;
-                        }
-
-                    }
-
-                    if (!tmpCsvEntry.isEmpty()) {
-                        returnValues.add(tmpCsvEntry);
-                    }
-                    fromTimestamp = TimestampUtils.addMinutesToTimestamp(fromTimestamp, 1);
-                }
-            }
+            returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error while db query", ex);
         }

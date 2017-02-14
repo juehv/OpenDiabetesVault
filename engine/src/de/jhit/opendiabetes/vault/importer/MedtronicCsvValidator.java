@@ -7,7 +7,6 @@ package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import de.jhit.openmediavault.app.preferences.Constants;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;

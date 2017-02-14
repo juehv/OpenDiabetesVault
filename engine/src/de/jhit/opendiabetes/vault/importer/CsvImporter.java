@@ -6,7 +6,7 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
-import de.jhit.openmediavault.app.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;

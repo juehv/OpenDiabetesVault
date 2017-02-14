@@ -5,7 +5,6 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
-import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
@@ -13,17 +12,14 @@ import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreter;
 import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreterOptions;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import de.jhit.openmediavault.app.data.VaultCsvWriter;
-import de.jhit.openmediavault.app.data.VaultDao;
+import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
+import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -619,7 +615,7 @@ public class MainGuiController implements Initializable {
                 Cursor cursorBackup = ap.getScene().getCursor();
                 ap.getScene().setCursor(Cursor.WAIT);
 
-                // import Data
+                // export Data
                 try {
                     Platform.runLater(() -> {
                         exportPorgressBar.setProgress(0.05);
@@ -638,19 +634,25 @@ public class MainGuiController implements Initializable {
                         odvExpotFileName = new File(path).getAbsolutePath()
                                 + "/" + odvExpotFileName;
 
-                        // TOOD move following into engine
-                        //create clean entrys
-                        Date fromDate = TimestampUtils.fromLocalDate(
-                                importPeriodFromPicker.getValue());
-                        Date toDate = TimestampUtils.fromLocalDate(
-                                importPeriodToPicker.getValue(), 86399000); // 86399000 = 1 day - 1 second
-                        List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
-                                fromDate, toDate); // TODO read gui properties
-
-                        try {
-                            VaultCsvWriter.writeData(odvExpotFileName, entrys);
-                        } catch (IOException ex) {
-                            System.err.println("too bad ;)");
+                        ExporterOptions eOptions = new ExporterOptions(
+                                !exportPeriodAllCheckbox.isSelected(),
+                                TimestampUtils.fromLocalDate(
+                                        importPeriodFromPicker.getValue()),
+                                TimestampUtils.fromLocalDate(
+                                        importPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second                        
+                        VaultCsvExporter exporter = new VaultCsvExporter(eOptions,
+                                VaultDao.getInstance(),
+                                odvExpotFileName);
+                        int result = exporter.exportDataToFile();
+                        if (result != VaultCsvExporter.RESULT_OK) {
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                                        "Could not export to odv csv file: "
+                                        + result + "\nSee logfile for details.",
+                                        ButtonType.CLOSE);
+                                alert.setHeaderText(null);
+                                alert.show();
+                            });
                         }
                     }
                     Platform.runLater(() -> {

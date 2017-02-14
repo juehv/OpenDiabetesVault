@@ -7,13 +7,11 @@ package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
 import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
-import de.jhit.openmediavault.app.container.VaultEntry;
-import de.jhit.openmediavault.app.container.VaultEntryType;
-import de.jhit.openmediavault.app.preferences.Constants;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -36,13 +34,6 @@ public class MedtronicCsvImporter extends CsvImporter {
     private static final Pattern DURATION_PATTERN = Pattern.compile(".*DURATION=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern RAW_TYPE_PATTERN = Pattern.compile(".*RAW_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern ALARM_TYPE_PATTERN = Pattern.compile(".*ALARM_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
-
-    private static Date createTimestamp(String date, String time) throws ParseException {
-        String format = Constants.CARELINK_CSV_DATETIME_FORMAT[Constants.CARELINK_CSV_LANG_SELECTION];
-
-        SimpleDateFormat df = new SimpleDateFormat(format);
-        return df.parse(time + date);
-    }
 
     public MedtronicCsvImporter() {
         super(new MedtronicCsvValidator(), ',');

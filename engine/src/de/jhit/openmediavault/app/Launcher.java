@@ -6,7 +6,7 @@
 package de.jhit.openmediavault.app;
 
 import com.j256.ormlite.logger.LocalLog;
-import de.jhit.openmediavault.app.data.VaultDao;
+import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.openmediavault.app.gui.MainFrame;
 import java.awt.Frame;
 import java.io.IOException;

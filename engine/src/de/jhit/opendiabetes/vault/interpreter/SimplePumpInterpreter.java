@@ -7,9 +7,9 @@ package de.jhit.opendiabetes.vault.interpreter;
 
 import de.jhit.opendiabetes.vault.importer.FileImporter;
 import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
-import de.jhit.openmediavault.app.container.VaultEntry;
-import de.jhit.openmediavault.app.container.VaultEntryType;
-import de.jhit.openmediavault.app.data.VaultDao;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.data.VaultDao;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;

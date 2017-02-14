@@ -5,7 +5,7 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
-import de.jhit.openmediavault.app.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.util.List;
 import java.util.logging.Logger;
 

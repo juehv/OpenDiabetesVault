@@ -20,8 +20,8 @@ public abstract class InterpreterOptions {
     public InterpreterOptions(boolean isImportPeriodRestricted, 
             Date importPeriodFrom, Date importPeriodTo) {
         this.isImportPeriodRestricted = isImportPeriodRestricted;
-        this.importPeriodFrom = importPeriodFrom;
-        this.importPeriodTo = importPeriodTo;
+        this.importPeriodFrom = importPeriodFrom != null ? importPeriodFrom : new Date();
+        this.importPeriodTo = importPeriodTo!= null ? importPeriodTo : new Date();
     }
 
     

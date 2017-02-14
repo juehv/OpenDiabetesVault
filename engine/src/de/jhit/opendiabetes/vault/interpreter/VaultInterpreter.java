@@ -6,8 +6,8 @@
 package de.jhit.opendiabetes.vault.interpreter;
 
 import de.jhit.opendiabetes.vault.importer.FileImporter;
-import de.jhit.openmediavault.app.container.VaultEntry;
-import de.jhit.openmediavault.app.data.VaultDao;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.data.VaultDao;
 import java.util.ArrayList;
 import java.util.List;
 
