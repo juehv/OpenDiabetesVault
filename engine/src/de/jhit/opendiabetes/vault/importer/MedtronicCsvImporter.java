@@ -6,9 +6,12 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
+import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
 import de.jhit.openmediavault.app.container.VaultEntry;
 import de.jhit.openmediavault.app.container.VaultEntryType;
 import de.jhit.openmediavault.app.preferences.Constants;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,6 +70,40 @@ public class MedtronicCsvImporter extends CsvImporter {
             }
         }
         return null;
+    }
+    
+    @Override
+    protected void preprocessingIfNeeded(String filePath){
+        // test for delimiter
+         CsvReader creader = null;
+        try {
+            boolean headerValid = true;
+            // test for , delimiter
+            creader = new CsvReader(filePath, ',', Charset.forName("UTF-8"));
+            do {
+                if (!creader.readHeaders()) {
+                    // no more lines --> no valid header
+                    headerValid = false;
+                }
+            } while (!validator.validateHeader(creader.getHeaders()));
+            creader.close();
+            
+            // did it work ?
+            if (headerValid){
+                delimiter = ',';
+            } else {
+                // did not work --> use ; as delimiter
+                // normal header check will try if it works
+                delimiter = ';';
+            }
+        } catch (IOException ex) {
+            LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter checkF: "
+                    + filePath, ex);
+        } finally {
+            if (creader != null) {
+                creader.close();
+            }
+        }
     }
 
     @Override
