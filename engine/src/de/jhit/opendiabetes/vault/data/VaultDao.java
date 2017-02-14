@@ -68,8 +68,19 @@ public class VaultDao {
         TableUtils.createTableIfNotExists(connectionSource, VaultEntry.class);
     }
 
-    public boolean putEntry(VaultEntry entry) {
+    public boolean putEntryIfNotExist(VaultEntry entry) {
         try {
+            PreparedQuery<VaultEntry> query = vaultDao.queryBuilder()
+                    .where()
+                    .eq(VaultEntry.TIMESTAMP_FIELD_NAME, entry.getTimestamp())
+                    .prepare();
+            List<VaultEntry> dublicates = vaultDao.query(query);
+            for (VaultEntry item : dublicates) {
+                if (item.equals(entry)) {
+                    return true;
+                }
+            }
+            // not found --> put it in
             vaultDao.createIfNotExists(entry);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error saving entry:\n" + entry.toString(), ex);
