@@ -7,6 +7,9 @@ package de.jhit.opendiabetes.vault.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -47,6 +50,19 @@ public class TimestampUtils {
     public static long addMinutesToTimestamp(long timestamp, int minutes) {
         timestamp += minutes * 60000; // 1 m = 60000 ms
         return timestamp;
+    }
+
+    public static Date fromLocalDate(LocalDate inputDate) {
+        return fromLocalDate(inputDate, 0);
+    }
+
+    public static Date fromLocalDate(LocalDate inputDate, long offestInMilliseconds) {
+        Date tmpInputDate = Date.from(Instant.from(inputDate
+                .atStartOfDay(ZoneId.systemDefault())));
+        if (offestInMilliseconds > 0) {
+            tmpInputDate = new Date(tmpInputDate.getTime() + offestInMilliseconds);
+        }
+        return tmpInputDate;
     }
 
 }
