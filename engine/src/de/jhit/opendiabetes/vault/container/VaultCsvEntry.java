@@ -8,6 +8,7 @@ package de.jhit.opendiabetes.vault.container;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -16,6 +17,8 @@ import java.util.Date;
 public class VaultCsvEntry {
 
     public final static double UNINITIALIZED_DOUBLE = -1.0;
+    public final static char CSV_DELIMITER = ',';
+    public final static char CSV_LIST_DELIMITER = ':';
 
     private Date timestamp;
     private double bgValue = UNINITIALIZED_DOUBLE;
@@ -24,9 +27,9 @@ public class VaultCsvEntry {
     private double basalValue = UNINITIALIZED_DOUBLE;
     private double bolusValue = UNINITIALIZED_DOUBLE;
     private double mealValue = UNINITIALIZED_DOUBLE;
-    private String pumpAnnotation;
+    private List<String> pumpAnnotation = new ArrayList<>();
     private double exerciseTimeValue = UNINITIALIZED_DOUBLE;
-    private String exerciseTypeValue;
+    private List<String> exerciseAnnotation = new ArrayList<>();
 
     public Date getTimestamp() {
         return timestamp;
@@ -84,12 +87,16 @@ public class VaultCsvEntry {
         this.mealValue = mealValue;
     }
 
-    public String getPumpAnnotation() {
+    public List<String> getPumpAnnotation() {
         return pumpAnnotation;
     }
 
-    public void setPumpAnnotation(String pumpAnnotation) {
+    public void setPumpAnnotation(List<String> pumpAnnotation) {
         this.pumpAnnotation = pumpAnnotation;
+    }
+
+    public void addPumpAnnotation(String pumpAnnotation) {
+        this.pumpAnnotation.add(pumpAnnotation);
     }
 
     public double getExerciseTimeValue() {
@@ -100,12 +107,16 @@ public class VaultCsvEntry {
         this.exerciseTimeValue = exerciseTimeValue;
     }
 
-    public String getExerciseTypeValue() {
-        return exerciseTypeValue;
+    public void addExerciseAnnotation(String exerciseAnnotation) {
+        this.exerciseAnnotation.add(exerciseAnnotation);
     }
 
-    public void setExerciseTypeValue(String exerciseTypeValue) {
-        this.exerciseTypeValue = exerciseTypeValue;
+    public List<String> getExerciseAnnotation() {
+        return exerciseAnnotation;
+    }
+
+    public void setExerciseAnnotation(List<String> exerciseAnnotation) {
+        this.exerciseAnnotation = exerciseAnnotation;
     }
 
     public boolean isEmpty() {
@@ -115,19 +126,19 @@ public class VaultCsvEntry {
                 && bolusValue == UNINITIALIZED_DOUBLE
                 && basalValue == UNINITIALIZED_DOUBLE
                 && mealValue == UNINITIALIZED_DOUBLE
-                && pumpAnnotation == null
+                && pumpAnnotation.isEmpty()
                 && exerciseTimeValue == UNINITIALIZED_DOUBLE
-                && exerciseTypeValue == null;
+                && exerciseAnnotation.isEmpty();
     }
 
     public String toCsvString() {
         StringBuilder sb = new StringBuilder();
-        
+
         String[] record = this.toCsvRecord();
-        for (String item: record){
-            sb.append(item).append(",");
+        for (String item : record) {
+            sb.append(item).append(CSV_DELIMITER);
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
 
         return sb.toString();
     }
@@ -166,8 +177,13 @@ public class VaultCsvEntry {
         } else {
             sb.add("");
         }
-        if (pumpAnnotation != null) {
-            sb.add(pumpAnnotation);
+        if (!pumpAnnotation.isEmpty()) {
+            StringBuilder annotations = new StringBuilder();
+            for (String item : pumpAnnotation) {
+                annotations.append(item).append(CSV_LIST_DELIMITER);
+            }
+            annotations.deleteCharAt(annotations.length() - 1);
+            sb.add(annotations.toString());
         } else {
             sb.add("");
         }
@@ -176,8 +192,13 @@ public class VaultCsvEntry {
         } else {
             sb.add("");
         }
-        if (exerciseTypeValue != null) {
-            sb.add(exerciseTypeValue);
+        if (!exerciseAnnotation.isEmpty()) {
+            StringBuilder annotations = new StringBuilder();
+            for (String item : exerciseAnnotation) {
+                annotations.append(item).append(CSV_LIST_DELIMITER);
+            }
+            annotations.deleteCharAt(annotations.length() - 1);
+            sb.add(annotations.toString());
         } else {
             sb.add("");
         }
@@ -187,12 +208,12 @@ public class VaultCsvEntry {
 
     public static String getCsvHeaderString() {
         StringBuilder sb = new StringBuilder();
-        
+
         String[] header = getCsvHeaderRecord();
-        for (String item: header){
-            sb.append(item).append(",");
+        for (String item : header) {
+            sb.append(item).append(CSV_DELIMITER);
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
 
         return sb.toString();
     }
@@ -211,5 +232,10 @@ public class VaultCsvEntry {
             "exerciseTimeValue",
             "exerciseTypeValue"
         };
+    }
+
+    @Override
+    public String toString() {
+        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmAlertValue=" + cgmAlertValue + ", basalValue=" + basalValue + ", bolusValue=" + bolusValue + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + '}';
     }
 }

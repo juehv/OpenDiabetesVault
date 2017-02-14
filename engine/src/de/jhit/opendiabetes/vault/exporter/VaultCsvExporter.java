@@ -25,7 +25,6 @@ import java.util.logging.Logger;
  */
 public class VaultCsvExporter {
 
-    public static final char ODV_EXPORT_DELIMITER = ',';
     public final static int RESULT_OK = 0;
     public final static int RESULT_ERROR = -1;
     public final static int RESULT_NO_DATA = -2;
@@ -46,11 +45,11 @@ public class VaultCsvExporter {
     public int exportDataToFile() {
         List<VaultEntry> entrys;
         List<VaultCsvEntry> csvEntrys;
-        
+
         // check file stuff        
         File checkFile = new File(filePath);
-        if (checkFile.exists() && 
-                (!checkFile.isFile() || !checkFile.canWrite())){
+        if (checkFile.exists()
+                && (!checkFile.isFile() || !checkFile.canWrite())) {
             return RESULT_FILE_ACCESS_ERROR;
         }
 
@@ -68,9 +67,9 @@ public class VaultCsvExporter {
 
         // create csv data
         csvEntrys = prepareData(entrys);
-        
+
         // write to file
-        try {            
+        try {
             writeToFile(csvEntrys);
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Error writing odv csv file: {0}" + filePath, ex);
@@ -79,8 +78,9 @@ public class VaultCsvExporter {
         return RESULT_OK;
     }
 
-    private void writeToFile(List<VaultCsvEntry> csvEntries) throws IOException{
-        CsvWriter cwriter = new CsvWriter(filePath, ',', Charset.forName("UTF-8"));
+    private void writeToFile(List<VaultCsvEntry> csvEntries) throws IOException {
+        CsvWriter cwriter = new CsvWriter(filePath, VaultCsvEntry.CSV_DELIMITER,
+                Charset.forName("UTF-8"));
 
         cwriter.writeRecord(VaultCsvEntry.getCsvHeaderRecord());
         for (VaultCsvEntry item : csvEntries) {
@@ -92,11 +92,11 @@ public class VaultCsvExporter {
 
     private List<VaultCsvEntry> prepareData(List<VaultEntry> tmpValues) {
         List<VaultCsvEntry> returnValues = new ArrayList<>();
-        
+
         // list is ordered by timestamp from database (or should be ordered otherwise)
         Date fromTimestamp = tmpValues.get(0).getTimestamp();
-        Date toTimestamp = tmpValues.get(tmpValues.size()-1).getTimestamp();
-        
+        Date toTimestamp = tmpValues.get(tmpValues.size() - 1).getTimestamp();
+
         if (!tmpValues.isEmpty()) {
             int i = 0;
             while (!fromTimestamp.after(toTimestamp)) {
@@ -116,10 +116,18 @@ public class VaultCsvExporter {
                     switch (tmpEntry.getType()) {
                         case GLUCOSE_CGM_ALERT:
                             tmpCsvEntry.setCgmAlertValue(tmpEntry.getValue());
+                            break;
                         case GLUCOSE_CGM:
+                            // TODO y does this happen
+                            // --> when more than one cgm value per minute is available
+                            // but cgm ticks are every 15 minutes 
                             if (tmpCsvEntry.getCgmValue()
-                                    == VaultCsvEntry.UNINITIALIZED_DOUBLE) { // TODO y is this if statement here ??
+                                    == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
                                 tmpCsvEntry.setCgmValue(tmpEntry.getValue());
+                            } else {
+                                LOG.log(Level.WARNING, "Drop {0}, hold: {1}",
+                                        new Object[]{tmpEntry.toString(),
+                                            tmpCsvEntry.toString()});
                             }
                             break;
                         case GLUCOSE_BG:
@@ -146,18 +154,20 @@ public class VaultCsvExporter {
                         case EXERCISE_GoogleRun:
                         case EXERCISE_Manual:
                             tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
-                            tmpCsvEntry.setExerciseTypeValue(tmpEntry.getType().toString());
+                            tmpCsvEntry.addExerciseAnnotation(tmpEntry.getType().toString());
                             break;
                         case PUMP_FILL:
                         case PUMP_NO_DELIVERY:
                         case PUMP_PRIME:
                         case PUMP_REWIND:
                         case PUMP_UNKNOWN_ERROR:
-                            tmpCsvEntry.setPumpAnnotation(tmpEntry.getType().toString());
+                            tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString());
                             break;
                         case GLUCOSE_CGM_CALIBRATION:
                         case GLUCOSE_CGM_RAW: // TODO implement this two
+                            break;
                         default:
+                            LOG.severe("ASSERTION ERROR!");
                             throw new AssertionError();
                     }
 
@@ -165,6 +175,7 @@ public class VaultCsvExporter {
 
                 if (!tmpCsvEntry.isEmpty()) {
                     returnValues.add(tmpCsvEntry);
+                    //LOG.log(Level.INFO, "Export entry: {0}", tmpCsvEntry.toCsvString());
                 }
                 fromTimestamp = TimestampUtils.addMinutesToTimestamp(fromTimestamp, 1);
             }

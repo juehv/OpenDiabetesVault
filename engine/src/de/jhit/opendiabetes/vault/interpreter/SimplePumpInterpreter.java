@@ -10,6 +10,7 @@ import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.data.VaultDao;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -43,12 +44,12 @@ public class SimplePumpInterpreter extends VaultInterpreter {
         // configure options        
         if (myOptions.FillCanulaAsNewKatheder){
             // ignore cooldown if option is disabled
-            cooldown = myOptions.FillCanulaCooldown;
+            cooldown = myOptions.FillCanulaCooldown * 60000;
         }
         
         // sort by date
         Collections.sort(result, new SortVaultEntryByDate());
-        
+        List<VaultEntry> fillEvents = new ArrayList<>();
         // go through timeline
         for (VaultEntry item : result){
             
@@ -62,10 +63,12 @@ public class SimplePumpInterpreter extends VaultInterpreter {
                         fillDate = latesFillCanulaHandle.getTimestamp();
                     } else {
                         fillDate = primeHandle.getTimestamp();                                
-                    } 
-                    result.add(new VaultEntry(VaultEntryType.PUMP_FILL, 
+                    }
+                    fillEvents.add(new VaultEntry(VaultEntryType.PUMP_FILL, 
                             fillDate, 
                             VaultEntry.VALUE_UNUSED));
+                    rewindHandle = null;
+                    primeHandle = null;
                 }
             
             // find new pairs
@@ -76,7 +79,7 @@ public class SimplePumpInterpreter extends VaultInterpreter {
                 // is pump rewinded?
                 if (rewindHandle != null){
                     // is pump already primed?
-                    if (primeHandle != null){
+                    if (primeHandle == null){
                         // no --> this is the prime
                         primeHandle = item;
                     } else {
@@ -85,12 +88,15 @@ public class SimplePumpInterpreter extends VaultInterpreter {
                     }
                 } else if (myOptions.FillCanulaAsNewKatheder){
                     // no prime event? --> new katheder (if enabled)
-                    result.add(new VaultEntry(VaultEntryType.PUMP_FILL, 
+                    fillEvents.add(new VaultEntry(VaultEntryType.PUMP_FILL, 
                             item.getTimestamp(), 
                             VaultEntry.VALUE_UNUSED));                    
                 }
             }
         }
+        
+        //merge
+        result.addAll(fillEvents);
         
         // sort by date again <-- not neccesary because database will do it
         //Collections.sort(result, new SortVaultEntryByDate());
