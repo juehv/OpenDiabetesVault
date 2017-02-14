@@ -6,12 +6,12 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
-import de.jhit.openmediavault.app.container.RawDataEntry;
+import deprecated_code.RawDataEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.data.VaultDao;
-import de.jhit.openmediavault.app.preferences.Constants;
+import deprecated_code.Constants;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;

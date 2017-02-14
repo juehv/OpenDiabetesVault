@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.jhit.openmediavault.app.data;
+package deprecated_code;
 
-import de.jhit.openmediavault.app.container.RawDataEntry;
-import de.jhit.openmediavault.app.preferences.Constants;
+import deprecated_code.RawDataEntry;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;

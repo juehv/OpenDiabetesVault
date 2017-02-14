@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.jhit.openmediavault.app.gui;
+package deprecated_code;
 
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
-import de.jhit.openmediavault.app.data.DataHelper;
-import de.jhit.openmediavault.app.Launcher;
-import de.jhit.openmediavault.app.container.RawDataEntry;
-import de.jhit.openmediavault.app.preferences.Constants;
+import deprecated_code.DataHelper;
+import deprecated_code.RawDataEntry;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.io.File;
@@ -119,7 +117,7 @@ public class MainFrame extends javax.swing.JFrame {
 //        hyperList.repaint();
     }
 
-    private final Preferences prefs = Preferences.userNodeForPackage(Launcher.class);
+    private final Preferences prefs = Preferences.userNodeForPackage(MainFrame.class);
 //    private Date fromRagen = new Date();
 //    private Date toRagen = new Date();
     private List<RawDataEntry> entrys = new ArrayList<>();
@@ -718,7 +716,6 @@ public class MainFrame extends javax.swing.JFrame {
 //        } catch (IOException ex) {
 //            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-
 //        System.out.println(VaultCsvEntry.getCsvHeaderString());
 //        for (VaultCsvEntry item : entrys) {
 //            System.out.println(item.toCsvString());

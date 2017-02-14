@@ -3,13 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.jhit.openmediavault.app.gui;
+package deprecated_code;
 
-import de.jhit.openmediavault.app.Launcher;
-import de.jhit.openmediavault.app.preferences.Constants;
-import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -20,7 +15,7 @@ import javax.swing.event.ChangeListener;
  */
 public class ImportOptionsDialog extends javax.swing.JDialog {
 
-    Preferences prefs = Preferences.userNodeForPackage(Launcher.class);
+    Preferences prefs = Preferences.userNodeForPackage(ImportOptionsDialog.class);
 
     /**
      * Creates new form ImportOptions
