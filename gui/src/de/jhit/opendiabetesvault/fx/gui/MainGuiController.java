@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -388,7 +390,7 @@ public class MainGuiController implements Initializable {
                 !importPeriodAllCheckbox.isSelected(),
                 Date.from(Instant.from(importPeriodFromPicker.getValue()
                         .atStartOfDay(ZoneId.systemDefault()))),
-                Date.from(Instant.from(importPeriodToPicker.getValue().plusDays(1)
+                Date.from(Instant.from(importPeriodToPicker.getValue().plusDays(1).minus(1, ChronoUnit.SECONDS)
                         .atStartOfDay(ZoneId.systemDefault()))));
         // do the work
         importPorgressBar.setProgress(
@@ -644,7 +646,8 @@ public class MainGuiController implements Initializable {
                         Date fromDate = Date.from(Instant.from(
                         exportPeriodFromPicker.getValue().atStartOfDay(ZoneId.systemDefault())));                        
                         Date toDate = Date.from(Instant.from(
-                        exportPeriodToPicker.getValue().plusDays(1).atStartOfDay(ZoneId.systemDefault())));
+                        exportPeriodToPicker.getValue().plusDays(1).minus(1, ChronoUnit.SECONDS)
+                                .atStartOfDay(ZoneId.systemDefault())));
                         List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
                                 fromDate, toDate); // TODO read gui properties
 
