@@ -37,6 +37,7 @@ public enum VaultEntryType {
     // Pump Events
     PUMP_REWIND,
     PUMP_PRIME,
+    PUMP_FILL,
     PUMP_NO_DELIVERY,
     PUMP_UNKNOWN_ERROR;
 

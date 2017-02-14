@@ -8,6 +8,7 @@ package de.jhit.opendiabetes.vault.interpreter;
 import de.jhit.opendiabetes.vault.importer.FileImporter;
 import de.jhit.openmediavault.app.container.VaultEntry;
 import de.jhit.openmediavault.app.data.VaultDao;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,28 +27,39 @@ public abstract class VaultInterpreter {
         this.db = db;
     }
 
+    private List<VaultEntry> dateFiltering(List<VaultEntry> result) {
+        if (options.isImportPeriodRestricted) {
+            List<VaultEntry> retVal = new ArrayList<>();
+            for (VaultEntry item : result) {
+                if (item.getTimestamp().after(options.importPeriodFrom)
+                        && item.getTimestamp().before(options.importPeriodTo)) {
+                    retVal.add(item);
+                }
+            }
+            return retVal;
+        } else {
+            return result;
+        }
+    }
+
     public void importAndInterpretFromFile(String filePath) {
         // parse file
         List<VaultEntry> result = importer.importFile(filePath);
-        if (result == null){
+        if (result == null) {
             return;
         }
-        
+
+        // filter unwanted dates
+        result = dateFiltering(result);
         // interpret stuff
         result = interpret(result);
-        if (result == null){
+        if (result == null) {
             return;
         }
 
         // update DB
         for (VaultEntry item : result) {
             db.putEntry(item);
-        }
-    }
-
-    public void importAndInterpretFromFileList(String[] filePath) {
-        for (String item : filePath) {
-            importAndInterpretFromFile(item);
         }
     }
 

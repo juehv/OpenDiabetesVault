@@ -9,8 +9,8 @@ import de.jhit.opendiabetes.vault.exporter.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
-import de.jhit.opendiabetes.vault.interpreter.InterpreterOptions;
 import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreter;
+import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreterOptions;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.openmediavault.app.data.VaultCsvWriter;
 import de.jhit.openmediavault.app.data.VaultDao;
@@ -18,13 +18,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -384,7 +382,7 @@ public class MainGuiController implements Initializable {
         }
 
         // read interpreter options
-        InterpreterOptions iOptions = new InterpreterOptions(
+        SimplePumpInterpreterOptions iOptions = new SimplePumpInterpreterOptions(
                 prefs.getBoolean(Constants.INTERPRETER_FILL_AS_KAT_KEY, false),
                 prefs.getInt(Constants.INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY, 60),
                 !importPeriodAllCheckbox.isSelected(),

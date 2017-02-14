@@ -11,19 +11,14 @@ import java.util.Date;
  *
  * @author mswin
  */
-public class InterpreterOptions {
-
-    public final boolean FillCanulaAsNewKatheder;
-    public final int FillCanulaCooldown;
-    
+public abstract class InterpreterOptions {
+   
     public final boolean isImportPeriodRestricted;
     public final Date importPeriodFrom;
     public final Date importPeriodTo;
 
-    public InterpreterOptions(boolean FillCanulaAsNewKatheder, int FillCanulaCooldown, 
-            boolean isImportPeriodRestricted, Date importPeriodFrom, Date importPeriodTo) {
-        this.FillCanulaAsNewKatheder = FillCanulaAsNewKatheder;
-        this.FillCanulaCooldown = FillCanulaCooldown;
+    public InterpreterOptions(boolean isImportPeriodRestricted, 
+            Date importPeriodFrom, Date importPeriodTo) {
         this.isImportPeriodRestricted = isImportPeriodRestricted;
         this.importPeriodFrom = importPeriodFrom;
         this.importPeriodTo = importPeriodTo;

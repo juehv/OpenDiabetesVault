@@ -34,6 +34,10 @@ public class LibreTxtImporter {
         // read file
         CsvReader creader = new CsvReader(filepath, '\t', Charset.forName("UTF-8"));
 
+        // TODO add stuff
+        // Teststreifen-Blutzucker (mg/dL)
+        // Keton (mmol/L)
+
         try {
             // validate header
             // TODO implement a header-erkenner
