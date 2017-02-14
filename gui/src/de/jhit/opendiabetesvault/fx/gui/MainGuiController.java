@@ -12,6 +12,7 @@ import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
 import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreter;
 import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreterOptions;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.openmediavault.app.data.VaultCsvWriter;
 import de.jhit.openmediavault.app.data.VaultDao;
 import java.io.File;
@@ -204,7 +205,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseMedtronic(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY+0, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_MEDTRONIC_IMPORT_PATH_KEY + 0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
@@ -223,7 +224,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseAbbott(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY+0, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_ABBOTT_IMPORT_PATH_KEY + 0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.TXT_EXTENSION_FILTER);
@@ -242,7 +243,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseGoogleFit(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY+0, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY + 0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
@@ -261,7 +262,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseGoogleTracks(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY+0, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY + 0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.JSON_EXTENSION_FILTER);
@@ -280,7 +281,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseRoche(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY+0, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY + 0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
@@ -299,7 +300,7 @@ public class MainGuiController implements Initializable {
     @FXML
     private void handleButtonBrowseOpenDiabetesVault(ActionEvent event) {
         Stage stage = (Stage) ap.getScene().getWindow();
-        File lastPath = new File(prefs.get(Constants.IMPORTER_ODV_IMPORT_PATH_KEY+0, ""));
+        File lastPath = new File(prefs.get(Constants.IMPORTER_ODV_IMPORT_PATH_KEY + 0, ""));
 
         FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
@@ -386,10 +387,8 @@ public class MainGuiController implements Initializable {
                 prefs.getBoolean(Constants.INTERPRETER_FILL_AS_KAT_KEY, false),
                 prefs.getInt(Constants.INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY, 60),
                 !importPeriodAllCheckbox.isSelected(),
-                Date.from(Instant.from(importPeriodFromPicker.getValue()
-                        .atStartOfDay(ZoneId.systemDefault()))),
-                Date.from(Instant.from(importPeriodToPicker.getValue().plusDays(1).minus(1, ChronoUnit.SECONDS)
-                        .atStartOfDay(ZoneId.systemDefault()))));
+                TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
+                TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000)); //86399000 = 1 day - 1 second
         // do the work
         importPorgressBar.setProgress(
                 -1.0);
@@ -641,11 +640,10 @@ public class MainGuiController implements Initializable {
 
                         // TOOD move following into engine
                         //create clean entrys
-                        Date fromDate = Date.from(Instant.from(
-                        exportPeriodFromPicker.getValue().atStartOfDay(ZoneId.systemDefault())));                        
-                        Date toDate = Date.from(Instant.from(
-                        exportPeriodToPicker.getValue().plusDays(1).minus(1, ChronoUnit.SECONDS)
-                                .atStartOfDay(ZoneId.systemDefault())));
+                        Date fromDate = TimestampUtils.fromLocalDate(
+                                importPeriodFromPicker.getValue());
+                        Date toDate = TimestampUtils.fromLocalDate(
+                                importPeriodToPicker.getValue(), 86399000); // 86399000 = 1 day - 1 second
                         List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
                                 fromDate, toDate); // TODO read gui properties
 
