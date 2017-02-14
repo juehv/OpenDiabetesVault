@@ -37,6 +37,14 @@ public class LauncherFx extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                System.err.println(e.toString());
+            }
+        });
+
         launch(args);
     }
 
