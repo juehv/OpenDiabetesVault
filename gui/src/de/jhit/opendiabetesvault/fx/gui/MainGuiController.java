@@ -317,20 +317,7 @@ public class MainGuiController implements Initializable {
 
     @FXML
     private void handleButtonImport(ActionEvent event) {
-//        Dialog<Void> dialog = new Dialog<>();
-//        dialog.initModality(Modality.WINDOW_MODAL);
-//        dialog.initOwner((Stage) ap.getScene().getWindow());//stage here is the stage of your webview
-//        dialog.initStyle(StageStyle.TRANSPARENT);
-//        Label loader = new Label("LOADING");
-//        loader.setContentDisplay(ContentDisplay.TOP);
-//        loader.setGraphic(new ProgressIndicator());
-//        dialog.getDialogPane().setGraphic(loader);
-//        DropShadow ds = new DropShadow();
-//        ds.setOffsetX(1.3);
-//        ds.setOffsetY(1.3);
-//        ds.setColor(Color.BLACK);
-//        dialog.getDialogPane().setEffect(ds);
-//        dialog.showAndWait();
+//        progress dialog
 //        --> try this http://docs.oracle.com/javafx/2/ui_controls/progress.htm
 
         // check if sth is selected
@@ -398,10 +385,10 @@ public class MainGuiController implements Initializable {
         InterpreterOptions iOptions = new InterpreterOptions(
                 prefs.getBoolean(Constants.INTERPRETER_FILL_AS_KAT_KEY, false),
                 prefs.getInt(Constants.INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY, 60),
-                importPeriodAllCheckbox.isSelected(),
+                !importPeriodAllCheckbox.isSelected(),
                 Date.from(Instant.from(importPeriodFromPicker.getValue()
                         .atStartOfDay(ZoneId.systemDefault()))),
-                Date.from(Instant.from(importPeriodToPicker.getValue()
+                Date.from(Instant.from(importPeriodToPicker.getValue().plusDays(1)
                         .atStartOfDay(ZoneId.systemDefault()))));
         // do the work
         importPorgressBar.setProgress(
@@ -657,7 +644,7 @@ public class MainGuiController implements Initializable {
                         Date fromDate = Date.from(Instant.from(
                         exportPeriodFromPicker.getValue().atStartOfDay(ZoneId.systemDefault())));                        
                         Date toDate = Date.from(Instant.from(
-                        exportPeriodToPicker.getValue().atStartOfDay(ZoneId.systemDefault())));
+                        exportPeriodToPicker.getValue().plusDays(1).atStartOfDay(ZoneId.systemDefault())));
                         List<VaultCsvEntry> entrys = VaultDao.getInstance().queryVaultCsvLinesBetween(
                                 fromDate, toDate); // TODO read gui properties
 
