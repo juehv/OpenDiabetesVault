@@ -59,12 +59,12 @@ public abstract class CsvImporter extends FileImporter {
                     for (VaultEntry item : entryList) {
                         item.setRawId(importedRawData.size()); // add array position as raw id
                         importedData.add(item);
-                        LOG.log(Level.INFO, "Got Entry: {0}", entryList.toString());
+                        LOG.log(Level.FINE, "Got Entry: {0}", entryList.toString());
                     }
                     interpreted = true;
                 }
                 importedRawData.add(new RawEntry(creader.getRawRecord(), interpreted));
-                LOG.log(Level.INFO, "Put Raw: {0}", creader.getRawRecord());
+                LOG.log(Level.FINER, "Put Raw: {0}", creader.getRawRecord());
             }
 
         } catch (Exception ex) {

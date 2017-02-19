@@ -38,13 +38,13 @@ public class SimplePumpInterpreter extends VaultInterpreter {
         // sort by date
         Collections.sort(data, new SortVaultEntryByDate());
 
-        LOG.info("Start basal interpretation");
+        LOG.finer("Start basal interpretation");
         data = applyTempBasalEvents(data);
         data = considerSuspendAsBasalOff(data);
-        LOG.info("Start fill canula interpretation");
+        LOG.finer("Start fill canula interpretation");
         data = fillCanulaInterpretation(data);
 
-        LOG.info("Interpretation finished");
+        LOG.finer("Interpretation finished");
         return data;
     }
 

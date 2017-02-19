@@ -100,7 +100,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                         // found valid header --> finish
                         delimiter = ',';
                         creader.close();
-                        LOG.log(Level.INFO, "Found ',' as delimiter for Carelink CSV: {0}", filePath);
+                        LOG.log(Level.FINE, "Use ',' as delimiter for Carelink CSV: {0}", filePath);
                         return;
                     }
                 }
@@ -108,7 +108,7 @@ public class MedtronicCsvImporter extends CsvImporter {
             // if you end up here there was no valid header within the range
             // try the other delimiter in normal operation
             delimiter = ';';
-            LOG.log(Level.INFO, "Found ';' as delimiter for Carelink CSV: {0}", filePath);
+            LOG.log(Level.FINE, "Use ';' as delimiter for Carelink CSV: {0}", filePath);
 
         } catch (IOException ex) {
             LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter checkF: "

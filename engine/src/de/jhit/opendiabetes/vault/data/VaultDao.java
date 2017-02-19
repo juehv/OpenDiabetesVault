@@ -12,6 +12,8 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.HsqldbDatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.LocalLog;
+import com.j256.ormlite.logger.Log;
+import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -58,7 +60,11 @@ public class VaultDao {
 
     public static void initializeDb() throws SQLException {
         //TODO combine logging
-        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "INFO");
+        System.setProperty(LoggerFactory.LOG_TYPE_SYSTEM_PROPERTY,
+                LoggerFactory.LogType.LOCAL.toString());
+        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY,
+                Log.Level.INFO.toString());
+
         INSTANCE = new VaultDao();
         INSTANCE.initDb();
     }
