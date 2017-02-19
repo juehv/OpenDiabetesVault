@@ -6,6 +6,7 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
+import de.jhit.opendiabetes.vault.container.MedtronicCsvInterpreterBasalInformation;
 import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
@@ -26,14 +27,16 @@ import java.util.regex.Pattern;
  */
 public class MedtronicCsvImporter extends CsvImporter {
 
-    private static final Pattern AMOUNT_PATTERN = Pattern.compile(".*AMOUNT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
-    private static final Pattern ISIG_PATTERN = Pattern.compile(".*ISIG=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
-    private static final Pattern RATE_PATTERN = Pattern.compile(".*RATE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CARB_INPUT_PATTERN = Pattern.compile(".*CARB_INPUT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
-    private static final Pattern BG_INPUT_PATTERN = Pattern.compile(".*BG_INPUT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
-    private static final Pattern DURATION_PATTERN = Pattern.compile(".*DURATION=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
-    private static final Pattern RAW_TYPE_PATTERN = Pattern.compile(".*RAW_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
-    private static final Pattern ALARM_TYPE_PATTERN = Pattern.compile(".*ALARM_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern AMOUNT_PATTERN = Pattern.compile("(.*\\s)?AMOUNT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ISIG_PATTERN = Pattern.compile("(.*\\s)?ISIG=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RATE_PATTERN = Pattern.compile("(.*\\s)?RATE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CARB_INPUT_PATTERN = Pattern.compile("(.*\\s)?CARB_INPUT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern BG_INPUT_PATTERN = Pattern.compile("(.*\\s)?BG_INPUT=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DURATION_PATTERN = Pattern.compile("(.*\\s)?DURATION=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RAW_TYPE_PATTERN = Pattern.compile("(.*\\s)?RAW_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ALARM_TYPE_PATTERN = Pattern.compile("(.*\\s)?ALARM_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern STATE_PATTERN = Pattern.compile("(.*\\s)?STATE=(\\w*).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PERCENT_OF_RATE_PATTERN = Pattern.compile("(.*\\s)?PERCENT_OF_RATE=(\\w*).*", Pattern.CASE_INSENSITIVE);
 
     public MedtronicCsvImporter() {
         super(new MedtronicCsvValidator(), ',');
@@ -43,12 +46,12 @@ public class MedtronicCsvImporter extends CsvImporter {
         super(new MedtronicCsvValidator(), delimiter);
     }
 
-    private static VaultEntry extractEntry(Date timestamp, VaultEntryType type,
+    private static VaultEntry extractDoubleEntry(Date timestamp, VaultEntryType type,
             String rawValues, Pattern pattern, String[] fullEntry) {
         if (rawValues != null && !rawValues.isEmpty()) {
             Matcher m = pattern.matcher(rawValues);
             if (m.matches()) {
-                String matchedString = m.group(1).replace(",", ".");
+                String matchedString = m.group(2).replace(",", ".");
                 try {
                     double value = Double.parseDouble(matchedString);
                     return new VaultEntry(type,
@@ -62,17 +65,38 @@ public class MedtronicCsvImporter extends CsvImporter {
         }
         return null;
     }
-    
+
+    private static MedtronicCsvInterpreterBasalInformation annotateBasalEntry(
+            VaultEntry oldEntry, String rawValues, MedtronicCsvValidator.TYPE rawType,
+            String[] fullEntry) {
+        if (rawValues != null && !rawValues.isEmpty() && oldEntry != null) {
+            Matcher m = DURATION_PATTERN.matcher(rawValues);
+            if (m.matches()) {
+                String matchedString = m.group(2).replace(",", ".");
+                try {
+                    double value = Double.parseDouble(matchedString);
+                    return new MedtronicCsvInterpreterBasalInformation(
+                            oldEntry, value, rawType);
+                } catch (NumberFormatException ex) {
+                    LOG.log(Level.WARNING, "{0} -- Record: {1}",
+                            new Object[]{ex.getMessage(), Arrays.toString(fullEntry)});
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
-    protected void preprocessingIfNeeded(String filePath){
+    protected void preprocessingIfNeeded(String filePath
+    ) {
         // test for delimiter
-         CsvReader creader = null;
+        CsvReader creader = null;
         try {
             // test for , delimiter
             creader = new CsvReader(filePath, ',', Charset.forName("UTF-8"));
-            for (int i =0; i< 15; i++){ // just scan the first 15 lines for a valid header
-                if (creader.readHeaders()){
-                    if (validator.validateHeader(creader.getHeaders())){                    
+            for (int i = 0; i < 15; i++) { // just scan the first 15 lines for a valid header
+                if (creader.readHeaders()) {
+                    if (validator.validateHeader(creader.getHeaders())) {
                         // found valid header --> finish
                         delimiter = ',';
                         creader.close();
@@ -85,7 +109,7 @@ public class MedtronicCsvImporter extends CsvImporter {
             // try the other delimiter in normal operation
             delimiter = ';';
             LOG.log(Level.INFO, "Found ';' as delimiter for Carelink CSV: {0}", filePath);
-                
+
         } catch (IOException ex) {
             LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter checkF: "
                     + filePath, ex);
@@ -121,16 +145,36 @@ public class MedtronicCsvImporter extends CsvImporter {
 
         switch (type) {
             case BASAL:
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.BASAL_Profile, rawValues,
                         RATE_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
                 }
                 break;
+            case BASAL_TMP_PERCENT:
+                tmpEntry = extractDoubleEntry(timestamp,
+                        VaultEntryType.BASAL_Manual, rawValues,
+                        PERCENT_OF_RATE_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    tmpEntry = annotateBasalEntry(tmpEntry, rawValues, type,
+                            creader.getValues());
+                    retVal.add(tmpEntry);
+                }
+                break;
+            case BASAL_TMP_RATE:
+                tmpEntry = extractDoubleEntry(timestamp,
+                        VaultEntryType.BASAL_Manual, rawValues,
+                        RATE_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    tmpEntry = annotateBasalEntry(tmpEntry, rawValues, type,
+                            creader.getValues());
+                    retVal.add(tmpEntry);
+                }
+                break;
             case BG_MANUAL:
             case BG_RECEIVED:
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.GLUCOSE_BG, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
@@ -139,22 +183,22 @@ public class MedtronicCsvImporter extends CsvImporter {
                 break;
             case BOLUS_WIZARD: // TODO store bolus suggestion somewhere   
                 // meal information
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.MEAL_BolusExpert, rawValues,
                         CARB_INPUT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
                 }
                 // bg information --> TODO new data line (s.th. like user informed /user view)
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.GLUCOSE_CGM_ALERT, rawValues,
                         BG_INPUT_PATTERN, creader.getValues());
                 if (tmpEntry != null && tmpEntry.getValue() > 0.0) {
-                   // retVal.add(tmpEntry); //<-- comment out for better plot
+                    // retVal.add(tmpEntry); //<-- comment out for better plot
                 }
                 break;
             case BOLUS: // TODO check other bolus types
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.BOLUS_ManualNormal, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
@@ -162,7 +206,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                 }
                 break;
             case EXERCICE:
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.EXERCISE_Manual, rawValues,
                         DURATION_PATTERN, creader.getValues());
 
@@ -175,7 +219,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                 }
                 break;
             case PRIME:
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.PUMP_PRIME, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
@@ -184,7 +228,7 @@ public class MedtronicCsvImporter extends CsvImporter {
 
                 break;
             case PUMP_ALERT:
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.PUMP_NO_DELIVERY, rawValues,
                         RAW_TYPE_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
@@ -196,20 +240,41 @@ public class MedtronicCsvImporter extends CsvImporter {
                 }
 
                 break;
+            case PUMP_SUSPEND_CHANGED:
+                if (rawValues != null && !rawValues.isEmpty()) {
+                    Matcher m = STATE_PATTERN.matcher(rawValues);
+                    if (m.matches()) {
+                        String matchedString = m.group(2);
+                        VaultEntryType entryType;
+                        if (matchedString.contains("suspend")) {
+                            entryType = VaultEntryType.PUMP_SUSPEND;
+                        } else if (matchedString.contains("normal")) {
+                            entryType = VaultEntryType.PUMP_UNSUSPEND;
+                        } else {
+                            entryType = VaultEntryType.PUMP_UNKNOWN_ERROR;
+                        }
+                        tmpEntry = new VaultEntry(entryType,
+                                timestamp,
+                                VaultEntry.VALUE_UNUSED);
+                        retVal.add(tmpEntry);
+                    }
+                }
+
+                break;
             case REWIND:
                 retVal.add(new VaultEntry(VaultEntryType.PUMP_REWIND, timestamp,
                         VaultEntry.VALUE_UNUSED));
                 break;
             case SENSOR_ALERT:
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.GLUCOSE_CGM_ALERT, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     // check if it is really a cgm-bg-alert
                     Matcher m = ALARM_TYPE_PATTERN.matcher(rawValues);
                     if (m.matches()) {
-                        if (m.group(1).equalsIgnoreCase("102")
-                                || m.group(1).equalsIgnoreCase("101")) {
+                        if (m.group(2).equalsIgnoreCase("102")
+                                || m.group(2).equalsIgnoreCase("101")) {
                             retVal.add(tmpEntry);
                         }
                     }
@@ -217,7 +282,7 @@ public class MedtronicCsvImporter extends CsvImporter {
 
                 break;
             case SENSOR_CAL_BG:
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.GLUCOSE_CGM_CALIBRATION, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
@@ -231,7 +296,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                 break;
             case SENSOR_VALUE:
                 // calibrated cgm value
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.GLUCOSE_CGM, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
@@ -239,7 +304,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                 }
 
                 // measured raw value
-                tmpEntry = extractEntry(timestamp,
+                tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.GLUCOSE_CGM_RAW, rawValues,
                         ISIG_PATTERN, creader.getValues());
                 if (tmpEntry != null) {

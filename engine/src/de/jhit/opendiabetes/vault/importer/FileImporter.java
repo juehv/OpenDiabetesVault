@@ -5,6 +5,7 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
+import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.util.List;
 import java.util.logging.Logger;
@@ -16,9 +17,21 @@ import java.util.logging.Logger;
 public abstract class FileImporter {
 
     protected final static Logger LOG = Logger.getLogger(FileImporter.class.getName());
+    protected List<VaultEntry> importedData;
+    protected List<RawEntry> importedRawData;
 
     public FileImporter() {
     }
 
-    public abstract List<VaultEntry> importFile(String filePath);
+    public abstract boolean importFile(String filePath);
+
+    public List<VaultEntry> getImportedData() {
+        return importedData;
+    }
+
+    public List<RawEntry> getImportedRawData() {
+        return importedRawData;
+    }
+    
+    
 }

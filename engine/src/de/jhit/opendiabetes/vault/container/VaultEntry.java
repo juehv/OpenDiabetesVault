@@ -18,11 +18,13 @@ import java.util.Objects;
 public class VaultEntry {
 
     public static final double VALUE_UNUSED = -5.0;
+    public static final long ID_UNUSED = -5L;
 
     // for QueryBuilder to be able to find the fields
     public static final String TYPE_FIELD_NAME = "type";
     public static final String TIMESTAMP_FIELD_NAME = "timestamp";
     public static final String VALUE_FIELD_NAME = "value";
+    public static final String RAW_ID_FIELD_NAME = "rawId";
 
     @DatabaseField(generatedId = true)
     private long id;
@@ -36,6 +38,9 @@ public class VaultEntry {
     @DatabaseField(columnName = VALUE_FIELD_NAME, canBeNull = false)
     private double value;
 
+    @DatabaseField(columnName = RAW_ID_FIELD_NAME, canBeNull = false)
+    private long rawId = ID_UNUSED;
+
     public VaultEntry() {
         // all persisted classes must define a no-arg constructor with at least package visibility
     }
@@ -44,6 +49,12 @@ public class VaultEntry {
         this.type = type;
         this.timestamp = timestamp;
         this.value = value;
+    }
+
+    public VaultEntry(VaultEntry copy) {
+        this.type = copy.type;
+        this.timestamp = copy.timestamp;
+        this.value = copy.value;
     }
 
     public long getId() {
@@ -60,6 +71,14 @@ public class VaultEntry {
 
     public double getValue() {
         return value;
+    }
+
+    public long getRawId() {
+        return rawId;
+    }
+
+    public void setRawId(long rawId) {
+        this.rawId = rawId;
     }
 
     @Override

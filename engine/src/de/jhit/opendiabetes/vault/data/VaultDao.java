@@ -9,19 +9,18 @@ import com.j256.ormlite.dao.CloseableIterator;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.HsqldbDatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.LocalLog;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,12 +32,14 @@ import java.util.logging.Logger;
  */
 public class VaultDao {
 
+    public static final long RESULT_ERROR = -1;
     private static final String DATABASE_URL = "jdbc:hsqldb:mem:odvault";
     private static final Logger LOG = Logger.getLogger(VaultDao.class.getName());
     private static VaultDao INSTANCE = null;
 
     private ConnectionSource connectionSource;
     private Dao<VaultEntry, Long> vaultDao;
+    private Dao<RawEntry, Long> rawDao;
 
     private VaultDao() {
     }
@@ -64,21 +65,32 @@ public class VaultDao {
 
     private void initDb() throws SQLException {
         // create a connection source to our database
-        connectionSource = new JdbcConnectionSource(DATABASE_URL, "sa", "", new HsqldbDatabaseType());
+        connectionSource = new JdbcConnectionSource(DATABASE_URL, "sa", "",
+                new HsqldbDatabaseType());
         // instantiate the DAO to handle Account with String id
         vaultDao = DaoManager.createDao(connectionSource, VaultEntry.class);
+        rawDao = DaoManager.createDao(connectionSource, RawEntry.class);
         // if you need to create the 'accounts' table make this call
         TableUtils.createTableIfNotExists(connectionSource, VaultEntry.class);
+        TableUtils.createTableIfNotExists(connectionSource, RawEntry.class);
     }
 
-    public boolean putEntry(VaultEntry entry) {
+    public long putEntry(VaultEntry entry) {
         try {
-            vaultDao.createIfNotExists(entry);
+            return vaultDao.createIfNotExists(entry).getId();
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error saving entry:\n" + entry.toString(), ex);
-            return false;
+            return RESULT_ERROR;
         }
-        return true;
+    }
+
+    public long putRawEntry(RawEntry entry) {
+        try {
+            return rawDao.createIfNotExists(entry).getId();
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, "Error saving entry:\n" + entry.toString(), ex);
+            return RESULT_ERROR;
+        }
     }
 
     public boolean removeDublicates() throws SQLException {
@@ -107,8 +119,8 @@ public class VaultDao {
                     tmpList.add(entry);
                 } else {
                     // same timestamp --> check if it is a dublicate
-                    for (VaultEntry item : tmpList){
-                        if (item.equals(entry)){
+                    for (VaultEntry item : tmpList) {
+                        if (item.equals(entry)) {
                             // dublicate --> delete and move on
                             dublicateId.add(entry.getId());
                             break;
@@ -116,7 +128,7 @@ public class VaultDao {
                     }
                 }
             }
-            
+
             // delete dublicates
             int lines = vaultDao.deleteIds(dublicateId);
             LOG.log(Level.INFO, "Removed {0} dublicates", lines);
@@ -145,6 +157,28 @@ public class VaultDao {
             LOG.log(Level.SEVERE, "Error while db query", ex);
         }
         return returnValues;
+    }
+
+    public VaultEntry queryLatestEventBefore(Date timestamp, VaultEntryType type) {
+        VaultEntry returnValue = null;
+        try {
+
+            PreparedQuery<VaultEntry> query
+                    = vaultDao.queryBuilder().orderBy("timestamp", false)
+                            .limit(1L)
+                            .where()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, type)
+                            .and()
+                            .le(VaultEntry.TIMESTAMP_FIELD_NAME, timestamp)
+                            .prepare();
+            List<VaultEntry> tmpList = vaultDao.query(query);
+            if (tmpList.size() > 0) {
+                returnValue = tmpList.get(0);
+            }
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, "Error while db query", ex);
+        }
+        return returnValue;
     }
 
     public List<VaultEntry> queryAllVaultEntrys() {

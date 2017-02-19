@@ -39,6 +39,8 @@ public enum VaultEntryType {
     PUMP_PRIME,
     PUMP_FILL,
     PUMP_NO_DELIVERY,
+    PUMP_SUSPEND,
+    PUMP_UNSUSPEND,
     PUMP_UNKNOWN_ERROR;
 
     public boolean isBolusType() {

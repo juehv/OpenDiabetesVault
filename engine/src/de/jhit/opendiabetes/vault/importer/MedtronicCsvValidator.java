@@ -40,8 +40,9 @@ public class MedtronicCsvValidator extends CsvValidator {
         SENSOR_CAL_BG("SensorCalBG"), SENSOR_CAL_FACTOR("SensorCalFactor"),
         SENSOR_VALUE("GlucoseSensorData"), SENSOR_ALERT("AlarmSensor"),
         BOLUS_WIZARD("BolusWizardBolusEstimate"), BOLUS("BolusNormal"),
-        BASAL("BasalProfileStart"),
-        PUMP_ALERT("AlarmPump");
+        BASAL("BasalProfileStart"), BASAL_TMP_PERCENT("ChangeTempBasalPercent"),
+        BASAL_TMP_RATE("ChangeTempBasal"),
+        PUMP_ALERT("AlarmPump"), PUMP_SUSPEND_CHANGED("ChangeSuspendState");
 
         final String name;
 

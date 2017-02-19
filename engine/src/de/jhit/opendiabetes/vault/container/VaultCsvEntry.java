@@ -180,7 +180,7 @@ public class VaultCsvEntry {
         if (!pumpAnnotation.isEmpty()) {
             StringBuilder annotations = new StringBuilder();
             for (String item : pumpAnnotation) {
-                annotations.append(item).append(CSV_LIST_DELIMITER);
+                annotations.insert(0,CSV_LIST_DELIMITER).insert(0,item);
             }
             annotations.deleteCharAt(annotations.length() - 1);
             sb.add(annotations.toString());

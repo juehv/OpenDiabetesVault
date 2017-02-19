@@ -6,6 +6,7 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
+import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -27,10 +28,11 @@ public abstract class CsvImporter extends FileImporter {
     }
 
     @Override
-    public List<VaultEntry> importFile(String filePath) {
+    public boolean importFile(String filePath) {
         preprocessingIfNeeded(filePath);
-        
-        List<VaultEntry> entrys = new ArrayList<>();
+
+        importedData = new ArrayList<>();
+        importedRawData = new ArrayList<>();
         List<String[]> metaEntrys = new ArrayList<>();
 
         CsvReader creader = null;
@@ -43,7 +45,7 @@ public abstract class CsvImporter extends FileImporter {
                 if (!creader.readHeaders()) {
                     // no more lines --> no valid header
                     LOG.log(Level.WARNING, "No valid header found in File:{0}", filePath);
-                    return null;
+                    return false;
                 }
                 metaEntrys.add(creader.getHeaders());
             } while (!validator.validateHeader(creader.getHeaders()));
@@ -51,14 +53,18 @@ public abstract class CsvImporter extends FileImporter {
 
             // read entries
             while (creader.readRecord()) {
-                // Todo cathegorize entry
                 List<VaultEntry> entryList = parseEntry(creader);
+                boolean interpreted = false;
                 if (entryList != null && !entryList.isEmpty()) {
                     for (VaultEntry item : entryList) {
-                        entrys.add(item);
-                        // LOG.log(Level.INFO, "Got Entry: {0}", entryList.toString());
+                        item.setRawId(importedRawData.size()); // add array position as raw id
+                        importedData.add(item);
+                        LOG.log(Level.INFO, "Got Entry: {0}", entryList.toString());
                     }
+                    interpreted = true;
                 }
+                importedRawData.add(new RawEntry(creader.getRawRecord(), interpreted));
+                LOG.log(Level.INFO, "Put Raw: {0}", creader.getRawRecord());
             }
 
         } catch (Exception ex) {
@@ -69,7 +75,7 @@ public abstract class CsvImporter extends FileImporter {
                 creader.close();
             }
         }
-        return entrys;
+        return true;
     }
 
     protected abstract List<VaultEntry> parseEntry(CsvReader creader) throws Exception;

@@ -158,10 +158,16 @@ public class VaultCsvExporter {
                             break;
                         case PUMP_FILL:
                         case PUMP_NO_DELIVERY:
-                        case PUMP_PRIME:
                         case PUMP_REWIND:
                         case PUMP_UNKNOWN_ERROR:
+                        case PUMP_SUSPEND:
+                        case PUMP_UNSUSPEND:
                             tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString());
+                            break;
+                        case PUMP_PRIME:
+                            tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString()
+                                    + "="
+                                    + tmpEntry.getValue());
                             break;
                         case GLUCOSE_CGM_CALIBRATION:
                         case GLUCOSE_CGM_RAW: // TODO implement this two
