@@ -38,12 +38,13 @@ public class LauncherFx extends Application {
      */
     public static void main(String[] args) {
 
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                System.err.println(e.toString());
-            }
-        });
+        // doesnt work
+//        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+//            @Override
+//            public void uncaughtException(Thread t, Throwable e) {
+//                System.err.println(e.toString());
+//            }
+//        });
 
         launch(args);
     }
