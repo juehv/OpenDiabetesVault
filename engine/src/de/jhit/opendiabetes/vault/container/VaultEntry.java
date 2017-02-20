@@ -24,6 +24,7 @@ public class VaultEntry {
     public static final String TYPE_FIELD_NAME = "type";
     public static final String TIMESTAMP_FIELD_NAME = "timestamp";
     public static final String VALUE_FIELD_NAME = "value";
+    public static final String VALUE2_FIELD_NAME = "value2";
     public static final String RAW_ID_FIELD_NAME = "rawId";
 
     @DatabaseField(generatedId = true)
@@ -37,6 +38,9 @@ public class VaultEntry {
 
     @DatabaseField(columnName = VALUE_FIELD_NAME, canBeNull = false)
     private double value;
+
+    @DatabaseField(columnName = VALUE2_FIELD_NAME, canBeNull = true)
+    private double value2 = VALUE_UNUSED;
 
     @DatabaseField(columnName = RAW_ID_FIELD_NAME, canBeNull = false)
     private long rawId = ID_UNUSED;
@@ -81,6 +85,14 @@ public class VaultEntry {
         this.rawId = rawId;
     }
 
+    public double getValue2() {
+        return value2;
+    }
+
+    public void setValue2(double value2) {
+        this.value2 = value2;
+    }
+
     @Override
     public int hashCode() {
         int hash = 3;
@@ -116,7 +128,7 @@ public class VaultEntry {
 
     @Override
     public String toString() {
-        return "VaultEntry{" + "type=" + type + ", timestamp=" + timestamp + ", value=" + value + '}';
+        return "VaultEntry{" + "id=" + id + ", type=" + type + ", timestamp=" + timestamp + ", value=" + value + ", value2=" + value2 + ", rawId=" + rawId + '}';
     }
 
 }

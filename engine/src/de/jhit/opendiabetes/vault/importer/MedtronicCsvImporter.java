@@ -66,6 +66,26 @@ public class MedtronicCsvImporter extends CsvImporter {
         return null;
     }
 
+    public static VaultEntry extractSecondValue(VaultEntry entry,
+            String rawValues, Pattern pattern, String[] fullEntry) {
+        if (rawValues != null && !rawValues.isEmpty() && entry != null) {
+            Matcher m = pattern.matcher(rawValues);
+            if (m.matches()) {
+                String matchedString = m.group(2).replace(",", ".");
+                try {
+                    double value = Double.parseDouble(matchedString);
+                    entry.setValue2(value);
+                    return entry;
+                } catch (NumberFormatException ex) {
+                    LOG.log(Level.WARNING, "{0} -- Record: {1}",
+                            new Object[]{ex.getMessage(), Arrays.toString(fullEntry)});
+                }
+            }
+        }
+        return null;
+    }
+
+    // TODO reimplement with usage of second value
     private static MedtronicCsvInterpreterBasalInformation annotateBasalEntry(
             VaultEntry oldEntry, String rawValues, MedtronicCsvValidator.TYPE rawType,
             String[] fullEntry) {
@@ -186,23 +206,29 @@ public class MedtronicCsvImporter extends CsvImporter {
                 tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.MEAL_BolusExpert, rawValues,
                         CARB_INPUT_PATTERN, creader.getValues());
-                if (tmpEntry != null) {
+                if (tmpEntry != null && tmpEntry.getValue() > 0.0) {
                     retVal.add(tmpEntry);
                 }
-                // bg information --> TODO new data line (s.th. like user informed /user view)
-                tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.GLUCOSE_CGM_ALERT, rawValues,
-                        BG_INPUT_PATTERN, creader.getValues());
-                if (tmpEntry != null && tmpEntry.getValue() > 0.0) {
-                    // retVal.add(tmpEntry); //<-- comment out for better plot
-                }
                 break;
-            case BOLUS: // TODO check other bolus types
+            case BOLUS_NORMAL: // TODO check other bolus types
                 tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.BOLUS_ManualNormal, rawValues,
+                        VaultEntryType.BOLUS_Normal, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
+                }
+                break;
+            case BOLUS_SQUARE:
+                tmpEntry = extractDoubleEntry(timestamp,
+                        VaultEntryType.BOLUS_Square, rawValues,
+                        AMOUNT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    tmpEntry = extractSecondValue(tmpEntry, rawValues,
+                            DURATION_PATTERN, creader.getValues());
+                    if (tmpEntry != null) {
+                        tmpEntry.setValue2(tmpEntry.getValue2() / 1000);
+                        retVal.add(tmpEntry);
+                    }
                 }
                 break;
             case EXERCICE:

@@ -136,14 +136,18 @@ public class VaultCsvExporter {
                         case BASAL_Manual:
                         case BASAL_Profile:
                             tmpCsvEntry.setBasalValue(tmpEntry.getValue());
+                            tmpCsvEntry.addBasalAnnotation(tmpEntry.getType().toString());
                             break;
-                        case BOLUS_BolusExpertNormal:
-                        case BOLUS_BolusExpertSquare:
-                        case BOLUS_BolusExpertDual:
-                        case BOLUS_ManualSquare:
-                        case BOLUS_ManualDual:
-                        case BOLUS_ManualNormal:
+                        case BOLUS_Square:
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
+                            tmpCsvEntry.addBolusAnnotation(
+                                    tmpEntry.getType().toString()
+                                    + "=" + tmpEntry.getValue2());
+                            break;
+                        case BOLUS_Normal:
+                            tmpCsvEntry.setBolusValue(tmpEntry.getValue());
+                            tmpCsvEntry.addBolusAnnotation(
+                                    tmpEntry.getType().toString());
                             break;
                         case MEAL_BolusExpert:
                         case MEAL_Manual:

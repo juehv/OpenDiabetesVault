@@ -25,11 +25,16 @@ public class VaultCsvEntry {
     private double cgmValue = UNINITIALIZED_DOUBLE;
     private double cgmAlertValue = UNINITIALIZED_DOUBLE;
     private double basalValue = UNINITIALIZED_DOUBLE;
+    private List<String> basalAnnotation = new ArrayList<>();
     private double bolusValue = UNINITIALIZED_DOUBLE;
+    private List<String> bolusAnnotation = new ArrayList<>();
     private double mealValue = UNINITIALIZED_DOUBLE;
     private List<String> pumpAnnotation = new ArrayList<>();
     private double exerciseTimeValue = UNINITIALIZED_DOUBLE;
     private List<String> exerciseAnnotation = new ArrayList<>();
+    private double hrValue = UNINITIALIZED_DOUBLE;
+    private double hrvValue = UNINITIALIZED_DOUBLE;
+    private List<String> sleepAnnotation = new ArrayList<>();
 
     public Date getTimestamp() {
         return timestamp;
@@ -119,16 +124,73 @@ public class VaultCsvEntry {
         this.exerciseAnnotation = exerciseAnnotation;
     }
 
+    public List<String> getBasalAnnotation() {
+        return basalAnnotation;
+    }
+
+    public void setBasalAnnotation(List<String> basalAnnotation) {
+        this.basalAnnotation = basalAnnotation;
+    }
+
+    public void addBasalAnnotation(String basalAnnotation) {
+        this.basalAnnotation.add(basalAnnotation);
+    }
+
+    public List<String> getBolusAnnotation() {
+        return bolusAnnotation;
+    }
+
+    public void setBolusAnnotation(List<String> bolusAnnotation) {
+        this.bolusAnnotation = bolusAnnotation;
+    }
+
+    public void addBolusAnnotation(String bolusAnnotation) {
+        this.bolusAnnotation.add(bolusAnnotation);
+    }
+
+    public double getPulseValue() {
+        return hrValue;
+    }
+
+    public void setPulseValue(double pulseValue) {
+        this.hrValue = pulseValue;
+    }
+
+    public double getStressValue() {
+        return hrvValue;
+    }
+
+    public void setStressValue(double stressValue) {
+        this.hrvValue = stressValue;
+    }
+
+    public List<String> getSleepAnnotation() {
+        return sleepAnnotation;
+    }
+
+    public void setSleepAnnotation(List<String> sleepAnnotation) {
+        this.sleepAnnotation = sleepAnnotation;
+    }
+
+    public void addSleepAnnotation(String sleepAnnotation) {
+        this.sleepAnnotation.add(sleepAnnotation);
+    }
+
     public boolean isEmpty() {
         return bgValue == UNINITIALIZED_DOUBLE
                 && cgmValue == UNINITIALIZED_DOUBLE
                 && cgmAlertValue == UNINITIALIZED_DOUBLE
-                && bolusValue == UNINITIALIZED_DOUBLE
                 && basalValue == UNINITIALIZED_DOUBLE
+                && basalAnnotation.isEmpty()
+                && bolusValue == UNINITIALIZED_DOUBLE
+                && bolusAnnotation.isEmpty()
                 && mealValue == UNINITIALIZED_DOUBLE
                 && pumpAnnotation.isEmpty()
                 && exerciseTimeValue == UNINITIALIZED_DOUBLE
-                && exerciseAnnotation.isEmpty();
+                && exerciseAnnotation.isEmpty()
+                && hrValue == UNINITIALIZED_DOUBLE
+                && hrvValue == UNINITIALIZED_DOUBLE
+                && sleepAnnotation.isEmpty();
     }
 
     public String toCsvString() {
@@ -144,53 +206,73 @@ public class VaultCsvEntry {
     }
 
     public String[] toCsvRecord() {
-        ArrayList<String> sb = new ArrayList<>();
-        sb.add(new SimpleDateFormat("dd.MM.yy").format(timestamp));
-        sb.add(new SimpleDateFormat("HH:mm").format(timestamp));
+        ArrayList<String> csvRecord = new ArrayList<>();
+        csvRecord.add(new SimpleDateFormat("dd.MM.yy").format(timestamp));
+        csvRecord.add(new SimpleDateFormat("HH:mm").format(timestamp));
         if (bgValue > 0.0) {
-            sb.add(String.valueOf(bgValue));
+            csvRecord.add(String.valueOf(bgValue));
         } else {
-            sb.add("");
+            csvRecord.add("");
         }
         if (cgmValue > UNINITIALIZED_DOUBLE) {
-            sb.add(String.valueOf(cgmValue));
+            csvRecord.add(String.valueOf(cgmValue));
         } else {
-            sb.add("");
+            csvRecord.add("");
         }
         if (cgmAlertValue > UNINITIALIZED_DOUBLE) {
-            sb.add(String.valueOf(cgmAlertValue));
+            csvRecord.add(String.valueOf(cgmAlertValue));
         } else {
-            sb.add("");
+            csvRecord.add("");
         }
         if (basalValue > UNINITIALIZED_DOUBLE) {
-            sb.add(String.valueOf(basalValue));
+            csvRecord.add(String.valueOf(basalValue));
         } else {
-            sb.add("");
+            csvRecord.add("");
+        }
+        if (!basalAnnotation.isEmpty()) {
+            StringBuilder annotations = new StringBuilder();
+            for (String item : basalAnnotation) {
+                annotations.insert(0, CSV_LIST_DELIMITER).insert(0, item);
+            }
+            annotations.deleteCharAt(annotations.length() - 1);
+            csvRecord.add(annotations.toString());
+        } else {
+            csvRecord.add("");
         }
         if (bolusValue > UNINITIALIZED_DOUBLE) {
-            sb.add(String.valueOf(bolusValue));
+            csvRecord.add(String.valueOf(bolusValue));
         } else {
-            sb.add("");
+            csvRecord.add("");
+        }
+        if (!bolusAnnotation.isEmpty()) {
+            StringBuilder annotations = new StringBuilder();
+            for (String item : bolusAnnotation) {
+                annotations.insert(0, CSV_LIST_DELIMITER).insert(0, item);
+            }
+            annotations.deleteCharAt(annotations.length() - 1);
+            csvRecord.add(annotations.toString());
+        } else {
+            csvRecord.add("");
         }
         if (mealValue > UNINITIALIZED_DOUBLE) {
-            sb.add(String.valueOf(mealValue));
+            csvRecord.add(String.valueOf(mealValue));
         } else {
-            sb.add("");
+            csvRecord.add("");
         }
         if (!pumpAnnotation.isEmpty()) {
             StringBuilder annotations = new StringBuilder();
             for (String item : pumpAnnotation) {
-                annotations.insert(0,CSV_LIST_DELIMITER).insert(0,item);
+                annotations.insert(0, CSV_LIST_DELIMITER).insert(0, item);
             }
             annotations.deleteCharAt(annotations.length() - 1);
-            sb.add(annotations.toString());
+            csvRecord.add(annotations.toString());
         } else {
-            sb.add("");
+            csvRecord.add("");
         }
         if (exerciseTimeValue > UNINITIALIZED_DOUBLE) {
-            sb.add(String.valueOf(exerciseTimeValue));
+            csvRecord.add(String.valueOf(exerciseTimeValue));
         } else {
-            sb.add("");
+            csvRecord.add("");
         }
         if (!exerciseAnnotation.isEmpty()) {
             StringBuilder annotations = new StringBuilder();
@@ -198,12 +280,32 @@ public class VaultCsvEntry {
                 annotations.append(item).append(CSV_LIST_DELIMITER);
             }
             annotations.deleteCharAt(annotations.length() - 1);
-            sb.add(annotations.toString());
+            csvRecord.add(annotations.toString());
         } else {
-            sb.add("");
+            csvRecord.add("");
+        }
+        if (hrValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(String.valueOf(hrValue));
+        } else {
+            csvRecord.add("");
+        }
+        if (hrvValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(String.valueOf(hrvValue));
+        } else {
+            csvRecord.add("");
+        }
+        if (!sleepAnnotation.isEmpty()) {
+            StringBuilder annotations = new StringBuilder();
+            for (String item : sleepAnnotation) {
+                annotations.insert(0, CSV_LIST_DELIMITER).insert(0, item);
+            }
+            annotations.deleteCharAt(annotations.length() - 1);
+            csvRecord.add(annotations.toString());
+        } else {
+            csvRecord.add("");
         }
 
-        return sb.toArray(new String[]{});
+        return csvRecord.toArray(new String[]{});
     }
 
     public static String getCsvHeaderString() {
@@ -226,16 +328,22 @@ public class VaultCsvEntry {
             "cgmValue",
             "cgmAlertValue",
             "basalValue",
+            "basalAnnotation",
             "bolusValue",
+            "bolusAnnotation",
             "mealValue",
             "pumpAnnotation",
             "exerciseTimeValue",
-            "exerciseTypeValue"
+            "exerciseAnnotation",
+            "heartRateValue",
+            "heartRateVariabilityValue",
+            "sleepAnnotation"
         };
     }
 
     @Override
     public String toString() {
-        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmAlertValue=" + cgmAlertValue + ", basalValue=" + basalValue + ", bolusValue=" + bolusValue + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + '}';
+        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmAlertValue=" + cgmAlertValue + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", hrValue=" + hrValue + ", hrvValue=" + hrvValue + ", sleepAnnotation=" + sleepAnnotation + '}';
     }
+
 }
