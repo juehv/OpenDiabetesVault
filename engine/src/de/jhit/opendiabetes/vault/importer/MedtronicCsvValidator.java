@@ -69,14 +69,14 @@ public class MedtronicCsvValidator extends CsvValidator {
     }
 
     @Override
-    public boolean validateHeader(String[] creader) {
+    public boolean validateHeader(String[] header) {
 
         boolean result = true;
-        Set<String> header = new TreeSet<>(Arrays.asList(creader));
+        Set<String> headerSet = new TreeSet<>(Arrays.asList(header));
 
         // Check german header
         for (String item : CARELINK_HEADER_DE) {
-            result &= header.contains(item);
+            result &= headerSet.contains(item);
         }
         if (result == true) {
             languageSelection = Language.DE;

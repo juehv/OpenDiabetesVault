@@ -11,6 +11,7 @@ package de.jhit.opendiabetes.vault.container;
  */
 public enum VaultEntryType {
     // Bolus
+// Bolus
     BOLUS_Normal,
     BOLUS_Square,
     // Basal
@@ -21,6 +22,9 @@ public enum VaultEntryType {
     EXERCISE_GoogleRun,
     EXERCISE_GoogleWalk,
     EXERCISE_GoogleBicycle,
+    EXERCISE_TrackerWalk,
+    EXERCISE_TrackerRun,
+    EXERCISE_TrackerBicycle,
     // Glucose
     GLUCOSE_CGM,
     GLUCOSE_CGM_RAW,
@@ -37,6 +41,19 @@ public enum VaultEntryType {
     PUMP_NO_DELIVERY,
     PUMP_SUSPEND,
     PUMP_UNSUSPEND,
-    PUMP_UNKNOWN_ERROR;
-
+    PUMP_UNKNOWN_ERROR,
+    // Sleep
+    SLEEP_LIGHT,
+    SLEEP_REM,
+    SLEEP_DEEP,
+    // Heart
+    HEART_RATE,
+    HEART_RATE_VARIABILITY,
+    // Location (Geocoding)
+    LOC_TRANSISTION,
+    LOC_HOME,
+    LOC_WORK,
+    LOC_FOOD,
+    LOC_SPORTS,
+    LOC_OTHER;
 }

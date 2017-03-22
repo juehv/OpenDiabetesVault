@@ -17,10 +17,10 @@ public abstract class CsvValidator {
     protected static final Logger LOG = Logger.getLogger(CsvValidator.class.getName());
 
     public static enum Language {
-        DE, EN;
+        DE, EN, UNIVERSAL;
     };
 
     protected Language languageSelection;
 
-    public abstract boolean validateHeader(String[] creader);
+    public abstract boolean validateHeader(String[] header);
 }
