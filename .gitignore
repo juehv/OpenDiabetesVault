@@ -3,3 +3,4 @@
 build/
 dist/
 export*.csv
+/OpenDiabetesVault-Plot/nbproject/private/
