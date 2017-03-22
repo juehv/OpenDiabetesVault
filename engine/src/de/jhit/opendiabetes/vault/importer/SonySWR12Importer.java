@@ -8,7 +8,6 @@ package de.jhit.opendiabetes.vault.importer;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,6 +72,21 @@ public class SonySWR12Importer extends CsvImporter {
                         timestamp,
                         rawValue);
                 break;
+            case CYCLE:
+                tmpEntry = new VaultEntry(
+                        VaultEntryType.SLEEP_DEEP,
+                        timestamp,
+                        endTime - startTime);
+            case RUN:
+                tmpEntry = new VaultEntry(
+                        VaultEntryType.SLEEP_DEEP,
+                        timestamp,
+                        endTime - startTime);
+            case WALK:
+                tmpEntry = new VaultEntry(
+                        VaultEntryType.SLEEP_DEEP,
+                        timestamp,
+                        endTime - startTime);
             default:
                 throw new AssertionError();
         }

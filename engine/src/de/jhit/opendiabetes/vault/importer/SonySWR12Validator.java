@@ -6,9 +6,6 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
-import static de.jhit.opendiabetes.vault.importer.MedtronicCsvValidator.CARELINK_HEADER_DE;
-import static de.jhit.opendiabetes.vault.importer.MedtronicCsvValidator.CARELINK_HEADER_DE_TIMESTAMP;
-import static de.jhit.opendiabetes.vault.importer.MedtronicCsvValidator.TIME_FORMAT_DE;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.IOException;
 import java.text.ParseException;

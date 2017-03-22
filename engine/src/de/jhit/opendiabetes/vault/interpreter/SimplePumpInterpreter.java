@@ -44,7 +44,7 @@ public class SimplePumpInterpreter extends VaultInterpreter {
         LOG.finer("Start fill canula interpretation");
         data = fillCanulaInterpretation(data);
 
-        LOG.finer("Interpretation finished");
+        LOG.finer("Pump data interpretation finished");
         return data;
     }
 
