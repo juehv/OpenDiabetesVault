@@ -72,16 +72,12 @@ public class SonySWR12Importer extends CsvImporter {
                         timestamp,
                         rawValue);
                 break;
-            case CYCLE:
-                tmpEntry = new VaultEntry(
-                        VaultEntryType.SLEEP_DEEP,
-                        timestamp,
-                        endTime - startTime);
             case RUN:
                 tmpEntry = new VaultEntry(
                         VaultEntryType.SLEEP_DEEP,
                         timestamp,
                         endTime - startTime);
+                break;
             case WALK:
                 tmpEntry = new VaultEntry(
                         VaultEntryType.SLEEP_DEEP,
@@ -91,6 +87,7 @@ public class SonySWR12Importer extends CsvImporter {
                 throw new AssertionError();
         }
 
+        retVal.add(tmpEntry);
         return retVal;
     }
 
