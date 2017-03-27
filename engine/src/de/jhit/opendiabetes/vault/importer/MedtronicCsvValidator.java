@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 /**
  *
@@ -93,6 +94,7 @@ public class MedtronicCsvValidator extends CsvValidator {
             case EN:
                 throw new UnsupportedOperationException("Not supported yet.");
             default:
+                Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");
                 throw new AssertionError();
         }
     }
@@ -105,6 +107,7 @@ public class MedtronicCsvValidator extends CsvValidator {
             case EN:
                 throw new UnsupportedOperationException("Not supported yet.");
             default:
+                Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");
                 throw new AssertionError();
         }
     }
@@ -117,6 +120,7 @@ public class MedtronicCsvValidator extends CsvValidator {
             case EN:
                 throw new UnsupportedOperationException("Not supported yet.");
             default:
+                Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");
                 throw new AssertionError();
         }
     }
@@ -131,6 +135,7 @@ public class MedtronicCsvValidator extends CsvValidator {
             case EN:
                 throw new UnsupportedOperationException("Not supported yet.");
             default:
+                Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");
                 throw new AssertionError();
         }
     }

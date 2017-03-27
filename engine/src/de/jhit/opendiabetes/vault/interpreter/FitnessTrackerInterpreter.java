@@ -53,9 +53,10 @@ public class FitnessTrackerInterpreter extends VaultInterpreter {
                 case EXERCISE_TrackerBicycle:
                 case EXERCISE_TrackerRun:
                 case EXERCISE_TrackerWalk:
-                    if (item.getValue() > myOptions.activityThreshold) {
+                    // TODO Zeitreihen erkennen da immer nur in 1m schritten gespeichert wird
+//                    if (item.getValue() > myOptions.activityThreshold) {
                         retVal.add(item);
-                    }
+ //                   }
                     break;
                 default:
                     retVal.add(item);

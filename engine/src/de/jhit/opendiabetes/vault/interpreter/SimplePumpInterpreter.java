@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -284,6 +285,7 @@ public class SimplePumpInterpreter extends VaultInterpreter {
                                 affectedHistoricElements.get(0).getValue()));
                         break;
                     default:
+                        Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");
                         throw new AssertionError();
                 }
 

@@ -20,7 +20,7 @@ import java.util.TreeSet;
  */
 public class SonySWR12Validator extends CsvValidator {
 
-    public static final String HEADER_TIMESTAMP = "event_timestamp";
+    //public static final String HEADER_TIMESTAMP = "event_timestamp";
     public static final String HEADER_TYPE = "activity_type";
     public static final String HEADER_VALUE = "activity_data";
     public static final String HEADER_START_TIME = "start_time";
@@ -29,14 +29,15 @@ public class SonySWR12Validator extends CsvValidator {
 
     public static final String[] CARELINK_HEADER_DE = {
         HEADER_START_TIME, HEADER_END_TIME,
-        HEADER_TIMESTAMP, HEADER_TYPE,
+        //HEADER_TIMESTAMP, 
+        HEADER_TYPE,
         HEADER_VALUE
     };
 
     public static enum TYPE {
         SLEEP_LIGHT(5), SLEEP_DEEP(6),
         HEART_RATE_VARIABILITY(9), HEART_RATE(8),
-        WALK(0), RUN(1); // TODO update ints
+        WALK(0), RUN(1);
 
         final int typeInt;
 
@@ -77,8 +78,12 @@ public class SonySWR12Validator extends CsvValidator {
     }
 
     public Date getTimestamp(CsvReader creader) throws IOException, ParseException {
-        String timeString = creader.get(HEADER_TIMESTAMP).trim();
-        return TimestampUtils.createCleanTimestamp(timeString, TIME_FORMAT);
+        String timeString = creader.get(
+                //HEADER_TIMESTAMP).trim();
+                HEADER_START_TIME).trim();
+        long timeStampMil = Long.parseLong(timeString);
+        //return TimestampUtils.createCleanTimestamp(timeString, TIME_FORMAT);
+        return TimestampUtils.createCleanTimestamp(new Date(timeStampMil));
     }
 
     public int getValue(CsvReader creader) throws IOException {

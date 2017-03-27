@@ -13,6 +13,7 @@ import de.jhit.opendiabetes.vault.data.VaultDao;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,7 @@ public class VaultCsvExporter {
     public final static int RESULT_FILE_ACCESS_ERROR = -3;
 
     private static final Logger LOG = Logger.getLogger(VaultCsvExporter.class.getName());
+    private static final DecimalFormat doubleFormatter = new DecimalFormat("#.00");
 
     private final ExporterOptions options;
     private final VaultDao db;
@@ -130,6 +132,14 @@ public class VaultCsvExporter {
                                             tmpCsvEntry.toString()});
                             }
                             break;
+                        case GLUCOSE_CGM_CALIBRATION:
+                            tmpCsvEntry.addCgmAnnotation(tmpEntry.getType().toString()
+                                    + "="
+                                    + doubleFormatter.format(tmpEntry.getValue()));
+                            break;
+                        case GLUCOSE_CGM_RAW:
+                            tmpCsvEntry.setCgmRawValue(tmpEntry.getValue());
+                            break;
                         case GLUCOSE_BG:
                             tmpCsvEntry.setBgValue(tmpEntry.getValue());
                             break;
@@ -142,7 +152,7 @@ public class VaultCsvExporter {
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
                             tmpCsvEntry.addBolusAnnotation(
                                     tmpEntry.getType().toString()
-                                    + "=" + tmpEntry.getValue2());
+                                    + "=" + doubleFormatter.format(tmpEntry.getValue2()));
                             break;
                         case BOLUS_Normal:
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
@@ -157,6 +167,9 @@ public class VaultCsvExporter {
                         case EXERCISE_GoogleWalk:
                         case EXERCISE_GoogleRun:
                         case EXERCISE_Manual:
+                        case EXERCISE_TrackerBicycle:
+                        case EXERCISE_TrackerRun:
+                        case EXERCISE_TrackerWalk:
                             tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
                             tmpCsvEntry.addExerciseAnnotation(tmpEntry.getType().toString());
                             break;
@@ -171,10 +184,28 @@ public class VaultCsvExporter {
                         case PUMP_PRIME:
                             tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString()
                                     + "="
-                                    + tmpEntry.getValue());
+                                    + doubleFormatter.format(tmpEntry.getValue()));
                             break;
-                        case GLUCOSE_CGM_CALIBRATION:
-                        case GLUCOSE_CGM_RAW: // TODO implement this two
+                        case HEART_RATE:
+                            tmpCsvEntry.setHeartRateValue(tmpEntry.getValue());
+                            break;
+                        case HEART_RATE_VARIABILITY:
+                            tmpCsvEntry.setStressValue(tmpEntry.getValue(), tmpEntry.getValue2());
+                            break;
+                        case LOC_FOOD:
+                        case LOC_HOME:
+                        case LOC_OTHER:
+                        case LOC_SPORTS:
+                        case LOC_TRANSISTION:
+                        case LOC_WORK:
+                            tmpCsvEntry.addLocationAnnotation(tmpEntry.getType().toString());
+                            break;
+                        case SLEEP_DEEP:
+                        case SLEEP_LIGHT:
+                        case SLEEP_REM:
+                            tmpCsvEntry.addSleepAnnotation(tmpEntry.getType().toString()
+                                    + "="
+                                    + doubleFormatter.format(tmpEntry.getValue()));
                             break;
                         default:
                             LOG.severe("ASSERTION ERROR!");

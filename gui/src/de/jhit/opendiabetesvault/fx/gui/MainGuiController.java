@@ -15,6 +15,9 @@ import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
+import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
+import de.jhit.opendiabetes.vault.interpreter.FitnessTrackerInterpreter;
+import de.jhit.opendiabetes.vault.interpreter.FitnessTrackerInterpreterOptions;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -386,6 +389,13 @@ public class MainGuiController implements Initializable {
                 !importPeriodAllCheckbox.isSelected(),
                 TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
                 TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000)); //86399000 = 1 day - 1 second
+        
+        FitnessTrackerInterpreterOptions fOptions = new FitnessTrackerInterpreterOptions(
+                !importPeriodAllCheckbox.isSelected(),
+                TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
+                TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000), 
+                5);
+        
         // do the work
         importPorgressBar.setProgress(
                 -1.0);
@@ -452,17 +462,15 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.65);
                     });
                     if (rocheCheckBox.isSelected()) {
+                        FitnessTrackerInterpreter interpreter
+                                = new FitnessTrackerInterpreter(
+                                        new SonySWR12Importer(),
+                                        fOptions, VaultDao.getInstance());
                         for (String filePath : rocheTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
-                            if (filePath != null && !filePath.isEmpty()) {//TODO
+                            if (filePath != null && !filePath.isEmpty()) {
+                                interpreter.importAndInterpretFromFile(filePath);
                             }
                         }
-                        Platform.runLater(() -> {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "Roche import is not implemented yet.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        });
                     }
                     Platform.runLater(() -> {
                         importPorgressBar.setProgress(0.80);
