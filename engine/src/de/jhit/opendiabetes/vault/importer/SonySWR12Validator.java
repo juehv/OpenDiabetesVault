@@ -34,9 +34,9 @@ public class SonySWR12Validator extends CsvValidator {
     };
 
     public static enum TYPE {
-        SLEEP_LIGHT(0), SLEEP_DEEP(0),
+        SLEEP_LIGHT(5), SLEEP_DEEP(6),
         HEART_RATE_VARIABILITY(9), HEART_RATE(8),
-        WALK(0), RUN(0), CYCLE(0); // TODO update ints
+        WALK(0), RUN(1); // TODO update ints
 
         final int typeInt;
 
