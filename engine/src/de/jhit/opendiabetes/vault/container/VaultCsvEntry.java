@@ -347,7 +347,7 @@ public class VaultCsvEntry {
             csvRecord.add("");
         }
         if (hrvValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(hrvValue) + "-"
+            csvRecord.add(doubleFormatter.format(hrvValue) + "/"
                     + doubleFormatter.format(hrvValue2));
         } else {
             csvRecord.add("");

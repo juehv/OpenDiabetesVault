@@ -68,7 +68,7 @@ public abstract class CsvImporter extends FileImporter {
             }
 
         } catch (Exception ex) {
-            LOG.log(Level.WARNING, "Error while parsing Careling CSV: "
+            LOG.log(Level.WARNING, "Error while parsing CSV: "
                     + filePath, ex);
         } finally {
             if (creader != null) {
