@@ -190,7 +190,11 @@ public class VaultCsvExporter {
                             tmpCsvEntry.setHeartRateValue(tmpEntry.getValue());
                             break;
                         case HEART_RATE_VARIABILITY:
-                            tmpCsvEntry.setStressValue(tmpEntry.getValue(), tmpEntry.getValue2());
+                            tmpCsvEntry.setHeartRateVariabilityValue(tmpEntry.getValue());
+                            tmpCsvEntry.setStressBalanceValue(tmpEntry.getValue2());
+                            break;
+                        case STRESS:
+                            tmpCsvEntry.setStressValue(tmpEntry.getValue());
                             break;
                         case LOC_FOOD:
                         case LOC_HOME:
@@ -203,9 +207,8 @@ public class VaultCsvExporter {
                         case SLEEP_DEEP:
                         case SLEEP_LIGHT:
                         case SLEEP_REM:
-                            tmpCsvEntry.addSleepAnnotation(tmpEntry.getType().toString()
-                                    + "="
-                                    + doubleFormatter.format(tmpEntry.getValue()));
+                            tmpCsvEntry.addSleepAnnotation(tmpEntry.getType().toString());
+                            tmpCsvEntry.setSleepValue(tmpEntry.getValue());
                             break;
                         default:
                             LOG.severe("ASSERTION ERROR!");

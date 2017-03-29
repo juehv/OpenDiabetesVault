@@ -18,37 +18,37 @@ import java.util.logging.Logger;
  * @author juehv
  */
 public class SonySWR12Importer extends CsvImporter {
-    
+
     public SonySWR12Importer() {
         super(new SonySWR12Validator(), ',');
     }
-    
+
     @Override
     protected void preprocessingIfNeeded(String filePath) {
         // not needed
     }
-    
+
     @Override
     protected List<VaultEntry> parseEntry(CsvReader creader) throws Exception {
         List<VaultEntry> retVal = new ArrayList<>();
         SonySWR12Validator parseValidator = (SonySWR12Validator) validator;
-        
+
         SonySWR12Validator.TYPE type = parseValidator.getSmartbandType(creader);
         if (type == null) {
             return null;
         }
-        
+
         Date timestamp = parseValidator.getTimestamp(creader);
         if (timestamp == null) {
             return null;
         }
-        
+
         int rawValue = parseValidator.getValue(creader);
         long startTime = parseValidator.getStartTime(creader);
         long endTime = parseValidator.getEndTime(creader);
         double timeSpan = (endTime - startTime) / 60000;
         VaultEntry tmpEntry = null;
-        
+
         switch (type) {
             case SLEEP_LIGHT:
                 tmpEntry = new VaultEntry(
@@ -69,13 +69,30 @@ public class SonySWR12Importer extends CsvImporter {
                         rawValue);
                 break;
             case HEART_RATE_VARIABILITY:
+                // Algorithm see decompiled SWR12 app --> RelaxStressIntensity Class
                 int value1 = (int) ((rawValue >>> 8) & 255);
                 int value2 = (int) (255 & rawValue);
-                tmpEntry = new VaultEntry(
-                        VaultEntryType.HEART_RATE_VARIABILITY,
-                        timestamp,
-                        value1);
-                tmpEntry.setValue2(value2);
+
+                if (value1 > 0 && value1 < 100
+                        && value2 > 0 && value2 < 200) {
+                    tmpEntry = new VaultEntry(
+                            VaultEntryType.HEART_RATE_VARIABILITY,
+                            timestamp,
+                            value1);
+                    tmpEntry.setValue2(value2);
+                    retVal.add(tmpEntry);
+
+                    // calculate stress value
+                    value2 -= 100;
+                    double weight = value2 < 0 ? 0.75 : 0.25;
+
+                    double stressValue = 25 - value2 * weight;
+                    tmpEntry = new VaultEntry(
+                            VaultEntryType.STRESS,
+                            timestamp,
+                            stressValue);
+                }
+
                 break;
             case RUN:
                 tmpEntry = new VaultEntry(
@@ -93,11 +110,11 @@ public class SonySWR12Importer extends CsvImporter {
                 Logger.getLogger(this.getClass().getName()).fine("AssertionError");
                 throw new AssertionError();
         }
-        
+
         if (tmpEntry != null) {
             retVal.add(tmpEntry);
         }
         return retVal;
     }
-    
+
 }

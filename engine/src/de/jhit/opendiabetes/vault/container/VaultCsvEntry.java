@@ -35,9 +35,11 @@ public class VaultCsvEntry {
     private List<String> pumpAnnotation = new ArrayList<>();
     private double exerciseTimeValue = UNINITIALIZED_DOUBLE;
     private List<String> exerciseAnnotation = new ArrayList<>();
-    private double hrValue = UNINITIALIZED_DOUBLE;
-    private double hrvValue = UNINITIALIZED_DOUBLE;
-    private double hrvValue2 = UNINITIALIZED_DOUBLE;
+    private double heartRateValue = UNINITIALIZED_DOUBLE;
+    private double stressBalanceValue = UNINITIALIZED_DOUBLE;
+    private double heartRateVariabilityValue = UNINITIALIZED_DOUBLE;
+    private double stressValue = UNINITIALIZED_DOUBLE;
+    private double sleepValue = UNINITIALIZED_DOUBLE;
     private List<String> sleepAnnotation = new ArrayList<>();
     private List<String> locationAnnotation = new ArrayList<>();
 
@@ -174,20 +176,43 @@ public class VaultCsvEntry {
     }
 
     public double getHeartRateValue() {
-        return hrValue;
+        return heartRateValue;
     }
 
     public void setHeartRateValue(double pulseValue) {
-        this.hrValue = pulseValue;
+        this.heartRateValue = pulseValue;
     }
 
-    public String getStressValue() {
-        return hrvValue + "-" + hrvValue2;
+    public double getHeartRateVariabilityValue() {
+        return heartRateVariabilityValue;
     }
 
-    public void setStressValue(double stressValue, double stressValue2) {
-        this.hrvValue = stressValue;
-        this.hrvValue2 = stressValue2;
+    public void setHeartRateVariabilityValue(double hrvValue) {
+        this.heartRateVariabilityValue = hrvValue;
+    }
+
+    public double getStressBalance() {
+        return stressBalanceValue;
+    }
+
+    public void setStressBalanceValue(double stressBalance) {
+        this.stressBalanceValue = stressBalance;
+    }
+
+    public double getStressValue() {
+        return stressValue;
+    }
+
+    public void setStressValue(double stressValue) {
+        this.stressValue = stressValue;
+    }
+
+    public double getSleepValue() {
+        return sleepValue;
+    }
+
+    public void setSleepValue(double sleepValue) {
+        this.sleepValue = sleepValue;
     }
 
     public List<String> getSleepAnnotation() {
@@ -228,8 +253,11 @@ public class VaultCsvEntry {
                 && pumpAnnotation.isEmpty()
                 && exerciseTimeValue == UNINITIALIZED_DOUBLE
                 && exerciseAnnotation.isEmpty()
-                && hrValue == UNINITIALIZED_DOUBLE
-                && hrvValue == UNINITIALIZED_DOUBLE
+                && heartRateValue == UNINITIALIZED_DOUBLE
+                && heartRateVariabilityValue == UNINITIALIZED_DOUBLE
+                && stressBalanceValue == UNINITIALIZED_DOUBLE
+                && stressValue == UNINITIALIZED_DOUBLE
+                && sleepValue == UNINITIALIZED_DOUBLE
                 && sleepAnnotation.isEmpty()
                 && locationAnnotation.isEmpty();
     }
@@ -341,14 +369,28 @@ public class VaultCsvEntry {
         } else {
             csvRecord.add("");
         }
-        if (hrValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(hrValue));
+        if (heartRateValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(doubleFormatter.format(heartRateValue));
         } else {
             csvRecord.add("");
         }
-        if (hrvValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(hrvValue) + "/"
-                    + doubleFormatter.format(hrvValue2));
+        if (heartRateVariabilityValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(doubleFormatter.format(heartRateVariabilityValue));
+        } else {
+            csvRecord.add("");
+        }
+        if (stressBalanceValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(doubleFormatter.format(stressBalanceValue));
+        } else {
+            csvRecord.add("");
+        }
+        if (stressValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(doubleFormatter.format(stressValue));
+        } else {
+            csvRecord.add("");
+        }
+        if (sleepValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(doubleFormatter.format(sleepValue));
         } else {
             csvRecord.add("");
         }
@@ -407,6 +449,9 @@ public class VaultCsvEntry {
             "exerciseAnnotation",
             "heartRateValue",
             "heartRateVariabilityValue",
+            "stressBalanceValue",
+            "stressValue",
+            "sleepValue",
             "sleepAnnotation",
             "locationAnnotation"
         };
@@ -414,7 +459,7 @@ public class VaultCsvEntry {
 
     @Override
     public String toString() {
-        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", cgmAnnotation=" + cgmAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", hrValue=" + hrValue + ", hrvValue=" + hrvValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + '}';
+        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", cgmAnnotation=" + cgmAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + '}';
     }
-
+    
 }

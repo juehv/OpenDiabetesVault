@@ -49,6 +49,7 @@ public enum VaultEntryType {
     // Heart
     HEART_RATE,
     HEART_RATE_VARIABILITY,
+    STRESS,
     // Location (Geocoding)
     LOC_TRANSISTION,
     LOC_HOME,
