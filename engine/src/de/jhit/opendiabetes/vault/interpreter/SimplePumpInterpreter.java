@@ -5,7 +5,7 @@
  */
 package de.jhit.opendiabetes.vault.interpreter;
 
-import de.jhit.opendiabetes.vault.container.MedtronicCsvInterpreterBasalInformation;
+import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
 import de.jhit.opendiabetes.vault.importer.FileImporter;
 import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
@@ -199,9 +199,9 @@ public class SimplePumpInterpreter extends VaultInterpreter {
 
         for (VaultEntry item : data) {
             if (item.getType() == VaultEntryType.BASAL_Manual
-                    && item instanceof MedtronicCsvInterpreterBasalInformation) {
-                MedtronicCsvInterpreterBasalInformation basalItem
-                        = (MedtronicCsvInterpreterBasalInformation) item;
+                    && item instanceof MedtronicAnnotatedVaultEntry) {
+                MedtronicAnnotatedVaultEntry basalItem
+                        = (MedtronicAnnotatedVaultEntry) item;
 
                 // check if we need db data (will just match the first element if at all)
                 if (basalItem.getDuration() > (basalItem.getTimestamp().getTime()
@@ -223,7 +223,7 @@ public class SimplePumpInterpreter extends VaultInterpreter {
                         killedBasalEvents.add(historicItem);
                         affectedHistoricElements.add(historicItem);
                     } else {
-                        // jungest now available element is not affected 
+                        // yungest now available element is not affected 
                         // --> no other remaining elements are affected
                         // add to affected list for calculation but don't kill it
                         affectedHistoricElements.add(historicItem);
@@ -234,7 +234,8 @@ public class SimplePumpInterpreter extends VaultInterpreter {
                     LOG.log(Level.WARNING, "Could not calculate tmp basal, "
                             + "because no profile elements are found\n{0}",
                             basalItem.toString());
-                    break;
+                    killedBasalEvents.add(item);
+                    continue;
                 }
 
                 // apply changes

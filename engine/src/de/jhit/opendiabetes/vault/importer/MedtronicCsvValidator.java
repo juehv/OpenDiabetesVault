@@ -40,7 +40,7 @@ public class MedtronicCsvValidator extends CsvValidator {
         BG_MANUAL("BGCapturedOnPump"), BG_RECEIVED("BGReceived"),
         SENSOR_CAL_BG("SensorCalBG"), SENSOR_CAL_FACTOR("SensorCalFactor"),
         SENSOR_VALUE("GlucoseSensorData"), SENSOR_ALERT("AlarmSensor"),
-        BOLUS_WIZARD("BolusWizardBolusEstimate"), BOLUS_NORMAL("BolusNormal"), 
+        BOLUS_WIZARD("BolusWizardBolusEstimate"), BOLUS_NORMAL("BolusNormal"),
         BOLUS_SQUARE("BolusSquare"),
         BASAL("BasalProfileStart"), BASAL_TMP_PERCENT("ChangeTempBasalPercent"),
         BASAL_TMP_RATE("ChangeTempBasal"),
@@ -99,17 +99,20 @@ public class MedtronicCsvValidator extends CsvValidator {
         }
     }
 
-    public TYPE getCarelinkType(CsvReader creader) throws IOException {
+    public String getCarelinkTypeString(CsvReader creader) throws IOException {
         switch (languageSelection) {
             case DE:
-                String typeString = creader.get(CARELINK_HEADER_DE_TYPE).trim();
-                return TYPE.fromString(typeString);
+                return creader.get(CARELINK_HEADER_DE_TYPE).trim();
             case EN:
                 throw new UnsupportedOperationException("Not supported yet.");
             default:
                 Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");
                 throw new AssertionError();
         }
+    }
+
+    public TYPE getCarelinkType(CsvReader creader) throws IOException {
+        return TYPE.fromString(getCarelinkTypeString(creader));
     }
 
     public Date getTimestamp(CsvReader creader) throws IOException, ParseException {

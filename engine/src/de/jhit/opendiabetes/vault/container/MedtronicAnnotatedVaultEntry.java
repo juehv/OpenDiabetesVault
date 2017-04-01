@@ -11,20 +11,18 @@ import de.jhit.opendiabetes.vault.importer.MedtronicCsvValidator;
  *
  * @author mswin
  */
-public class MedtronicCsvInterpreterBasalInformation extends VaultEntry {
+public class MedtronicAnnotatedVaultEntry extends VaultEntry {
 
-    private final double duration;
     private final MedtronicCsvValidator.TYPE rawType;
 
-    public MedtronicCsvInterpreterBasalInformation(VaultEntry copy,
-            double duration, MedtronicCsvValidator.TYPE rawType) {
+    public MedtronicAnnotatedVaultEntry(VaultEntry copy,
+            MedtronicCsvValidator.TYPE rawType) {
         super(copy);
-        this.duration = duration;
         this.rawType = rawType;
     }
 
     public double getDuration() {
-        return duration;
+        return super.getValue2();
     }
 
     public MedtronicCsvValidator.TYPE getRawType() {

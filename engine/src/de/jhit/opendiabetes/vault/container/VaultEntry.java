@@ -59,6 +59,7 @@ public class VaultEntry {
         this.type = copy.type;
         this.timestamp = copy.timestamp;
         this.value = copy.value;
+        this.value2 = copy.value2;
     }
 
     public long getId() {

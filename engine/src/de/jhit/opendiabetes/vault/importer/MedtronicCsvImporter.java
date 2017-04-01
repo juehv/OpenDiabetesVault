@@ -6,7 +6,7 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
-import de.jhit.opendiabetes.vault.container.MedtronicCsvInterpreterBasalInformation;
+import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
 import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
@@ -86,8 +86,7 @@ public class MedtronicCsvImporter extends CsvImporter {
         return null;
     }
 
-    // TODO reimplement with usage of second value
-    private static MedtronicCsvInterpreterBasalInformation annotateBasalEntry(
+    private static MedtronicAnnotatedVaultEntry annotateBasalEntry(
             VaultEntry oldEntry, String rawValues, MedtronicCsvValidator.TYPE rawType,
             String[] fullEntry) {
         if (rawValues != null && !rawValues.isEmpty() && oldEntry != null) {
@@ -96,8 +95,9 @@ public class MedtronicCsvImporter extends CsvImporter {
                 String matchedString = m.group(2).replace(",", ".");
                 try {
                     double value = Double.parseDouble(matchedString);
-                    return new MedtronicCsvInterpreterBasalInformation(
-                            oldEntry, value, rawType);
+                    oldEntry.setValue2(value);
+                    return new MedtronicAnnotatedVaultEntry(
+                            oldEntry, rawType);
                 } catch (NumberFormatException ex) {
                     LOG.log(Level.WARNING, "{0} -- Record: {1}",
                             new Object[]{ex.getMessage(), Arrays.toString(fullEntry)});
@@ -148,6 +148,8 @@ public class MedtronicCsvImporter extends CsvImporter {
 
         MedtronicCsvValidator.TYPE type = parseValidator.getCarelinkType(creader);
         if (type == null) {
+            LOG.log(Level.FINER, "Ignore Type: {0}",
+                    parseValidator.getCarelinkTypeString(creader));
             return null;
         }
         Date timestamp;
@@ -211,7 +213,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                     retVal.add(tmpEntry);
                 }
                 break;
-            case BOLUS_NORMAL: // TODO check other bolus types
+            case BOLUS_NORMAL:
                 tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.BOLUS_Normal, rawValues,
                         AMOUNT_PATTERN, creader.getValues());

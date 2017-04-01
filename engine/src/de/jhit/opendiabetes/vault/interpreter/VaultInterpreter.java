@@ -47,10 +47,11 @@ public abstract class VaultInterpreter {
     }
 
     public void importAndInterpretFromFile(String filePath) {
+        // parse file
         if (!importer.importFile(filePath)) {
             return;
         }
-        // parse file
+        
         List<VaultEntry> result = importer.getImportedData();
         if (result.isEmpty()) { // not null since importFile is called
             return;
