@@ -396,6 +396,7 @@ public class MainGuiController implements Initializable {
                 !importPeriodAllCheckbox.isSelected(),
                 TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
                 TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000),
+                5,
                 5);
 
         // do the work
@@ -479,7 +480,7 @@ public class MainGuiController implements Initializable {
                     });
                     if (odvCheckBox.isSelected()) {
                         for (String filePath : odvTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
-                                //FIXME Temporary add lifelog data importer here
+                            //FIXME Temporary add lifelog data importer here
                             NonInterpreter interpreter = new NonInterpreter(
                                     new LifelogStressDBImporter(),
                                     iOptions,

@@ -14,12 +14,15 @@ import java.util.Date;
 public class FitnessTrackerInterpreterOptions extends InterpreterOptions {
     
     public final int activityThreshold;
+    public final int activitySliceThreshold;
     
     public FitnessTrackerInterpreterOptions(boolean isImportPeriodRestricted, 
             Date importPeriodFrom, Date importPeriodTo,
-            int activityThreshold) {
+            int activityThreshold,
+            int activitySliceThreshold) {
         super(isImportPeriodRestricted, importPeriodFrom, importPeriodTo);
         this.activityThreshold = activityThreshold;
+        this.activitySliceThreshold = activitySliceThreshold;
     }
     
 }

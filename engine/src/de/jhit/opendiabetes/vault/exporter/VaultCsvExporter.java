@@ -13,10 +13,10 @@ import de.jhit.opendiabetes.vault.data.VaultDao;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +32,7 @@ public class VaultCsvExporter {
     public final static int RESULT_FILE_ACCESS_ERROR = -3;
 
     private static final Logger LOG = Logger.getLogger(VaultCsvExporter.class.getName());
-    private static final DecimalFormat doubleFormatter = new DecimalFormat("#.00");
+    private static final String DOUBLE_FORMAT = "%1$.2f";
 
     private final ExporterOptions options;
     private final VaultDao db;
@@ -86,7 +86,7 @@ public class VaultCsvExporter {
 
         cwriter.writeRecord(VaultCsvEntry.getCsvHeaderRecord());
         for (VaultCsvEntry item : csvEntries) {
-            cwriter.writeRecord(item.toCsvRecord());
+            cwriter.writeRecord(item.toCsvRecord(DOUBLE_FORMAT));
         }
         cwriter.flush();
         cwriter.close();
@@ -135,7 +135,7 @@ public class VaultCsvExporter {
                         case GLUCOSE_CGM_CALIBRATION:
                             tmpCsvEntry.addCgmAnnotation(tmpEntry.getType().toString()
                                     + "="
-                                    + doubleFormatter.format(tmpEntry.getValue()));
+                                    + String.format(Locale.ENGLISH, DOUBLE_FORMAT, tmpEntry.getValue()));
                             break;
                         case GLUCOSE_CGM_RAW:
                             tmpCsvEntry.setCgmRawValue(tmpEntry.getValue());
@@ -152,7 +152,7 @@ public class VaultCsvExporter {
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
                             tmpCsvEntry.addBolusAnnotation(
                                     tmpEntry.getType().toString()
-                                    + "=" + doubleFormatter.format(tmpEntry.getValue2()));
+                                    + "=" + String.format(Locale.ENGLISH, DOUBLE_FORMAT, tmpEntry.getValue2()));
                             break;
                         case BOLUS_Normal:
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
@@ -184,7 +184,7 @@ public class VaultCsvExporter {
                         case PUMP_PRIME:
                             tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString()
                                     + "="
-                                    + doubleFormatter.format(tmpEntry.getValue()));
+                                    + String.format(Locale.ENGLISH, DOUBLE_FORMAT, tmpEntry.getValue()));
                             break;
                         case HEART_RATE:
                             tmpCsvEntry.setHeartRateValue(tmpEntry.getValue());

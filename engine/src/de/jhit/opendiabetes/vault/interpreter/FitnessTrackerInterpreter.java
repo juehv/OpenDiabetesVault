@@ -36,7 +36,7 @@ public class FitnessTrackerInterpreter extends VaultInterpreter {
 
         LOG.finer("Start activity data interpretation");
         data = filterActititys(data);
-        
+
         LOG.finer("Tracker data interpretation finished");
 
         return data;
@@ -47,20 +47,43 @@ public class FitnessTrackerInterpreter extends VaultInterpreter {
             return data;
         }
         List<VaultEntry> retVal = new ArrayList<>();
+        VaultEntry lastExerciseItem = null;
 
         for (VaultEntry item : data) {
             switch (item.getType()) {
                 case EXERCISE_TrackerBicycle:
                 case EXERCISE_TrackerRun:
                 case EXERCISE_TrackerWalk:
-                    // TODO Zeitreihen erkennen da immer nur in 1m schritten gespeichert wird
-//                    if (item.getValue() > myOptions.activityThreshold) {
-                        retVal.add(item);
- //                   }
+                    if (lastExerciseItem == null) {
+                        // init item
+                        lastExerciseItem = item;
+                    } else {
+                        if (Math.round(
+                                (item.getTimestamp().getTime()
+                                - lastExerciseItem.getTimestamp().getTime())
+                                / 60000)
+                                >= myOptions.activitySliceThreshold) {
+                            // within a slice
+                            item.setValue(item.getValue() + lastExerciseItem.getValue());
+                            lastExerciseItem = item; // <-- update timestamp
+                        } else {
+                            // new slice
+                            if (lastExerciseItem.getValue() > myOptions.activityThreshold) {
+                                retVal.add(lastExerciseItem);
+                                lastExerciseItem = item;
+                            }
+                        }
+                    }
                     break;
                 default:
                     retVal.add(item);
             }
+        }
+
+        // add last unsliced item
+        if (lastExerciseItem != null
+                && lastExerciseItem.getValue() > myOptions.activityThreshold) {
+            retVal.add(lastExerciseItem);
         }
 
         return retVal;

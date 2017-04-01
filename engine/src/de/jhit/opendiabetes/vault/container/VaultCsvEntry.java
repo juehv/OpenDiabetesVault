@@ -5,11 +5,11 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -275,27 +275,30 @@ public class VaultCsvEntry {
     }
 
     public String[] toCsvRecord() {
-        DecimalFormat doubleFormatter = new DecimalFormat("#.00");
+        return toCsvRecord("%1$,.2f");
+    }
+
+    public String[] toCsvRecord(String decimalFormat) {
         ArrayList<String> csvRecord = new ArrayList<>();
         csvRecord.add(new SimpleDateFormat("dd.MM.yy").format(timestamp));
         csvRecord.add(new SimpleDateFormat("HH:mm").format(timestamp));
         if (bgValue > 0.0) {
-            csvRecord.add(doubleFormatter.format(bgValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, bgValue));
         } else {
             csvRecord.add("");
         }
         if (cgmValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(cgmValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmValue));
         } else {
             csvRecord.add("");
         }
         if (cgmRawValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(cgmRawValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmRawValue));
         } else {
             csvRecord.add("");
         }
         if (cgmAlertValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(cgmAlertValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmAlertValue));
         } else {
             csvRecord.add("");
         }
@@ -310,7 +313,7 @@ public class VaultCsvEntry {
             csvRecord.add("");
         }
         if (basalValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(basalValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, basalValue));
         } else {
             csvRecord.add("");
         }
@@ -325,7 +328,7 @@ public class VaultCsvEntry {
             csvRecord.add("");
         }
         if (bolusValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(bolusValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, bolusValue));
         } else {
             csvRecord.add("");
         }
@@ -340,7 +343,7 @@ public class VaultCsvEntry {
             csvRecord.add("");
         }
         if (mealValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(mealValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, mealValue));
         } else {
             csvRecord.add("");
         }
@@ -355,7 +358,7 @@ public class VaultCsvEntry {
             csvRecord.add("");
         }
         if (exerciseTimeValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(exerciseTimeValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, exerciseTimeValue));
         } else {
             csvRecord.add("");
         }
@@ -370,27 +373,27 @@ public class VaultCsvEntry {
             csvRecord.add("");
         }
         if (heartRateValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(heartRateValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, heartRateValue));
         } else {
             csvRecord.add("");
         }
         if (heartRateVariabilityValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(heartRateVariabilityValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, heartRateVariabilityValue));
         } else {
             csvRecord.add("");
         }
         if (stressBalanceValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(stressBalanceValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, stressBalanceValue));
         } else {
             csvRecord.add("");
         }
         if (stressValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(stressValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, stressValue));
         } else {
             csvRecord.add("");
         }
         if (sleepValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(doubleFormatter.format(sleepValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, sleepValue));
         } else {
             csvRecord.add("");
         }
@@ -461,5 +464,5 @@ public class VaultCsvEntry {
     public String toString() {
         return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", cgmAnnotation=" + cgmAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + '}';
     }
-    
+
 }

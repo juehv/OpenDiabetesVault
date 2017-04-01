@@ -77,6 +77,10 @@ public class VaultEntry {
         return value;
     }
 
+    public void setValue(double value) {
+        this.value = value;
+    }
+
     public long getRawId() {
         return rawId;
     }
