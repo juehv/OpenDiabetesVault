@@ -122,7 +122,7 @@ public class VaultCsvExporter {
                         case GLUCOSE_CGM:
                             // TODO y does this happen
                             // --> when more than one cgm value per minute is available
-                            // but cgm ticks are every 15 minutes 
+                            // but cgm ticks are every 15 minutes ...
                             if (tmpCsvEntry.getCgmValue()
                                     == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
                                 tmpCsvEntry.setCgmValue(tmpEntry.getValue());
@@ -133,7 +133,7 @@ public class VaultCsvExporter {
                             }
                             break;
                         case GLUCOSE_CGM_CALIBRATION:
-                            tmpCsvEntry.addCgmAnnotation(tmpEntry.getType().toString()
+                            tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString()
                                     + "="
                                     + String.format(Locale.ENGLISH, DOUBLE_FORMAT, tmpEntry.getValue()));
                             break;
@@ -142,6 +142,10 @@ public class VaultCsvExporter {
                             break;
                         case GLUCOSE_BG:
                             tmpCsvEntry.setBgValue(tmpEntry.getValue());
+                            tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
+                            break;
+                        case GLUCOSE_BOLUS_CALCULATION:
+                            tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());
                             break;
                         case BASAL_Manual:
                         case BASAL_Profile:

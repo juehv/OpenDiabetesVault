@@ -204,11 +204,18 @@ public class MedtronicCsvImporter extends CsvImporter {
                     retVal.add(tmpEntry);
                 }
                 break;
-            case BOLUS_WIZARD: // TODO store bolus suggestion somewhere   
+            case BOLUS_WIZARD:  
                 // meal information
                 tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.MEAL_BolusExpert, rawValues,
                         CARB_INPUT_PATTERN, creader.getValues());
+                if (tmpEntry != null && tmpEntry.getValue() > 0.0) {
+                    retVal.add(tmpEntry);
+                }
+
+                tmpEntry = extractDoubleEntry(timestamp,
+                        VaultEntryType.GLUCOSE_BOLUS_CALCULATION, rawValues,
+                        BG_INPUT_PATTERN, creader.getValues());
                 if (tmpEntry != null && tmpEntry.getValue() > 0.0) {
                     retVal.add(tmpEntry);
                 }
