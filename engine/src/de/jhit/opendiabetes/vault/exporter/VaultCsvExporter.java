@@ -149,6 +149,7 @@ public class VaultCsvExporter {
                             break;
                         case BASAL_Manual:
                         case BASAL_Profile:
+                        case BASAL_INTERPRETER:
                             tmpCsvEntry.setBasalValue(tmpEntry.getValue());
                             tmpCsvEntry.addBasalAnnotation(tmpEntry.getType().toString());
                             break;
@@ -178,6 +179,7 @@ public class VaultCsvExporter {
                             tmpCsvEntry.addExerciseAnnotation(tmpEntry.getType().toString());
                             break;
                         case PUMP_FILL:
+                        case PUMP_FILL_INTERPRETER:
                         case PUMP_NO_DELIVERY:
                         case PUMP_REWIND:
                         case PUMP_UNKNOWN_ERROR:

@@ -17,6 +17,7 @@ import java.util.Locale;
  */
 public class VaultCsvEntry {
 
+    public final static String VERSION_STRING = "v9";
     public final static double UNINITIALIZED_DOUBLE = -1.0;
     public final static char CSV_DELIMITER = ',';
     public final static char CSV_LIST_DELIMITER = ':';

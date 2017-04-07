@@ -17,6 +17,7 @@ public enum VaultEntryType {
     // Basal
     BASAL_Profile,
     BASAL_Manual,
+    BASAL_INTERPRETER,
     // Exercise
     EXERCISE_Manual,
     EXERCISE_TrackerWalk,
@@ -39,6 +40,7 @@ public enum VaultEntryType {
     PUMP_REWIND,
     PUMP_PRIME,
     PUMP_FILL,
+    PUMP_FILL_INTERPRETER,
     PUMP_NO_DELIVERY,
     PUMP_SUSPEND,
     PUMP_UNSUSPEND,

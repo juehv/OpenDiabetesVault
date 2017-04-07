@@ -21,7 +21,7 @@ public class MedtronicAnnotatedVaultEntry extends VaultEntry {
         this.rawType = rawType;
     }
 
-    public double getDuration() {
+    public double getDuration() { // in medtronic data, the duration is in milliseconds
         return super.getValue2();
     }
 
@@ -29,4 +29,10 @@ public class MedtronicAnnotatedVaultEntry extends VaultEntry {
         return rawType;
     }
 
+    @Override
+    public String toString() {
+        return super.toString()+" MedtronicAnnotatedVaultEntry{" + "rawType=" + rawType + '}';
+    }
+
+    
 }

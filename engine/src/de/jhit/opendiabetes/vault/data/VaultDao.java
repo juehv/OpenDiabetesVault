@@ -186,7 +186,7 @@ public class VaultDao {
                             .or()
                             .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_Manual)
                             .and()
-                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)                            
+                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
                             .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
@@ -241,6 +241,27 @@ public class VaultDao {
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
                             .where()
                             .between(VaultEntry.TIMESTAMP_FIELD_NAME, fromTimestamp, toTimestamp)
+                            .prepare();
+            returnValues = vaultDao.query(query);
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, "Error while db query", ex);
+        }
+        return returnValues;
+    }
+
+    public List<VaultEntry> queryBasalBetween(Date from, Date to) {
+        List<VaultEntry> returnValues = null;
+        try {
+            PreparedQuery<VaultEntry> query
+                    = vaultDao.queryBuilder().orderBy("timestamp", true)
+                            .where()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_Manual)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_Profile)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_INTERPRETER)
+                            .and()
+                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
                             .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {

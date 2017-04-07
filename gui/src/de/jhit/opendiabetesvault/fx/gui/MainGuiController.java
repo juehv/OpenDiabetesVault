@@ -5,6 +5,7 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
+import de.jhit.opendiabetes.vault.container.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
@@ -26,6 +27,8 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -419,7 +422,9 @@ public class MainGuiController implements Initializable {
                                 = new PumpInterpreter(
                                         new MedtronicCsvImporter(),
                                         iOptions, VaultDao.getInstance());
-                        for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                        String[] unsortedPaths = medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER);
+                        Arrays.sort(unsortedPaths);
+                        for (String filePath : unsortedPaths) {
                             if (filePath != null && !filePath.isEmpty()) {
                                 interpreter.importAndInterpretFromFile(filePath);
                             }
@@ -645,8 +650,10 @@ public class MainGuiController implements Initializable {
                     Platform.runLater(() -> {
                         exportPorgressBar.setProgress(0.05);
                     });
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMss-HHmm");
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMM-HHmmss");
                     String odvExpotFileName = "export-"
+                            + VaultCsvEntry.VERSION_STRING
+                            + "-"
                             + formatter.format(new Date())
                             + ".csv"; //TODO read format from options
                     if (exportOdvCheckBox.isSelected() || exportPlotDailyCheckBox.isSelected()) {

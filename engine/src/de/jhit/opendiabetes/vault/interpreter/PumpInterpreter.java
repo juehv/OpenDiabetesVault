@@ -11,6 +11,7 @@ import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -49,14 +50,14 @@ public class PumpInterpreter extends VaultInterpreter {
         return data;
     }
 
-    private List<VaultEntry> fillCanulaInterpretation(List<VaultEntry> result) {
-        if (result == null || result.isEmpty()) {
-            return result;
+    private List<VaultEntry> fillCanulaInterpretation(List<VaultEntry> importedData) {
+        if (importedData == null || importedData.isEmpty()) {
+            return importedData;
         }
-        //TODO prefill the handles with database information (when multiple files are read, this is neede)
+
         VaultEntry rewindHandle = null;
         VaultEntry primeHandle = null;
-        VaultEntry latesFillCanulaHandle = null;
+        VaultEntry latestFillCanulaHandle = null;
         VaultEntry canulaFillAsPumpFillCandidate = null;
         int cooldown = 0;
         List<VaultEntry> fillEvents = new ArrayList<>();
@@ -68,21 +69,21 @@ public class PumpInterpreter extends VaultInterpreter {
         }
 
         // check if handle prefill is needed
-        VaultEntry rewindFromDb = db.queryLatestEventBefore(result.get(0).getTimestamp(),
+        VaultEntry rewindFromDb = db.queryLatestEventBefore(importedData.get(0).getTimestamp(),
                 VaultEntryType.PUMP_REWIND);
-        VaultEntry primeFromDb = db.queryLatestEventBefore(result.get(0).getTimestamp(),
+        VaultEntry primeFromDb = db.queryLatestEventBefore(importedData.get(0).getTimestamp(),
                 VaultEntryType.PUMP_PRIME);
         if (rewindFromDb != null) {
             if (((primeFromDb != null
                     && rewindFromDb.getTimestamp().after(primeFromDb.getTimestamp()))
                     || primeFromDb == null)
-                    && (result.get(0).getTimestamp().getTime()
+                    && (importedData.get(0).getTimestamp().getTime()
                     - rewindFromDb.getTimestamp().getTime()) < 10800000L) {
                 // rewind without prime has no fill event --> add as handle when its within 3 hours
                 rewindHandle = rewindFromDb;
 
             } else if (primeFromDb != null && (rewindFromDb.getTimestamp().getTime()
-                    - result.get(0).getTimestamp().getTime()) < cooldown) {
+                    - importedData.get(0).getTimestamp().getTime()) < cooldown) {
                 // rewind has prime (so it has a fill event) but is within cooldown
                 // --> prefill handles and delete their fill event
                 // TODO find and kill fill event in db
@@ -92,7 +93,7 @@ public class PumpInterpreter extends VaultInterpreter {
         }
 
         // go through timeline
-        for (VaultEntry item : result) {
+        for (VaultEntry item : importedData) {
 
             // reset handles if cooldown is over
             if (rewindHandle != null && primeHandle != null
@@ -100,17 +101,17 @@ public class PumpInterpreter extends VaultInterpreter {
                     > cooldown)) {
 
                 Date fillDate;
-                if (latesFillCanulaHandle != null) {
-                    fillDate = latesFillCanulaHandle.getTimestamp();
+                if (latestFillCanulaHandle != null) {
+                    fillDate = latestFillCanulaHandle.getTimestamp();
                 } else {
                     fillDate = primeHandle.getTimestamp();
                 }
-                fillEvents.add(new VaultEntry(VaultEntryType.PUMP_FILL,
+                fillEvents.add(new VaultEntry(VaultEntryType.PUMP_FILL_INTERPRETER,
                         fillDate,
                         VaultEntry.VALUE_UNUSED));
                 rewindHandle = null;
                 primeHandle = null;
-                latesFillCanulaHandle = null;
+                latestFillCanulaHandle = null;
                 canulaFillAsPumpFillCandidate = null;
             }
 
@@ -137,11 +138,11 @@ public class PumpInterpreter extends VaultInterpreter {
                         primeHandle = item;
                     } else {
                         // yes --> must be fill canula
-                        latesFillCanulaHandle = item;
+                        latestFillCanulaHandle = item;
                     }
                 } else if (myOptions.FillCanulaAsNewKatheder) {
                     // no prime event? --> new katheder (if enabled)
-                    canulaFillAsPumpFillCandidate = new VaultEntry(VaultEntryType.PUMP_FILL,
+                    canulaFillAsPumpFillCandidate = new VaultEntry(VaultEntryType.PUMP_FILL_INTERPRETER,
                             item.getTimestamp(),
                             VaultEntry.VALUE_UNUSED);
                 }
@@ -151,22 +152,22 @@ public class PumpInterpreter extends VaultInterpreter {
         // process last prime entrys
         if (rewindHandle != null && primeHandle != null) {
             Date fillDate;
-            if (latesFillCanulaHandle != null) {
-                fillDate = latesFillCanulaHandle.getTimestamp();
+            if (latestFillCanulaHandle != null) {
+                fillDate = latestFillCanulaHandle.getTimestamp();
             } else {
                 fillDate = primeHandle.getTimestamp();
             }
-            fillEvents.add(new VaultEntry(VaultEntryType.PUMP_FILL,
+            fillEvents.add(new VaultEntry(VaultEntryType.PUMP_FILL_INTERPRETER,
                     fillDate,
                     VaultEntry.VALUE_UNUSED));
         }
 
         //merge
-        result.addAll(fillEvents);
+        importedData.addAll(fillEvents);
 
         // sort by date again <-- not neccesary because database will do it
         //Collections.sort(result, new SortVaultEntryByDate());
-        return result;
+        return importedData;
     }
 
     private List<VaultEntry> considerSuspendAsBasalOff(List<VaultEntry> data) {
@@ -176,11 +177,37 @@ public class PumpInterpreter extends VaultInterpreter {
         if (data == null || data.isEmpty()) {
             return data;
         }
+
+        List<VaultEntry> dbBasalData = db.queryBasalBetween(
+                TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), -1 * 24 * 60), // start 1 day with the search
+                data.get(data.size() - 1).getTimestamp());
+
         List<VaultEntry> basalEvents = new ArrayList<>();
-        for (VaultEntry item : data) {
-            if (item.getType() == VaultEntryType.PUMP_SUSPEND) {
-                basalEvents.add(new VaultEntry(VaultEntryType.BASAL_Manual,
-                        item.getTimestamp(), 0.0));
+        for (VaultEntry suspendItem : data) {
+            if (suspendItem.getType() == VaultEntryType.PUMP_SUSPEND) {
+                // at start add basal 0
+                basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
+                        suspendItem.getTimestamp(), 0.0));
+
+                // at end set basal to old value
+                VaultEntry lastKnownBasalEntry = null;
+                for (VaultEntry basalItems : dbBasalData) {
+                    if (suspendItem.getTimestamp().after(basalItems.getTimestamp())) {
+                        // update last known value
+                        lastKnownBasalEntry = basalItems;
+                    } else {
+                        if (lastKnownBasalEntry != null) {
+                            // use found item as reference
+                            basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
+                                    TimestampUtils.addMinutesToTimestamp(suspendItem.getTimestamp(),
+                                            (int) Math.round(suspendItem.getValue())),
+                                    lastKnownBasalEntry.getValue()));
+                        } else {
+                            // nothing found as reference ...
+                            break;
+                        }
+                    }
+                }
             }
         }
         data.addAll(basalEvents);
@@ -189,7 +216,7 @@ public class PumpInterpreter extends VaultInterpreter {
 
     private List<VaultEntry> applyTempBasalEvents(List<VaultEntry> data) {
         // if tmp basal ocures, real basal rate must be calculated
-        // it is possible, that tmp basal rate events have an effect on db data
+        // it is possible, that tmp basal rate events have an effect on db data <-- ?
         if (data == null || data.isEmpty()) {
             return data;
         }
@@ -202,15 +229,6 @@ public class PumpInterpreter extends VaultInterpreter {
                     && item instanceof MedtronicAnnotatedVaultEntry) {
                 MedtronicAnnotatedVaultEntry basalItem
                         = (MedtronicAnnotatedVaultEntry) item;
-
-                // check if we need db data (will just match the first element if at all)
-                if (basalItem.getDuration() > (basalItem.getTimestamp().getTime()
-                        - data.get(0).getTimestamp().getTime())) {
-                    // find affected basal_profil events in db
-                    // add them to historic list and kill them from db
-                    // they will be pushed corrected to db again with this run
-                    //TODO implement
-                }
 
                 // get affected historic elements from this dataset
                 List<VaultEntry> affectedHistoricElements = new ArrayList<>();
@@ -231,11 +249,23 @@ public class PumpInterpreter extends VaultInterpreter {
                     }
                 }
                 if (affectedHistoricElements.isEmpty()) {
-                    LOG.log(Level.WARNING, "Could not calculate tmp basal, "
-                            + "because no profile elements are found\n{0}",
-                            basalItem.toString());
-                    killedBasalEvents.add(item);
-                    continue;
+                    // try to get it from DB
+                    VaultEntry tmpItem = db.queryLatestEventBefore(
+                            TimestampUtils.createCleanTimestamp(
+                                    new Date(Math.round(
+                                            basalItem.getTimestamp().getTime()
+                                            - basalItem.getDuration()))),
+                            VaultEntryType.BASAL_Profile);
+                    
+                    if (tmpItem != null) {
+                        affectedHistoricElements.add(tmpItem);
+                    } else {
+                        LOG.log(Level.WARNING, "Could not calculate tmp basal, "
+                                + "because no profile elements are found\n{0}",
+                                basalItem.toString());
+                        killedBasalEvents.add(item); // kill the item since we cannot calculate its meaning
+                        continue;
+                    }
                 }
 
                 // apply changes
@@ -244,7 +274,7 @@ public class PumpInterpreter extends VaultInterpreter {
                         // calculate new rate
                         Date startTimestamp = new Date((long) (basalItem.getTimestamp().getTime()
                                 - basalItem.getDuration()));
-                        // first manual item needs special imestamp
+                        // first manual item needs special timestamp
                         double currentBasalValue = affectedHistoricElements.get(
                                 affectedHistoricElements.size() - 1).getValue();
                         double newBasalValue = currentBasalValue
