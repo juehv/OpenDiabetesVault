@@ -18,12 +18,12 @@ import java.util.List;
  *
  * @author Jens
  */
-public class FitnessTrackerInterpreter extends VaultInterpreter {
+public class ExerciseInterpreter extends VaultInterpreter {
 
-    private final FitnessTrackerInterpreterOptions myOptions;
+    private final ExerciseInterpreterOptions myOptions;
 
-    public FitnessTrackerInterpreter(FileImporter importer,
-            FitnessTrackerInterpreterOptions options, VaultDao db) {
+    public ExerciseInterpreter(FileImporter importer,
+            ExerciseInterpreterOptions options, VaultDao db) {
         super(importer, options, db);
         myOptions = options;
     }

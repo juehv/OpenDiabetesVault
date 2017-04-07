@@ -22,12 +22,12 @@ import java.util.logging.Logger;
  *
  * @author mswin
  */
-public class SimplePumpInterpreter extends VaultInterpreter {
+public class PumpInterpreter extends VaultInterpreter {
 
-    private final SimplePumpInterpreterOptions myOptions;
+    private final PumpInterpreterOptions myOptions;
 
-    public SimplePumpInterpreter(FileImporter importer,
-            SimplePumpInterpreterOptions options, VaultDao db) {
+    public PumpInterpreter(FileImporter importer,
+            PumpInterpreterOptions options, VaultDao db) {
         super(importer, options, db);
         myOptions = options;
     }

@@ -11,12 +11,12 @@ import java.util.Date;
  *
  * @author Jens
  */
-public class SimplePumpInterpreterOptions extends InterpreterOptions {
+public class PumpInterpreterOptions extends InterpreterOptions {
     
     public final boolean FillCanulaAsNewKatheder;
     public final int FillCanulaCooldown;
 
-    public SimplePumpInterpreterOptions(boolean FillCanulaAsNewKatheder, 
+    public PumpInterpreterOptions(boolean FillCanulaAsNewKatheder, 
             int FillCanulaCooldown, boolean isImportPeriodRestricted, 
             Date importPeriodFrom, Date importPeriodTo) {
         super(isImportPeriodRestricted, importPeriodFrom, importPeriodTo);

@@ -8,8 +8,8 @@ package de.jhit.opendiabetesvault.fx.gui;
 import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
-import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreter;
-import de.jhit.opendiabetes.vault.interpreter.SimplePumpInterpreterOptions;
+import de.jhit.opendiabetes.vault.interpreter.PumpInterpreter;
+import de.jhit.opendiabetes.vault.interpreter.PumpInterpreterOptions;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.data.VaultDao;
@@ -17,8 +17,8 @@ import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import de.jhit.opendiabetes.vault.importer.LifelogStressDBImporter;
 import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
-import de.jhit.opendiabetes.vault.interpreter.FitnessTrackerInterpreter;
-import de.jhit.opendiabetes.vault.interpreter.FitnessTrackerInterpreterOptions;
+import de.jhit.opendiabetes.vault.interpreter.ExerciseInterpreter;
+import de.jhit.opendiabetes.vault.interpreter.ExerciseInterpreterOptions;
 import de.jhit.opendiabetes.vault.interpreter.NonInterpreter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -385,14 +385,14 @@ public class MainGuiController implements Initializable {
         }
 
         // read interpreter options
-        SimplePumpInterpreterOptions iOptions = new SimplePumpInterpreterOptions(
+        PumpInterpreterOptions iOptions = new PumpInterpreterOptions(
                 prefs.getBoolean(Constants.INTERPRETER_FILL_AS_KAT_KEY, false),
                 prefs.getInt(Constants.INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY, 60),
                 !importPeriodAllCheckbox.isSelected(),
                 TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
                 TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000)); //86399000 = 1 day - 1 second
 
-        FitnessTrackerInterpreterOptions fOptions = new FitnessTrackerInterpreterOptions(
+        ExerciseInterpreterOptions fOptions = new ExerciseInterpreterOptions(
                 !importPeriodAllCheckbox.isSelected(),
                 TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
                 TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000),
@@ -415,8 +415,8 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.05);
                     });
                     if (medtronicCheckBox.isSelected()) {
-                        SimplePumpInterpreter interpreter
-                                = new SimplePumpInterpreter(
+                        PumpInterpreter interpreter
+                                = new PumpInterpreter(
                                         new MedtronicCsvImporter(),
                                         iOptions, VaultDao.getInstance());
                         for (String filePath : medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
@@ -465,8 +465,8 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.65);
                     });
                     if (rocheCheckBox.isSelected()) {
-                        FitnessTrackerInterpreter interpreter
-                                = new FitnessTrackerInterpreter(
+                        ExerciseInterpreter interpreter
+                                = new ExerciseInterpreter(
                                         new SonySWR12Importer(),
                                         fOptions, VaultDao.getInstance());
                         for (String filePath : rocheTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {

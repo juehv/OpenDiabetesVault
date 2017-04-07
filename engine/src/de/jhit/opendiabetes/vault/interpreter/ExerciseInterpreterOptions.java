@@ -11,12 +11,12 @@ import java.util.Date;
  *
  * @author Jens
  */
-public class FitnessTrackerInterpreterOptions extends InterpreterOptions {
+public class ExerciseInterpreterOptions extends InterpreterOptions {
     
     public final int activityThreshold;
     public final int activitySliceThreshold;
     
-    public FitnessTrackerInterpreterOptions(boolean isImportPeriodRestricted, 
+    public ExerciseInterpreterOptions(boolean isImportPeriodRestricted, 
             Date importPeriodFrom, Date importPeriodTo,
             int activityThreshold,
             int activitySliceThreshold) {
