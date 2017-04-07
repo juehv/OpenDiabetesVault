@@ -397,7 +397,7 @@ public class MainGuiController implements Initializable {
                 TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
                 TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000),
                 5,
-                5);
+                20);
 
         // do the work
         importPorgressBar.setProgress(
@@ -662,9 +662,9 @@ public class MainGuiController implements Initializable {
                         ExporterOptions eOptions = new ExporterOptions(
                                 !exportPeriodAllCheckbox.isSelected(),
                                 TimestampUtils.fromLocalDate(
-                                        importPeriodFromPicker.getValue()),
+                                        exportPeriodFromPicker.getValue()),
                                 TimestampUtils.fromLocalDate(
-                                        importPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second                        
+                                        exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second                        
                         VaultCsvExporter exporter = new VaultCsvExporter(eOptions,
                                 VaultDao.getInstance(),
                                 odvExpotFileName);
