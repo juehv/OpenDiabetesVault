@@ -70,6 +70,10 @@ public class VaultEntry {
         return type;
     }
 
+    public void setType(VaultEntryType type) {
+        this.type = type;
+    }
+
     public Date getTimestamp() {
         return timestamp;
     }

@@ -19,7 +19,7 @@ public class ExporterOptions {
 
     public ExporterOptions(boolean isImportPeriodRestricted, Date exportPeriodFrom, Date exportPeriodTo) {
         this.isImportPeriodRestricted = isImportPeriodRestricted;
-        this.exportPeriodFrom = exportPeriodFrom!= null ? exportPeriodTo : new Date();
+        this.exportPeriodFrom = exportPeriodFrom!= null ? exportPeriodFrom : new Date();
         this.exportPeriodTo = exportPeriodTo!= null ? exportPeriodTo : new Date();
     }
 }

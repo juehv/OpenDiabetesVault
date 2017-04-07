@@ -19,12 +19,12 @@ public enum VaultEntryType {
     BASAL_Manual,
     // Exercise
     EXERCISE_Manual,
-    EXERCISE_GoogleRun,
+    EXERCISE_TrackerWalk,
+    EXERCISE_TrackerBicycle,
+    EXERCISE_TrackerRun,
     EXERCISE_GoogleWalk,
     EXERCISE_GoogleBicycle,
-    EXERCISE_TrackerWalk,
-    EXERCISE_TrackerRun,
-    EXERCISE_TrackerBicycle,
+    EXERCISE_GoogleRun,
     // Glucose
     GLUCOSE_CGM,
     GLUCOSE_CGM_RAW,

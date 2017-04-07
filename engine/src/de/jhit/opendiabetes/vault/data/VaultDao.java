@@ -156,7 +156,37 @@ public class VaultDao {
                             .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM)
                             .or()
                             .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM_ALERT)
+                            .and()
                             .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
+                            .prepare();
+            returnValues = vaultDao.query(query);
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, "Error while db query", ex);
+        }
+        return returnValues;
+    }
+
+    public List<VaultEntry> queryExerciseBetween(Date from, Date to) {
+        List<VaultEntry> returnValues = null;
+        try {
+            PreparedQuery<VaultEntry> query
+                    = vaultDao.queryBuilder().orderBy("timestamp", true)
+                            .where()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleBicycle)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleRun)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleWalk)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerBicycle)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerRun)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerWalk)
+                            .or()
+                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_Manual)
+                            .and()
+                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)                            
                             .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
