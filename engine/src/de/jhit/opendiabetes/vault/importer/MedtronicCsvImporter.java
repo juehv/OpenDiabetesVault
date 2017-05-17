@@ -40,7 +40,7 @@ public class MedtronicCsvImporter extends CsvImporter {
     private static final Pattern PERCENT_OF_RATE_PATTERN = Pattern.compile("(.*\\s)?PERCENT_OF_RATE=(\\w*).*", Pattern.CASE_INSENSITIVE);
 
     public MedtronicCsvImporter() {
-        super(new MedtronicCsvValidator(), ',');
+        this(',');
     }
 
     public MedtronicCsvImporter(char delimiter) {
@@ -108,8 +108,7 @@ public class MedtronicCsvImporter extends CsvImporter {
     }
 
     @Override
-    protected void preprocessingIfNeeded(String filePath
-    ) {
+    protected void preprocessingIfNeeded(String filePath) {
         // test for delimiter
         CsvReader creader = null;
         try {
@@ -132,7 +131,7 @@ public class MedtronicCsvImporter extends CsvImporter {
             LOG.log(Level.FINE, "Use ';' as delimiter for Carelink CSV: {0}", filePath);
 
         } catch (IOException ex) {
-            LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter checkF: "
+            LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter check: "
                     + filePath, ex);
         } finally {
             if (creader != null) {
@@ -204,7 +203,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                     retVal.add(tmpEntry);
                 }
                 break;
-            case BOLUS_WIZARD:  
+            case BOLUS_WIZARD:
                 // meal information
                 tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.MEAL_BolusExpert, rawValues,
