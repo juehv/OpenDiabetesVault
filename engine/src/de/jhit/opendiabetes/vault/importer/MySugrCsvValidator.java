@@ -9,7 +9,7 @@ package de.jhit.opendiabetes.vault.importer;
  *
  * @author juehv
  */
-public class MySugrValidator extends CsvValidator {
+public class MySugrCsvValidator extends CsvValidator {
 
     @Override
     public boolean validateHeader(String[] header) {

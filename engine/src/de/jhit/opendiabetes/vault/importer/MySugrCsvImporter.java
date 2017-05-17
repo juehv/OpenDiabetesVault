@@ -17,14 +17,14 @@ import java.util.logging.Level;
  *
  * @author juehv
  */
-public class MySugrImporter extends CsvImporter {
+public class MySugrCsvImporter extends CsvImporter {
 
-    public MySugrImporter() {
+    public MySugrCsvImporter() {
         this(',');
     }
 
-    public MySugrImporter(char delimiter) {
-        super(new MySugrValidator(), delimiter);
+    public MySugrCsvImporter(char delimiter) {
+        super(new MySugrCsvValidator(), delimiter);
     }
 
     @Override
