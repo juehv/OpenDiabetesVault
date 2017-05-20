@@ -16,6 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
+import de.jhit.opendiabetes.vault.importer.validator.SonySWR12Validator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;

@@ -16,6 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
+import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
 import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer;
+package de.jhit.opendiabetes.vault.importer.validator;
 
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;

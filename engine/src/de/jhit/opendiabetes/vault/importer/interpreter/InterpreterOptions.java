@@ -14,19 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer;
+package de.jhit.opendiabetes.vault.importer.interpreter;
 
-import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
+import java.util.Date;
 
 /**
  *
- * @author juehv
+ * @author mswin
  */
-public class NonValidator extends CsvValidator {
+public abstract class InterpreterOptions {
+   
+    public final boolean isImportPeriodRestricted;
+    public final Date importPeriodFrom;
+    public final Date importPeriodTo;
 
-    @Override
-    public boolean validateHeader(String[] header) {
-        return true;
+    public InterpreterOptions(boolean isImportPeriodRestricted, 
+            Date importPeriodFrom, Date importPeriodTo) {
+        this.isImportPeriodRestricted = isImportPeriodRestricted;
+        this.importPeriodFrom = importPeriodFrom != null ? importPeriodFrom : new Date();
+        this.importPeriodTo = importPeriodTo!= null ? importPeriodTo : new Date();
     }
+
     
+
 }

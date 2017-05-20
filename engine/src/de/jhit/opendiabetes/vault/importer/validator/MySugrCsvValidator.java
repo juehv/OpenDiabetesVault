@@ -14,19 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer;
-
-import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
+package de.jhit.opendiabetes.vault.importer.validator;
 
 /**
  *
  * @author juehv
  */
-public class NonValidator extends CsvValidator {
+public class MySugrCsvValidator extends CsvValidator {
 
     @Override
     public boolean validateHeader(String[] header) {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

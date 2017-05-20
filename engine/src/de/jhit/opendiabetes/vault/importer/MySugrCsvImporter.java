@@ -16,6 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
+import de.jhit.opendiabetes.vault.importer.validator.MySugrCsvValidator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;

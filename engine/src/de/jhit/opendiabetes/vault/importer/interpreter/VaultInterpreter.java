@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.interpreter;
+package de.jhit.opendiabetes.vault.importer.interpreter;
 
 import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.importer.FileImporter;

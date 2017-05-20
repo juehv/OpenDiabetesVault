@@ -14,19 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer;
+package de.jhit.opendiabetes.vault.importer.validator;
 
-import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
+import com.csvreader.CsvReader;
+import java.util.logging.Logger;
 
 /**
  *
- * @author juehv
+ * @author mswin
  */
-public class NonValidator extends CsvValidator {
+public abstract class CsvValidator {
 
-    @Override
-    public boolean validateHeader(String[] header) {
-        return true;
-    }
-    
+    protected static final Logger LOG = Logger.getLogger(CsvValidator.class.getName());
+
+    public static enum Language {
+        DE, EN, UNIVERSAL;
+    };
+
+    protected Language languageSelection;
+
+    public abstract boolean validateHeader(String[] header);
 }

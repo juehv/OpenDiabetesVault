@@ -16,7 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
-import de.jhit.opendiabetes.vault.importer.MedtronicCsvValidator;
+import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
 
 /**
  *

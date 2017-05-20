@@ -16,6 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
+import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
