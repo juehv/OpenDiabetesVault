@@ -30,6 +30,7 @@ public abstract class FileImporter {
     protected final static Logger LOG = Logger.getLogger(FileImporter.class.getName());
     protected List<VaultEntry> importedData;
     protected List<RawEntry> importedRawData;
+    protected String currentFileName;
 
     public FileImporter() {
     }

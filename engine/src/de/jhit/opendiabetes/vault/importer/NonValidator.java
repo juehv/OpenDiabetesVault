@@ -24,9 +24,8 @@ import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
  */
 public class NonValidator extends CsvValidator {
 
-    @Override
-    public boolean validateHeader(String[] header) {
-        return true;
+    public NonValidator() {
+        super(new String[]{}, new String[]{});
     }
-    
+
 }

@@ -32,8 +32,6 @@ import java.util.GregorianCalendar;
 public class TimestampUtils {
 
     public static final String TIME_FORMAT_LIBRE_DE = "yyyy.MM.dd HH:mm";
-    public static final String TIME_FORMAT_CARELINK_DE = "dd.MM.yy HH:mm:ss";
-    public static final String TIME_FORMAT_GOOGLE_DE = "yyyy-MM-dd HHmmss.SSSZ";        //01:00:00.000+01:00
 
     public static Date createCleanTimestamp(String dateTime, String format) throws ParseException {
         SimpleDateFormat df = new SimpleDateFormat(format);

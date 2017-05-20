@@ -16,7 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.importer.validator;
 
-import static de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator.CARELINK_HEADER_DE;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
@@ -51,12 +50,20 @@ public abstract class CsvValidator {
         // Check german header
         for (String item : HEADER_DE) {
             result &= headerSet.contains(item);
+            if (!result) {
+                break;
+            }
         }
         if (result == true) {
             languageSelection = Language.DE;
         } else {
+            // try again with english header
+            result = true;
             for (String item : HEADER_EN) {
                 result &= headerSet.contains(item);
+                if (!result) {
+                    break;
+                }
             }
             if (result == true) {
                 languageSelection = Language.EN;

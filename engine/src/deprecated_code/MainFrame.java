@@ -654,7 +654,7 @@ public class MainFrame extends javax.swing.JFrame {
                 importData = new ArrayList<>();
                 File folder = new File(csvFile.getParent());
                 for (File googleFile : folder.listFiles()) {
-                    GoogleFitCsvImporter.parseData(googleFile.getAbsolutePath());
+                 //   GoogleFitCsvImporter.parseData(googleFile.getAbsolutePath());
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Programming Error",

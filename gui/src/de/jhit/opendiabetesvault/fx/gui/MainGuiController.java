@@ -9,8 +9,8 @@ import de.jhit.opendiabetes.vault.container.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
-import de.jhit.opendiabetes.vault.interpreter.PumpInterpreter;
-import de.jhit.opendiabetes.vault.interpreter.PumpInterpreterOptions;
+import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
+import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.data.VaultDao;
@@ -18,9 +18,9 @@ import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import de.jhit.opendiabetes.vault.importer.LifelogStressDBImporter;
 import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
-import de.jhit.opendiabetes.vault.interpreter.ExerciseInterpreter;
-import de.jhit.opendiabetes.vault.interpreter.ExerciseInterpreterOptions;
-import de.jhit.opendiabetes.vault.interpreter.NonInterpreter;
+import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreter;
+import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOptions;
+import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -444,9 +444,13 @@ public class MainGuiController implements Initializable {
                         importPorgressBar.setProgress(0.35);
                     });
                     if (googleFitCheckBox.isSelected()) {
+                        ExerciseInterpreter interpreter
+                                = new ExerciseInterpreter(
+                                        new GoogleFitCsvImporter(),
+                                        fOptions, VaultDao.getInstance());
                         for (String filePath : googleFitTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {
-                                GoogleFitCsvImporter.parseData(filePath);
+                                interpreter.importAndInterpretFromFile(filePath);
                             }
                         }
                     }

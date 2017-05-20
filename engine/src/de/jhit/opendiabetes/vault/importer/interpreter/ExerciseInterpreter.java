@@ -70,6 +70,9 @@ public class ExerciseInterpreter extends VaultInterpreter {
                 case EXERCISE_TrackerBicycle:
                 case EXERCISE_TrackerRun:
                 case EXERCISE_TrackerWalk:
+                case EXERCISE_GoogleWalk:
+                case EXERCISE_GoogleRun:
+                case EXERCISE_GoogleBicycle:
                     // TODO also use this for google
                     // google activity type > tracker activity type
                     if (lastExerciseItem == null) {
@@ -93,7 +96,7 @@ public class ExerciseInterpreter extends VaultInterpreter {
                             // new slice
                             // check if found slice already exist from other source
                             for (VaultEntry historyEntry : dbValues) {
-                                if (lastExerciseItem != null 
+                                if (lastExerciseItem != null
                                         && historyEntry.getTimestamp().after(lastExerciseItem.getTimestamp())
                                         && Math.round(historyEntry.getTimestamp().getTime() / 60000)
                                         <= Math.round(lastExerciseItem.getValue())) { // is within duration
@@ -109,10 +112,10 @@ public class ExerciseInterpreter extends VaultInterpreter {
                                             typeBestEfford = historyEntry.getType();
                                         }
                                     }
-                                } else if (lastExerciseItem != null 
+                                } else if (lastExerciseItem != null
                                         && historyEntry.getTimestamp().after(lastExerciseItem.getTimestamp())
                                         && Math.round(historyEntry.getTimestamp().getTime() / 60000)
-                                        > Math.round(lastExerciseItem.getValue())){
+                                        > Math.round(lastExerciseItem.getValue())) {
                                     // we passed the current time point --> stop searching
                                     break;
                                 }
