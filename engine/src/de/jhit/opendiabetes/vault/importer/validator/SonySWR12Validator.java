@@ -20,10 +20,7 @@ import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  *
@@ -31,16 +28,14 @@ import java.util.TreeSet;
  */
 public class SonySWR12Validator extends CsvValidator {
 
-    //public static final String HEADER_TIMESTAMP = "event_timestamp";
     public static final String HEADER_TYPE = "activity_type";
     public static final String HEADER_VALUE = "activity_data";
     public static final String HEADER_START_TIME = "start_time";
     public static final String HEADER_END_TIME = "end_time";
     public static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public static final String[] CARELINK_HEADER_DE = {
+    public static final String[] HEADER = {
         HEADER_START_TIME, HEADER_END_TIME,
-        //HEADER_TIMESTAMP, 
         HEADER_TYPE,
         HEADER_VALUE
     };
@@ -66,22 +61,10 @@ public class SonySWR12Validator extends CsvValidator {
         }
     }
 
-    @Override
-    public boolean validateHeader(String[] header) {
-
-        boolean result = true;
-        Set<String> headerSet = new TreeSet<>(Arrays.asList(header));
-
-        // Check header
-        for (String item : CARELINK_HEADER_DE) {
-            result &= headerSet.contains(item);
-        }
-        if (result == true) {
-            languageSelection = Language.UNIVERSAL;
-        }
-
-        return result;
-    }
+    public SonySWR12Validator() {
+        //universal header
+        super(HEADER, HEADER);
+    }    
 
     public TYPE getSmartbandType(CsvReader creader) throws IOException {
         int typeInt = Integer.parseInt(creader.get(HEADER_TYPE).trim());
@@ -90,10 +73,8 @@ public class SonySWR12Validator extends CsvValidator {
 
     public Date getTimestamp(CsvReader creader) throws IOException, ParseException {
         String timeString = creader.get(
-                //HEADER_TIMESTAMP).trim();
                 HEADER_START_TIME).trim();
         long timeStampMil = Long.parseLong(timeString);
-        //return TimestampUtils.createCleanTimestamp(timeString, TIME_FORMAT);
         return TimestampUtils.createCleanTimestamp(new Date(timeStampMil));
     }
 

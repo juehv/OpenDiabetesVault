@@ -20,10 +20,7 @@ import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
@@ -76,26 +73,8 @@ public class MedtronicCsvValidator extends CsvValidator {
     }
 
     public MedtronicCsvValidator() {
-        // TODO implement auto recognition while header parsing
-        languageSelection = Language.DE;
-    }
-
-    @Override
-    public boolean validateHeader(String[] header) {
-
-        boolean result = true;
-        Set<String> headerSet = new TreeSet<>(Arrays.asList(header));
-
-        // Check german header
-        for (String item : CARELINK_HEADER_DE) {
-            result &= headerSet.contains(item);
-        }
-        if (result == true) {
-            languageSelection = Language.DE;
-        }
-
-        //TODO check english headers
-        return result;
+        //TODO add english header
+        super(CARELINK_HEADER_DE, CARELINK_HEADER_DE);
     }
 
     public String getRawValues(CsvReader creader) throws IOException {

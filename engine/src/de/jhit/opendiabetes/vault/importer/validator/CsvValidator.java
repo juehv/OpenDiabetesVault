@@ -16,7 +16,10 @@
  */
 package de.jhit.opendiabetes.vault.importer.validator;
 
-import com.csvreader.CsvReader;
+import static de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator.CARELINK_HEADER_DE;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
@@ -28,10 +31,38 @@ public abstract class CsvValidator {
     protected static final Logger LOG = Logger.getLogger(CsvValidator.class.getName());
 
     public static enum Language {
-        DE, EN, UNIVERSAL;
+        DE, EN;
     };
 
     protected Language languageSelection;
+    private final String[] HEADER_DE;
+    private final String[] HEADER_EN;
 
-    public abstract boolean validateHeader(String[] header);
+    protected CsvValidator(String[] HEADER_DE, String[] HEADER_EN) {
+        this.HEADER_DE = HEADER_DE;
+        this.HEADER_EN = HEADER_EN;
+    }
+
+    public boolean validateHeader(String[] header) {
+
+        boolean result = true;
+        Set<String> headerSet = new TreeSet<>(Arrays.asList(header));
+
+        // Check german header
+        for (String item : HEADER_DE) {
+            result &= headerSet.contains(item);
+        }
+        if (result == true) {
+            languageSelection = Language.DE;
+        } else {
+            for (String item : HEADER_EN) {
+                result &= headerSet.contains(item);
+            }
+            if (result == true) {
+                languageSelection = Language.EN;
+            }
+        }
+
+        return result;
+    }
 }

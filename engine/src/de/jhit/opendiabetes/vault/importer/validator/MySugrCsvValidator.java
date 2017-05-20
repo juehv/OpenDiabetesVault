@@ -22,9 +22,20 @@ package de.jhit.opendiabetes.vault.importer.validator;
  */
 public class MySugrCsvValidator extends CsvValidator {
 
-    @Override
-    public boolean validateHeader(String[] header) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    public static final String[] HEADER_DE = {
+        // put header fields here
+    };
+    
+    public static final String[] HEADER_EN = {
+        // put header fields here
+    };
+
+    public MySugrCsvValidator() {
+        super(HEADER_DE, HEADER_EN);
     }
+    
+    
+    // add functions for field access here
     
 }
