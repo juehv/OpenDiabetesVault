@@ -32,6 +32,7 @@ public enum VaultEntryType {
     GLUCOSE_CGM_ALERT,
     GLUCOSE_CGM_CALIBRATION,
     GLUCOSE_BG,
+    GLUCOSE_BG_MANUAL,
     GLUCOSE_BOLUS_CALCULATION,
     // Meal
     MEAL_BolusExpert,
