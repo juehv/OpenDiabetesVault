@@ -14,18 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer;
-
-import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
+package de.jhit.opendiabetes.vault.importer.validator;
 
 /**
  *
  * @author juehv
  */
-public class NonValidator extends CsvValidator {
+public class MySugrCsvValidator extends CsvValidator {
 
-    public NonValidator() {
-        super(new String[]{}, new String[]{});
+    
+    public static final String[] HEADER_DE = {
+        // put header fields here
+    };
+    
+    public static final String[] HEADER_EN = {
+        // put header fields here
+    };
+
+    public MySugrCsvValidator() {
+        super(HEADER_DE, HEADER_EN);
     }
-
+    
+    
+    // add functions for field access here
+    
 }

@@ -1,10 +1,22 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2017 Jens Heuschkel
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.jhit.opendiabetes.vault.importer;
 
+import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
 import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
@@ -40,7 +52,7 @@ public class MedtronicCsvImporter extends CsvImporter {
     private static final Pattern PERCENT_OF_RATE_PATTERN = Pattern.compile("(.*\\s)?PERCENT_OF_RATE=(\\w*).*", Pattern.CASE_INSENSITIVE);
 
     public MedtronicCsvImporter() {
-        super(new MedtronicCsvValidator(), ',');
+        this(',');
     }
 
     public MedtronicCsvImporter(char delimiter) {
@@ -108,8 +120,7 @@ public class MedtronicCsvImporter extends CsvImporter {
     }
 
     @Override
-    protected void preprocessingIfNeeded(String filePath
-    ) {
+    protected void preprocessingIfNeeded(String filePath) {
         // test for delimiter
         CsvReader creader = null;
         try {
@@ -132,7 +143,7 @@ public class MedtronicCsvImporter extends CsvImporter {
             LOG.log(Level.FINE, "Use ';' as delimiter for Carelink CSV: {0}", filePath);
 
         } catch (IOException ex) {
-            LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter checkF: "
+            LOG.log(Level.WARNING, "Error while parsing Careling CSV in delimiter check: "
                     + filePath, ex);
         } finally {
             if (creader != null) {
@@ -204,7 +215,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                     retVal.add(tmpEntry);
                 }
                 break;
-            case BOLUS_WIZARD:  
+            case BOLUS_WIZARD:
                 // meal information
                 tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.MEAL_BolusExpert, rawValues,

@@ -14,21 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.util;
-
-import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.Comparator;
+package de.jhit.opendiabetes.vault.processing;
 
 /**
  *
- * @author Jens
+ * @author juehv
  */
-public class SortVaultEntryByDate implements Comparator<VaultEntry> {
-
-    @Override
-    public int compare(VaultEntry o1, VaultEntry o2) {
-        return o1.getTimestamp().compareTo(o2.getTimestamp());
-    }
-
+public class DataSlicer {
     
 }

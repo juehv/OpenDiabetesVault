@@ -14,18 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer;
+package de.jhit.opendiabetes.vault.importer.interpreter;
 
-import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.importer.FileImporter;
+import java.util.List;
 
 /**
  *
  * @author juehv
  */
-public class NonValidator extends CsvValidator {
+public class NonInterpreter extends VaultInterpreter {
 
-    public NonValidator() {
-        super(new String[]{}, new String[]{});
+    public NonInterpreter(FileImporter importer, InterpreterOptions options, VaultDao db) {
+        super(importer, options, db);
+    }
+
+    @Override
+    protected List<VaultEntry> interpret(List<VaultEntry> result) {
+        return result;
     }
 
 }

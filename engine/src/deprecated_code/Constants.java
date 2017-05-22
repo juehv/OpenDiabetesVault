@@ -83,11 +83,7 @@ public final class Constants {
             "Gescannte Glukose (mg/dL)", "Teststreifen-Blutzucker (mg/dL)"} //GER
     };
 
-    public static final String[][] GOOGLE_FIT_CSV_HEADER = {
-        {"Beginn", "Ende", "Maximale Geschwindigkeit (m/s)",
-            "Radfahren – Dauer (ms)", "Gehen – Dauer (ms)",
-            "Laufen – Dauer (ms)"} //GER
-    };
+    
     // Other
     public static final String DATE_TIME_OUTPUT_FORMAT = "dd.MM. HH:mm";
 
