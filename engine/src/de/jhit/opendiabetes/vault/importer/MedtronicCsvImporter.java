@@ -207,6 +207,13 @@ public class MedtronicCsvImporter extends CsvImporter {
                 }
                 break;
             case BG_MANUAL:
+                tmpEntry = extractDoubleEntry(timestamp,
+                        VaultEntryType.GLUCOSE_BG_MANUAL, rawValues,
+                        AMOUNT_PATTERN, creader.getValues());
+                if (tmpEntry != null) {
+                    retVal.add(tmpEntry);
+                }
+                break;
             case BG_RECEIVED:
                 tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.GLUCOSE_BG, rawValues,

@@ -152,8 +152,10 @@ public class VaultCsvExporter {
                             tmpCsvEntry.setCgmRawValue(tmpEntry.getValue());
                             break;
                         case GLUCOSE_BG:
+                        case GLUCOSE_BG_MANUAL:
                             tmpCsvEntry.setBgValue(tmpEntry.getValue());
                             tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
+                            LOG.severe(tmpCsvEntry.toString());
                             break;
                         case GLUCOSE_BOLUS_CALCULATION:
                             tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());

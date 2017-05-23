@@ -47,6 +47,7 @@ public class VaultDao {
 
     public static final long RESULT_ERROR = -1;
     private static final String DATABASE_URL = "jdbc:hsqldb:mem:odvault";
+//    private static final String DATABASE_URL = "jdbc:hsqldb:file:/home/juehv/test.db";
     private static final Logger LOG = Logger.getLogger(VaultDao.class.getName());
     private static VaultDao INSTANCE = null;
 
@@ -88,8 +89,8 @@ public class VaultDao {
         vaultDao = DaoManager.createDao(connectionSource, VaultEntry.class);
         rawDao = DaoManager.createDao(connectionSource, RawEntry.class);
         // if you need to create the 'accounts' table make this call
-        TableUtils.createTableIfNotExists(connectionSource, VaultEntry.class);
-        TableUtils.createTableIfNotExists(connectionSource, RawEntry.class);
+        TableUtils.createTable(connectionSource, VaultEntry.class);
+        TableUtils.createTable(connectionSource, RawEntry.class);
     }
 
     public long putEntry(VaultEntry entry) {
@@ -110,13 +111,13 @@ public class VaultDao {
         }
     }
 
-    public boolean removeDublicates() throws SQLException {
+    public boolean removeDublicates() {
         // DELETE FROM MyTable WHERE RowId NOT IN (SELECT MIN(RowId) FROM MyTable GROUP BY Col1, Col2, Col3);
         // but we need a workaround for the or mapper
         try {
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
-                            .prepare();
+                    .prepare();
             CloseableIterator<VaultEntry> iterator = vaultDao.iterator(query);
 
             Date startGenerationTimestamp = null;
@@ -151,6 +152,7 @@ public class VaultDao {
             LOG.log(Level.INFO, "Removed {0} dublicates", lines);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error while db query", ex);
+            return false;
         }
 
         return true;
@@ -161,15 +163,15 @@ public class VaultDao {
         try {
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
-                            .where()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_BG)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM_ALERT)
-                            .and()
-                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
-                            .prepare();
+                    .where()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_BG)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.GLUCOSE_CGM_ALERT)
+                    .and()
+                    .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
+                    .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error while db query", ex);
@@ -182,23 +184,23 @@ public class VaultDao {
         try {
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
-                            .where()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleBicycle)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleRun)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleWalk)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerBicycle)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerRun)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerWalk)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_Manual)
-                            .and()
-                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
-                            .prepare();
+                    .where()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleBicycle)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleRun)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleWalk)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerBicycle)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerRun)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerWalk)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_Manual)
+                    .and()
+                    .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
+                    .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error while db query", ex);
@@ -212,12 +214,12 @@ public class VaultDao {
 
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", false)
-                            .limit(1L)
-                            .where()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, type)
-                            .and()
-                            .le(VaultEntry.TIMESTAMP_FIELD_NAME, timestamp)
-                            .prepare();
+                    .limit(1L)
+                    .where()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, type)
+                    .and()
+                    .le(VaultEntry.TIMESTAMP_FIELD_NAME, timestamp)
+                    .prepare();
             List<VaultEntry> tmpList = vaultDao.query(query);
             if (tmpList.size() > 0) {
                 returnValue = tmpList.get(0);
@@ -234,7 +236,7 @@ public class VaultDao {
 
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
-                            .prepare();
+                    .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error while db query", ex);
@@ -250,9 +252,9 @@ public class VaultDao {
 
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
-                            .where()
-                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, fromTimestamp, toTimestamp)
-                            .prepare();
+                    .where()
+                    .between(VaultEntry.TIMESTAMP_FIELD_NAME, fromTimestamp, toTimestamp)
+                    .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error while db query", ex);
@@ -265,15 +267,15 @@ public class VaultDao {
         try {
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
-                            .where()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_Manual)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_Profile)
-                            .or()
-                            .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_INTERPRETER)
-                            .and()
-                            .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
-                            .prepare();
+                    .where()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_Manual)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_Profile)
+                    .or()
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_INTERPRETER)
+                    .and()
+                    .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
+                    .prepare();
             returnValues = vaultDao.query(query);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, "Error while db query", ex);

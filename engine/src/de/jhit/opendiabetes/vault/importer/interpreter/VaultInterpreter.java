@@ -91,6 +91,8 @@ public abstract class VaultInterpreter {
             // put in db
             db.putEntry(item);
         }
+       
+        db.removeDublicates();
     }
 
     protected abstract List<VaultEntry> interpret(List<VaultEntry> result);
