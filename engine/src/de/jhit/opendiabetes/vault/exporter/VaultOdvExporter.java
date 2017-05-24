@@ -38,6 +38,9 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
  */
 public class VaultOdvExporter extends VaultCsvExporter {
 
+    public static final String DATA_ZIP_ENTRY = "data.csv";
+    public static final String SIGNATURE_ZIP_ENTRY = "sig.txt";
+
     public VaultOdvExporter(ExporterOptions options, VaultDao db, String filePath) {
         super(options, db, filePath);
     }
@@ -65,7 +68,7 @@ public class VaultOdvExporter extends VaultCsvExporter {
         DigestOutputStream dos = new DigestOutputStream(zos, md);
 
         // write data        
-        zos.putNextEntry(new ZipEntry("data.csv"));
+        zos.putNextEntry(new ZipEntry(DATA_ZIP_ENTRY));
         CsvWriter cwriter = new CsvWriter(dos, VaultCsvEntry.CSV_DELIMITER,
                 Charset.forName("UTF-8"));
 
@@ -76,9 +79,8 @@ public class VaultOdvExporter extends VaultCsvExporter {
         cwriter.flush();
 
         // add signature file
-        zos.putNextEntry(new ZipEntry("sig.txt"));
-        byte[] signature = md.digest();
-        String sigString = (new HexBinaryAdapter()).marshal(signature);
+        zos.putNextEntry(new ZipEntry(SIGNATURE_ZIP_ENTRY));
+        String sigString = (new HexBinaryAdapter()).marshal(md.digest());
         zos.write(sigString.getBytes(), 0, sigString.getBytes().length);
 
         // close everything

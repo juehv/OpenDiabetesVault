@@ -21,10 +21,15 @@ import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -45,6 +50,27 @@ public abstract class CsvImporter extends FileImporter {
         super.currentFileName = new File(filePath).getName();
         preprocessingIfNeeded(filePath);
 
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(filePath);
+            return processImport(fis, filePath);
+        } catch (FileNotFoundException ex) {
+            LOG.log(Level.SEVERE, "Error opening a FileInputStream for File "
+                    + filePath, ex);
+            return false;
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    // not interesting :D
+                }
+            }
+        }
+
+    }
+
+    protected boolean processImport(InputStream fis, String filenameForLogging) {
         importedData = new ArrayList<>();
         importedRawData = new ArrayList<>();
         List<String[]> metaEntrys = new ArrayList<>();
@@ -52,13 +78,13 @@ public abstract class CsvImporter extends FileImporter {
         CsvReader creader = null;
         try {
             // open file
-            creader = new CsvReader(filePath, delimiter, Charset.forName("UTF-8"));
+            creader = new CsvReader(fis, delimiter, Charset.forName("UTF-8"));
 
             //validate header
             do {
                 if (!creader.readHeaders()) {
                     // no more lines --> no valid header
-                    LOG.log(Level.WARNING, "No valid header found in File:{0}", filePath);
+                    LOG.log(Level.WARNING, "No valid header found in File:{0}", filenameForLogging);
                     return false;
                 }
                 metaEntrys.add(creader.getHeaders());
@@ -83,11 +109,7 @@ public abstract class CsvImporter extends FileImporter {
 
         } catch (Exception ex) {
             LOG.log(Level.WARNING, "Error while parsing CSV: "
-                    + filePath, ex);
-        } finally {
-            if (creader != null) {
-                creader.close();
-            }
+                    + filenameForLogging, ex);
         }
         return true;
     }

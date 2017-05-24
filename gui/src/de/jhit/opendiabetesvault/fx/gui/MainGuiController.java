@@ -19,6 +19,7 @@ import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultOdvExporter;
 import de.jhit.opendiabetes.vault.importer.LifelogStressDBImporter;
 import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
+import de.jhit.opendiabetes.vault.importer.VaultOdvImporter;
 import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOptions;
 import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
@@ -488,9 +489,9 @@ public class MainGuiController implements Initializable {
                     });
                     if (odvCheckBox.isSelected()) {
                         for (String filePath : odvTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
-                            //FIXME Temporary add lifelog data importer here
+                            //FIXME Temporary add odv importer for testing
                             NonInterpreter interpreter = new NonInterpreter(
-                                    new LifelogStressDBImporter(),
+                                    new VaultOdvImporter(),
                                     iOptions,
                                     VaultDao.getInstance());
                             if (filePath != null && !filePath.isEmpty()) {
