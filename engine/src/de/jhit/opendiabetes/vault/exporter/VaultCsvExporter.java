@@ -22,6 +22,8 @@ import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -42,12 +44,13 @@ public class VaultCsvExporter {
     public final static int RESULT_NO_DATA = -2;
     public final static int RESULT_FILE_ACCESS_ERROR = -3;
 
-    private static final Logger LOG = Logger.getLogger(VaultCsvExporter.class.getName());
-    private static final String DOUBLE_FORMAT = "%1$.2f";
+    protected static final Logger LOG = Logger.getLogger(VaultCsvExporter.class.getName());
+    protected static final String DOUBLE_FORMAT = "%1$.2f";
 
     private final ExporterOptions options;
     private final VaultDao db;
     private final String filePath;
+    protected FileOutputStream fileOutpuStream;
 
     public VaultCsvExporter(ExporterOptions options, VaultDao db, String filePath) {
         this.options = options;
@@ -63,6 +66,12 @@ public class VaultCsvExporter {
         File checkFile = new File(filePath);
         if (checkFile.exists()
                 && (!checkFile.isFile() || !checkFile.canWrite())) {
+            return RESULT_FILE_ACCESS_ERROR;
+        }
+        try {
+            fileOutpuStream = new FileOutputStream(checkFile);
+        } catch (FileNotFoundException ex) {
+            LOG.log(Level.SEVERE, "Error accessing file for output stream", ex);
             return RESULT_FILE_ACCESS_ERROR;
         }
 
@@ -91,8 +100,8 @@ public class VaultCsvExporter {
         return RESULT_OK;
     }
 
-    private void writeToFile(List<VaultCsvEntry> csvEntries) throws IOException {
-        CsvWriter cwriter = new CsvWriter(filePath, VaultCsvEntry.CSV_DELIMITER,
+    protected void writeToFile(List<VaultCsvEntry> csvEntries) throws IOException {
+        CsvWriter cwriter = new CsvWriter(fileOutpuStream, VaultCsvEntry.CSV_DELIMITER,
                 Charset.forName("UTF-8"));
 
         cwriter.writeRecord(VaultCsvEntry.getCsvHeaderRecord());
@@ -101,6 +110,7 @@ public class VaultCsvExporter {
         }
         cwriter.flush();
         cwriter.close();
+        fileOutpuStream.close();
     }
 
     private List<VaultCsvEntry> prepareData(List<VaultEntry> tmpValues) {

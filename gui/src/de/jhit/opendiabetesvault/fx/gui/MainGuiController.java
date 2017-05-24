@@ -16,6 +16,7 @@ import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
+import de.jhit.opendiabetes.vault.exporter.VaultOdvExporter;
 import de.jhit.opendiabetes.vault.importer.LifelogStressDBImporter;
 import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
 import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreter;
@@ -24,11 +25,9 @@ import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -671,7 +670,9 @@ public class MainGuiController implements Initializable {
                                 TimestampUtils.fromLocalDate(
                                         exportPeriodFromPicker.getValue()),
                                 TimestampUtils.fromLocalDate(
-                                        exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second                        
+                                        exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second      
+
+                        // standard export
                         VaultCsvExporter exporter = new VaultCsvExporter(eOptions,
                                 VaultDao.getInstance(),
                                 odvExpotFileName);
@@ -681,6 +682,22 @@ public class MainGuiController implements Initializable {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
                                         "Could not export to odv csv file: "
                                         + result + "\nSee logfile for details.",
+                                        ButtonType.CLOSE);
+                                alert.setHeaderText(null);
+                                alert.show();
+                            });
+                        }
+
+                        // novel odv export
+                        exporter = new VaultOdvExporter(eOptions,
+                                VaultDao.getInstance(),
+                                odvExpotFileName + ".odv");
+                        int result2 = exporter.exportDataToFile();
+                        if (result != VaultCsvExporter.RESULT_OK) {
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                                        "Could not export to odv csv file: "
+                                        + result2 + "\nSee logfile for details.",
                                         ButtonType.CLOSE);
                                 alert.setHeaderText(null);
                                 alert.show();
