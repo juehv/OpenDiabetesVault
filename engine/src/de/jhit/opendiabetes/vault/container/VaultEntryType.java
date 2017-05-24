@@ -37,6 +37,7 @@ public enum VaultEntryType {
     EXERCISE_GoogleWalk,
     EXERCISE_GoogleBicycle,
     EXERCISE_GoogleRun,
+    EXERCISE_MERGE_INTERPRETER,
     // Glucose
     GLUCOSE_CGM,
     GLUCOSE_CGM_RAW,
