@@ -37,6 +37,7 @@ public class VaultEntry {
     public static final String VALUE_FIELD_NAME = "value";
     public static final String VALUE2_FIELD_NAME = "value2";
     public static final String RAW_ID_FIELD_NAME = "rawId";
+    public static final String ANNOTATION_FIELD_NAME = "annotation";
 
     @DatabaseField(generatedId = true)
     private long id;
@@ -50,11 +51,14 @@ public class VaultEntry {
     @DatabaseField(columnName = VALUE_FIELD_NAME, canBeNull = false)
     private double value;
 
-    @DatabaseField(columnName = VALUE2_FIELD_NAME, canBeNull = true)
+    @DatabaseField(columnName = VALUE2_FIELD_NAME, canBeNull = false)
     private double value2 = VALUE_UNUSED;
 
     @DatabaseField(columnName = RAW_ID_FIELD_NAME, canBeNull = false)
     private long rawId = ID_UNUSED;
+
+    @DatabaseField(columnName = ANNOTATION_FIELD_NAME, canBeNull = false)
+    private String annotation = "";
 
     public VaultEntry() {
         // all persisted classes must define a no-arg constructor with at least package visibility
@@ -71,6 +75,7 @@ public class VaultEntry {
         this.timestamp = copy.timestamp;
         this.value = copy.value;
         this.value2 = copy.value2;
+        this.annotation = copy.annotation;
     }
 
     public long getId() {
@@ -113,12 +118,23 @@ public class VaultEntry {
         this.value2 = value2;
     }
 
+    public String getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 73 * hash + Objects.hashCode(this.type);
-        hash = 73 * hash + Objects.hashCode(this.timestamp);
-        hash = 73 * hash + Objects.hashCode(this.value);
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.type);
+        hash = 67 * hash + Objects.hashCode(this.timestamp);
+        hash = 67 * hash + (int) (Double.doubleToLongBits(this.value) ^ (Double.doubleToLongBits(this.value) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(this.value2) ^ (Double.doubleToLongBits(this.value2) >>> 32));
+        hash = 67 * hash + (int) (this.rawId ^ (this.rawId >>> 32));
+        hash = 67 * hash + Objects.hashCode(this.annotation);
         return hash;
     }
 
@@ -143,12 +159,18 @@ public class VaultEntry {
         if (!Objects.equals(this.value, other.value)) {
             return false;
         }
+        if (!Objects.equals(this.value2, other.value2)) {
+            return false;
+        }
+        if (!Objects.equals(this.annotation, other.annotation)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "VaultEntry{" + "id=" + id + ", type=" + type + ", timestamp=" + timestamp + ", value=" + value + ", value2=" + value2 + ", rawId=" + rawId + '}';
+        return "VaultEntry{" + "id=" + id + ", type=" + type + ", timestamp=" + timestamp + ", value=" + value + ", value2=" + value2 + ", rawId=" + rawId + ", annotaion=" + annotation + '}';
     }
 
 }

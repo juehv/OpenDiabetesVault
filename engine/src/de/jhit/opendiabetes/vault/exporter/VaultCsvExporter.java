@@ -138,8 +138,10 @@ public class VaultCsvExporter {
                                     == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
                                 tmpCsvEntry.setCgmValue(tmpEntry.getValue());
                             } else {
-                                LOG.log(Level.WARNING, "Drop {0}, hold: {1}",
-                                        new Object[]{tmpEntry.toString(),
+                                LOG.log(Level.WARNING,
+                                        "CGM Value for entry {0}, Drop {1}, hold: {2}",
+                                        new Object[]{tmpEntry.getTimestamp().toString(),
+                                            tmpEntry.toString(),
                                             tmpCsvEntry.toString()});
                             }
                             break;
@@ -153,9 +155,19 @@ public class VaultCsvExporter {
                             break;
                         case GLUCOSE_BG:
                         case GLUCOSE_BG_MANUAL:
-                            tmpCsvEntry.setBgValue(tmpEntry.getValue());
-                            tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
-                            LOG.severe(tmpCsvEntry.toString());
+                            // TODO why does this happen ?
+                            // it often happens with identical values, but db is cleaned bevore ...
+                            if (tmpCsvEntry.getBgValue()
+                                    == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
+                                tmpCsvEntry.setBgValue(tmpEntry.getValue());
+                                tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
+                            } else {
+                                LOG.log(Level.WARNING,
+                                        "CGM Value for entry {0}, Drop {1}, hold: {2}",
+                                        new Object[]{tmpEntry.getTimestamp().toString(),
+                                            tmpEntry.toString(),
+                                            tmpCsvEntry.toString()});
+                            }
                             break;
                         case GLUCOSE_BOLUS_CALCULATION:
                             tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());

@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -42,7 +44,7 @@ public class VaultCsvEntry {
     private double basalValue = UNINITIALIZED_DOUBLE;
     private List<String> basalAnnotation = new ArrayList<>();
     private double bolusValue = UNINITIALIZED_DOUBLE;
-    private double bolusCalculationValue = UNINITIALIZED_DOUBLE;    
+    private double bolusCalculationValue = UNINITIALIZED_DOUBLE;
     private List<String> bolusAnnotation = new ArrayList<>();
     private double mealValue = UNINITIALIZED_DOUBLE;
     private List<String> pumpAnnotation = new ArrayList<>();

@@ -50,6 +50,7 @@ public class MedtronicCsvImporter extends CsvImporter {
     private static final Pattern ALARM_TYPE_PATTERN = Pattern.compile("(.*\\s)?ALARM_TYPE=(\\d+([\\.,]\\d+)?).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern STATE_PATTERN = Pattern.compile("(.*\\s)?STATE=(\\w*).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern PERCENT_OF_RATE_PATTERN = Pattern.compile("(.*\\s)?PERCENT_OF_RATE=(\\w*).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern METER_PATTERN = Pattern.compile("(.*\\s)?METER_SERIAL_NUMBER=(\\w*).*", Pattern.CASE_INSENSITIVE);
 
     public MedtronicCsvImporter() {
         this(',');
@@ -211,6 +212,16 @@ public class MedtronicCsvImporter extends CsvImporter {
                         VaultEntryType.GLUCOSE_BG_MANUAL, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
+                    // check if it was received by a meter (new format doesn't use BG_RECEIVED)
+                    Matcher m = METER_PATTERN.matcher(rawValues);
+                    if (m.matches()) {
+                        String meterSerial = m.group(2);
+                        if (meterSerial.isEmpty()) {
+                            tmpEntry.setAnnotation(meterSerial);
+                            tmpEntry.setType(VaultEntryType.GLUCOSE_BG);
+                        }
+                    }
+
                     retVal.add(tmpEntry);
                 }
                 break;
