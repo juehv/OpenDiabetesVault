@@ -520,11 +520,7 @@ public class MainGuiController implements Initializable {
                 });
 
                 // clean db
-                try {
-                    VaultDao.getInstance().removeDublicates();
-                } catch (SQLException ex) {
-                    Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                VaultDao.getInstance().removeDublicates();
 
                 // reset cursor
                 ap.getScene().setCursor(cursorBackup);
