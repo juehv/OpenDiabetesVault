@@ -31,8 +31,8 @@ import java.util.logging.Logger;
  */
 public class SonySWR12Importer extends CsvImporter {
 
-    public SonySWR12Importer() {
-        super(new SonySWR12Validator(), ',');
+    public SonySWR12Importer(String importFilePath) {
+        super(importFilePath, new SonySWR12Validator(), ',');
     }
 
     @Override

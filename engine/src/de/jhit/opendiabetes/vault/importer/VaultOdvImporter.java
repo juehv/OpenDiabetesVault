@@ -17,7 +17,7 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import de.jhit.opendiabetes.vault.exporter.VaultOdvExporter;
-import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
+import static de.jhit.opendiabetes.vault.importer.Importer.LOG;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,13 +28,10 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.transaction.xa.XAResource;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
-import sun.misc.IOUtils;
 
 /**
  *
@@ -42,14 +39,18 @@ import sun.misc.IOUtils;
  */
 public class VaultOdvImporter extends VaultCsvImporter {
 
+    public VaultOdvImporter(String importFilePath) {
+        super(importFilePath);
+    }
+
     @Override
-    public boolean importFile(String filePath) {
-        super.currentFileName = new File(filePath).getName();
-        preprocessingIfNeeded(filePath);
+    public boolean importData() {
+        super.importFilePath = new File(importFilePath).getName();
+        preprocessingIfNeeded(importFilePath);
 
         try {
             // open zip package
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(filePath));
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(importFilePath));
 
             // Setup signature stuff
             MessageDigest md;
@@ -68,7 +69,7 @@ public class VaultOdvImporter extends VaultCsvImporter {
                 switch (tmpEntry.getName()) {
                     case VaultOdvExporter.DATA_ZIP_ENTRY:
                         // process data while creating signature
-                        processingResult = super.processImport(dis, filePath);
+                        processingResult = super.processImport(dis, importFilePath);
                         break;
                     case VaultOdvExporter.SIGNATURE_ZIP_ENTRY:
                         // read signature as string
@@ -96,11 +97,11 @@ public class VaultOdvImporter extends VaultCsvImporter {
             }
         } catch (FileNotFoundException ex) {
             LOG.log(Level.SEVERE, "Error opening a FileInputStream for file: "
-                    + filePath, ex);
+                    + importFilePath, ex);
             return false;
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Error reading compressed file: "
-                    + filePath, ex);
+                    + importFilePath, ex);
             return false;
         }
     }

@@ -17,7 +17,7 @@
 package de.jhit.opendiabetes.vault.importer.interpreter;
 
 import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
-import de.jhit.opendiabetes.vault.importer.FileImporter;
+import de.jhit.opendiabetes.vault.importer.Importer;
 import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
@@ -38,7 +38,7 @@ public class PumpInterpreter extends VaultInterpreter {
 
     private final PumpInterpreterOptions myOptions;
 
-    public PumpInterpreter(FileImporter importer,
+    public PumpInterpreter(Importer importer,
             PumpInterpreterOptions options, VaultDao db) {
         super(importer, options, db);
         myOptions = options;

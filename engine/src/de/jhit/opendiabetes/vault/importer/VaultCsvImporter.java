@@ -29,12 +29,12 @@ import java.util.List;
  */
 public class VaultCsvImporter extends CsvImporter {
 
-    public VaultCsvImporter() {
-        this(new VaultCsvValidator(), ',');
+    public VaultCsvImporter(String importFilePath) {
+        this(importFilePath, new VaultCsvValidator(), ',');
     }
 
-    private VaultCsvImporter(CsvValidator validator, char delimiter) {
-        super(validator, delimiter);
+    private VaultCsvImporter(String importFilePath, CsvValidator validator, char delimiter) {
+        super(importFilePath,validator, delimiter);
     }
 
     @Override

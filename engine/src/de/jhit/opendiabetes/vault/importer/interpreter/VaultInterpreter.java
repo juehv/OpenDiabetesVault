@@ -17,7 +17,7 @@
 package de.jhit.opendiabetes.vault.importer.interpreter;
 
 import de.jhit.opendiabetes.vault.container.RawEntry;
-import de.jhit.opendiabetes.vault.importer.FileImporter;
+import de.jhit.opendiabetes.vault.importer.Importer;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import java.util.ArrayList;
@@ -32,11 +32,11 @@ public abstract class VaultInterpreter {
 
     protected static final Logger LOG = Logger.getLogger(VaultInterpreter.class.getName());
 
-    protected FileImporter importer;
+    protected Importer importer;
     protected InterpreterOptions options;
     protected VaultDao db;
 
-    public VaultInterpreter(FileImporter importer, InterpreterOptions options, VaultDao db) {
+    public VaultInterpreter(Importer importer, InterpreterOptions options, VaultDao db) {
         this.importer = importer;
         this.options = options;
         this.db = db;
@@ -57,12 +57,38 @@ public abstract class VaultInterpreter {
         }
     }
 
-    public void importAndInterpretFromFile(String filePath) {
+    public List<VaultEntry> importAndInterpretWithoutDb() {
         // parse file
-        if (!importer.importFile(filePath)) {
+        if (!importer.importData()) {
+            return null;
+        }
+
+        List<VaultEntry> result = importer.getImportedData();
+        if (result.isEmpty()) { // not null since importFile is called
+            return null;
+        }
+
+        // filter unwanted dates
+        result = dateFiltering(result);
+        // interpret stuff
+        result = interpret(result);
+        if (result == null) {
+            return null;
+        }
+
+        for (RawEntry item : importer.getImportedRawData()) {// not null since importFile is called
+            item.setId(db.putRawEntry(item));
+        }
+
+        return result;
+    }
+
+    public void importAndInterpret() {
+        // parse file
+        if (!importer.importData()) {
             return;
         }
-        
+
         List<VaultEntry> result = importer.getImportedData();
         if (result.isEmpty()) { // not null since importFile is called
             return;
@@ -91,9 +117,14 @@ public abstract class VaultInterpreter {
             // put in db
             db.putEntry(item);
         }
-       
+
         db.removeDublicates();
     }
 
     protected abstract List<VaultEntry> interpret(List<VaultEntry> result);
+
+    public Importer getImporter() {
+        return importer;
+    }
+
 }

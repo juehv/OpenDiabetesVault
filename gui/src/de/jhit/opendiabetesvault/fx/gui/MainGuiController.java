@@ -17,7 +17,7 @@ import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultOdvExporter;
-import de.jhit.opendiabetes.vault.importer.LifelogStressDBImporter;
+import de.jhit.opendiabetes.vault.importer.FileImporter;
 import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
 import de.jhit.opendiabetes.vault.importer.VaultOdvImporter;
 import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreter;
@@ -420,13 +420,14 @@ public class MainGuiController implements Initializable {
                     if (medtronicCheckBox.isSelected()) {
                         PumpInterpreter interpreter
                                 = new PumpInterpreter(
-                                        new MedtronicCsvImporter(),
+                                        new MedtronicCsvImporter(null),
                                         iOptions, VaultDao.getInstance());
                         String[] unsortedPaths = medtronicTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER);
                         Arrays.sort(unsortedPaths);
                         for (String filePath : unsortedPaths) {
                             if (filePath != null && !filePath.isEmpty()) {
-                                interpreter.importAndInterpretFromFile(filePath);
+                                ((FileImporter) interpreter.getImporter()).setImportFilePath(filePath);
+                                interpreter.importAndInterpret();
                             }
                         }
                     }
@@ -446,11 +447,12 @@ public class MainGuiController implements Initializable {
                     if (googleFitCheckBox.isSelected()) {
                         ExerciseInterpreter interpreter
                                 = new ExerciseInterpreter(
-                                        new GoogleFitCsvImporter(),
+                                        new GoogleFitCsvImporter(null),
                                         fOptions, VaultDao.getInstance());
                         for (String filePath : googleFitTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {
-                                interpreter.importAndInterpretFromFile(filePath);
+                                ((FileImporter) interpreter.getImporter()).setImportFilePath(filePath);
+                                interpreter.importAndInterpret();
                             }
                         }
                     }
@@ -476,11 +478,12 @@ public class MainGuiController implements Initializable {
                     if (rocheCheckBox.isSelected()) {
                         ExerciseInterpreter interpreter
                                 = new ExerciseInterpreter(
-                                        new SonySWR12Importer(),
+                                        new SonySWR12Importer(null),
                                         fOptions, VaultDao.getInstance());
                         for (String filePath : rocheTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {
-                                interpreter.importAndInterpretFromFile(filePath);
+                                ((FileImporter) interpreter.getImporter()).setImportFilePath(filePath);
+                                interpreter.importAndInterpret();
                             }
                         }
                     }
@@ -491,11 +494,12 @@ public class MainGuiController implements Initializable {
                         for (String filePath : odvTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             //FIXME Temporary add odv importer for testing
                             NonInterpreter interpreter = new NonInterpreter(
-                                    new VaultOdvImporter(),
+                                    new VaultOdvImporter(null),
                                     iOptions,
                                     VaultDao.getInstance());
                             if (filePath != null && !filePath.isEmpty()) {
-                                interpreter.importAndInterpretFromFile(filePath);
+                                ((FileImporter) interpreter.getImporter()).setImportFilePath(filePath);
+                                interpreter.importAndInterpret();
                             }
                         }
                         Platform.runLater(() -> {

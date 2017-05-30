@@ -14,26 +14,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer.interpreter;
+package de.jhit.opendiabetes.vault.importer;
 
+import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.data.VaultDao;
-import de.jhit.opendiabetes.vault.importer.Importer;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
- * @author juehv
+ * @author mswin
  */
-public class NonInterpreter extends VaultInterpreter {
+public abstract class Importer {
 
-    public NonInterpreter(Importer importer, InterpreterOptions options, VaultDao db) {
-        super(importer, options, db);
+    protected final static Logger LOG = Logger.getLogger(Importer.class.getName());
+    protected List<VaultEntry> importedData;
+    protected List<RawEntry> importedRawData;
+
+    public Importer() {
+    }
+    
+    public abstract boolean importData();
+
+    public List<VaultEntry> getImportedData() {
+        return importedData;
     }
 
-    @Override
-    protected List<VaultEntry> interpret(List<VaultEntry> result) {
-        return result;
+    public List<RawEntry> getImportedRawData() {
+        return importedRawData;
     }
-
+    
+    
 }

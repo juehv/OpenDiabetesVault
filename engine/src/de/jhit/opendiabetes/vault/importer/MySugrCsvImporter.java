@@ -19,7 +19,7 @@ package de.jhit.opendiabetes.vault.importer;
 import de.jhit.opendiabetes.vault.importer.validator.MySugrCsvValidator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
+import static de.jhit.opendiabetes.vault.importer.Importer.LOG;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -31,12 +31,12 @@ import java.util.logging.Level;
  */
 public class MySugrCsvImporter extends CsvImporter {
 
-    public MySugrCsvImporter() {
-        this(',');
+    public MySugrCsvImporter(String importFilePath) {
+        this(importFilePath, ',');
     }
 
-    public MySugrCsvImporter(char delimiter) {
-        super(new MySugrCsvValidator(), delimiter);
+    public MySugrCsvImporter(String importFilePath, char delimiter) {
+        super(importFilePath, new MySugrCsvValidator(), delimiter);
     }
 
     @Override

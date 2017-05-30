@@ -19,7 +19,7 @@ package de.jhit.opendiabetes.vault.importer.interpreter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.data.VaultDao;
-import de.jhit.opendiabetes.vault.importer.FileImporter;
+import de.jhit.opendiabetes.vault.importer.Importer;
 import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class ExerciseInterpreter extends VaultInterpreter {
 
     private final ExerciseInterpreterOptions myOptions;
 
-    public ExerciseInterpreter(FileImporter importer,
+    public ExerciseInterpreter(Importer importer,
             ExerciseInterpreterOptions options, VaultDao db) {
         super(importer, options, db);
         myOptions = options;
@@ -73,7 +73,6 @@ public class ExerciseInterpreter extends VaultInterpreter {
                 case EXERCISE_GoogleWalk:
                 case EXERCISE_GoogleRun:
                 case EXERCISE_GoogleBicycle:
-                    // TODO also use this for google
                     // google activity type > tracker activity type
                     if (lastExerciseItem == null) {
                         // init item

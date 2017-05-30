@@ -16,24 +16,34 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
+import de.jhit.opendiabetes.vault.importer.interpreter.VaultInterpreter;
+import java.util.ArrayList;
+
 /**
  *
  * @author juehv
+ *
+ * used to cascade interpreter
  */
-public abstract class FileImporter extends Importer {
+public class InterpreterContainer extends Importer {
 
-    protected String importFilePath;
+    private final VaultInterpreter interpreter;
 
-    public FileImporter(String importFilePath) {
-        this.importFilePath = importFilePath;
+    public InterpreterContainer(VaultInterpreter interpreter) {
+        this.interpreter = interpreter;
     }
 
-    public String getImportFilePath() {
-        return importFilePath;
-    }
+    @Override
+    public boolean importData() {
+        importedData = interpreter.importAndInterpretWithoutDb();
+        importedRawData = new ArrayList<>();
 
-    public void setImportFilePath(String importFilePath) {
-        this.importFilePath = importFilePath;
+        if (importedData == null) {
+            importedData = new ArrayList<>();
+            return false;
+        }
+
+        return true;
     }
 
 }

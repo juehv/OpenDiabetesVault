@@ -31,12 +31,12 @@ import java.util.List;
  */
 public class GoogleFitCsvImporter extends CsvImporter {
 
-    public GoogleFitCsvImporter(CsvValidator validator, char delimiter) {
-        super(validator, delimiter);
+    public GoogleFitCsvImporter(String importFilePath) {
+        this(importFilePath, new GoogleFitCsvValidator(), ',');
     }
-
-    public GoogleFitCsvImporter() {
-        this(new GoogleFitCsvValidator(), ',');
+    
+    public GoogleFitCsvImporter(String importFilePath, CsvValidator validator, char delimiter) {
+        super(importFilePath, validator, delimiter);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class GoogleFitCsvImporter extends CsvImporter {
         }
 
         VaultEntry newVaultEntry;
-        Date timestamp = new Date(parseValidator.getStartTime(creader, super.currentFileName));
+        Date timestamp = new Date(parseValidator.getStartTime(creader, super.importFilePath));
         double durationInMinutes = Math.round((runTime + bikeTime + walkTime) / 1000 / 60);
         double maxSpeed = parseValidator.getMaxSpeedValue(creader);
 

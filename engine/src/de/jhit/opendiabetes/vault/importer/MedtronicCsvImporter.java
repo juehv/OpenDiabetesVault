@@ -19,7 +19,7 @@ package de.jhit.opendiabetes.vault.importer;
 import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
-import static de.jhit.opendiabetes.vault.importer.FileImporter.LOG;
+import static de.jhit.opendiabetes.vault.importer.Importer.LOG;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.io.IOException;
@@ -52,12 +52,12 @@ public class MedtronicCsvImporter extends CsvImporter {
     private static final Pattern PERCENT_OF_RATE_PATTERN = Pattern.compile("(.*\\s)?PERCENT_OF_RATE=(\\w*).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern METER_PATTERN = Pattern.compile("(.*\\s)?METER_SERIAL_NUMBER=(\\w*).*", Pattern.CASE_INSENSITIVE);
 
-    public MedtronicCsvImporter() {
-        this(',');
+    public MedtronicCsvImporter(String importFilePath) {
+        this(importFilePath, ',');
     }
 
-    public MedtronicCsvImporter(char delimiter) {
-        super(new MedtronicCsvValidator(), delimiter);
+    public MedtronicCsvImporter(String importFilePath, char delimiter) {
+        super(importFilePath, new MedtronicCsvValidator(), delimiter);
     }
 
     private static VaultEntry extractDoubleEntry(Date timestamp, VaultEntryType type,

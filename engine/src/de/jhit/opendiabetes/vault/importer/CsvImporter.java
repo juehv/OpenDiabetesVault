@@ -29,7 +29,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -40,23 +39,24 @@ public abstract class CsvImporter extends FileImporter {
     protected final CsvValidator validator;
     protected char delimiter;
 
-    public CsvImporter(CsvValidator validator, char delimiter) {
+    public CsvImporter(String importFilePath, CsvValidator validator, char delimiter) {
+        super(importFilePath);
         this.validator = validator;
         this.delimiter = delimiter;
     }
 
     @Override
-    public boolean importFile(String filePath) {
-        super.currentFileName = new File(filePath).getName();
-        preprocessingIfNeeded(filePath);
+    public boolean importData() {
+        super.importFilePath = new File(importFilePath).getName();
+        preprocessingIfNeeded(importFilePath);
 
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream(filePath);
-            return processImport(fis, filePath);
+            fis = new FileInputStream(importFilePath);
+            return processImport(fis, importFilePath);
         } catch (FileNotFoundException ex) {
             LOG.log(Level.SEVERE, "Error opening a FileInputStream for File "
-                    + filePath, ex);
+                    + importFilePath, ex);
             return false;
         } finally {
             if (fis != null) {

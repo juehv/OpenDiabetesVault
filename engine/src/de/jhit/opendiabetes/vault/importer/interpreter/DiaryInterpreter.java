@@ -18,7 +18,7 @@ package de.jhit.opendiabetes.vault.importer.interpreter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
-import de.jhit.opendiabetes.vault.importer.FileImporter;
+import de.jhit.opendiabetes.vault.importer.Importer;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class DiaryInterpreter extends VaultInterpreter {
 
-    public DiaryInterpreter(FileImporter importer, 
+    public DiaryInterpreter(Importer importer, 
             InterpreterOptions options, VaultDao db) {
         super(importer, options, db);
     }
