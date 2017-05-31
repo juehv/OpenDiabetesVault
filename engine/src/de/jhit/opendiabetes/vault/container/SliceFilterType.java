@@ -14,19 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer.validator;
-
-import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
+package de.jhit.opendiabetes.vault.container;
 
 /**
  *
  * @author juehv
  */
-public class VaultCsvValidator extends CsvValidator {
-
-    public VaultCsvValidator() {
-        super(new VaultCsvEntry().getCsvHeaderRecord(),
-                new VaultCsvEntry().getCsvHeaderRecord());
-    }
-
+public enum SliceFilterType {
+    //
+    UNKNOWN,
+    //
+    BOLUS,
+    NO_BOLUS_INFLUENCE,
+    //
+    CARB,
+    NO_CARB_INFLUENCE,
+    //
+    SPORTS,
+    NO_SPORT_INFLUENCE,
+    //
+    HYPO_AFTER_BOLUS,
+    HYPO_AFTER_SPORTS,
+    HYPO_WITHOUT_INFLUENCE,
+    //
+    HYPER_AFTER_CARB,
+    HYPER_AFTER_BOLUS,
+    HYPER_AFTER_SPORTS,
+    HYPER_WITHOUT_INFLUENCE,
+    //
+    SLEEP,
+    WAKEUP,
+    BEFORE_BEDTIME,
+    //
+    RISE_THRESHOLD,
+    //
+    ALCOHOL_CONSUM;
 }

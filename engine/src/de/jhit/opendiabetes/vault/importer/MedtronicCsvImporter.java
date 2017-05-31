@@ -217,7 +217,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                     Matcher m = METER_PATTERN.matcher(rawValues);
                     if (m.matches()) {
                         String meterSerial = m.group(2);
-                        if (meterSerial.isEmpty()) {
+                        if (!meterSerial.isEmpty()) {
                             VaultEntryAnnotation annotation = VaultEntryAnnotation.GLUCOSE_BG_METER_SERIAL;
                             annotation.setValue(meterSerial);
                             tmpEntry.addAnnotation(annotation);

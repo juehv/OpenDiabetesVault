@@ -14,26 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.container;
+package de.jhit.opendiabetes.vault.container.csv;
 
+import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author mswin
  */
-public class VaultCsvEntry {
+public class VaultCsvEntry extends CsvEntry {
 
     public final static String VERSION_STRING = "v9";
-    public final static double UNINITIALIZED_DOUBLE = -1.0;
-    public final static char CSV_DELIMITER = ',';
-    public final static char CSV_LIST_DELIMITER = ':';
+    public final static double UNINITIALIZED_DOUBLE = VaultEntry.VALUE_UNUSED;
 
     private Date timestamp;
     private double bgValue = UNINITIALIZED_DOUBLE;
@@ -298,8 +295,9 @@ public class VaultCsvEntry {
         return sb.toString();
     }
 
+    @Override
     public String[] toCsvRecord() {
-        return toCsvRecord("%1$,.2f");
+        return toCsvRecord(DECIMAL_FORMAT);
     }
 
     public String[] toCsvRecord(String decimalFormat) {
@@ -450,7 +448,7 @@ public class VaultCsvEntry {
         return csvRecord.toArray(new String[]{});
     }
 
-    public static String getCsvHeaderString() {
+    public String getCsvHeaderString() {
         StringBuilder sb = new StringBuilder();
 
         String[] header = getCsvHeaderRecord();
@@ -462,7 +460,8 @@ public class VaultCsvEntry {
         return sb.toString();
     }
 
-    public static String[] getCsvHeaderRecord() {
+    @Override
+    public String[] getCsvHeaderRecord() {
         return new String[]{
             "date",
             "time",

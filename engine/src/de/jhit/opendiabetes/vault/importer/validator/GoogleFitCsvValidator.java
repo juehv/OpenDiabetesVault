@@ -18,6 +18,7 @@ package de.jhit.opendiabetes.vault.importer.validator;
 
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -39,9 +40,9 @@ public class GoogleFitCsvValidator extends CsvValidator {
     public static final String[] HEADER_DE = {
         HEADER_START_TIME_DE, HEADER_END_TIME_DE,
         // files without this values doesn't contain this headers ... --> json ?
-//        HEADER_BIKE_VALUE_DE,
-//        HEADER_WALK_VALUE_DE,
-//        HEADER_RUN_VALUE_DE,
+        //        HEADER_BIKE_VALUE_DE,
+        //        HEADER_WALK_VALUE_DE,
+        //        HEADER_RUN_VALUE_DE,
         HEADER_MAX_SPEED_VALUE_DE
     };
 
@@ -107,7 +108,7 @@ public class GoogleFitCsvValidator extends CsvValidator {
         if (dbString == null || dbString.isEmpty()) {
             return 0;
         }
-
+        fileName = new File(fileName).getName();
         String dateString = fileName.split("\\.")[0]; //dirty hack --> change to json would solve this problem
         Date timestamp = TimestampUtils.createCleanTimestamp(
                 dateString + " " + dbString.replaceAll(":", ""),

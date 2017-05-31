@@ -31,7 +31,7 @@ public enum VaultEntryAnnotation {
     private String value = "";
 
     private VaultEntryAnnotation() {
-        valuePattern = Pattern.compile(".*" + this.toString() + "(=[\\w\\.]+)?).");
+        valuePattern = Pattern.compile(".*" + this.toString() + "(=([\\w\\.]+))?.");
     }
 
     public String getValue() {
@@ -42,30 +42,30 @@ public enum VaultEntryAnnotation {
         this.value = value;
     }
 
-    /**
-     *
-     * @param annotationString representing VaultEntryAnnotation as string
-     *
-     * @return VaultEntryAnnotation represented by the string or null if no (or
-     * more than one) VaultEntryAnnotation found
-     */
-    public static VaultEntryAnnotation fromString(String annotationString) {
-        VaultEntryAnnotation returnValue = null;
-        for (VaultEntryAnnotation item : VaultEntryAnnotation.values()) {
-            if (annotationString.toUpperCase().contains(item.toString().toUpperCase())) {
-                if (returnValue != null) {
-                    returnValue = item;
-                } else {
-                    // found more than one --> error
-                    return null;
-                }
-            }
-        }
-        return returnValue;
-    }
-
+    // TODO reimplement with pattern matching
+//    /**
+//     *
+//     * @param annotationString representing VaultEntryAnnotation as string
+//     *
+//     * @return VaultEntryAnnotation represented by the string or null if no (or
+//     * more than one) VaultEntryAnnotation found
+//     */
+//    public static VaultEntryAnnotation fromString(String annotationString) {
+//        VaultEntryAnnotation returnValue = null;
+//        for (VaultEntryAnnotation item : VaultEntryAnnotation.values()) {
+//            if (annotationString.toUpperCase().contains(item.toString().toUpperCase())) {
+//                if (returnValue != null) {
+//                    returnValue = item;
+//                } else {
+//                    // found more than one --> error
+//                    return null;
+//                }
+//            }
+//        }
+//        return returnValue;
+//    }
     public String toStringWithValue() {
-        return value.isEmpty() ? this.toString() : this.toString() + "=" + value;
+        return "";//value.isEmpty() ? this.toString() : this.toString() + "=" + value;
     }
 
 }

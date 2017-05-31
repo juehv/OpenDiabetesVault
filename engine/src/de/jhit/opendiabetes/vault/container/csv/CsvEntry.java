@@ -14,19 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.importer.validator;
-
-import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
+package de.jhit.opendiabetes.vault.container.csv;
 
 /**
  *
  * @author juehv
  */
-public class VaultCsvValidator extends CsvValidator {
+public abstract class CsvEntry {
 
-    public VaultCsvValidator() {
-        super(new VaultCsvEntry().getCsvHeaderRecord(),
-                new VaultCsvEntry().getCsvHeaderRecord());
-    }
+    public static final String DECIMAL_FORMAT = "%1$,.2f";
+    public final static char CSV_DELIMITER = ',';
+    public final static char CSV_LIST_DELIMITER = ':';
 
+    public abstract String[] toCsvRecord();
+
+    public abstract String[] getCsvHeaderRecord();
 }

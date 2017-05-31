@@ -16,6 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
@@ -59,8 +60,8 @@ public class VaultEntry {
     @DatabaseField(columnName = RAW_ID_FIELD_NAME, canBeNull = false)
     private long rawId = ID_UNUSED;
 
-    @DatabaseField(columnName = ANNOTATION_FIELD_NAME, canBeNull = false)
-    private List<VaultEntryAnnotation> annotations = new ArrayList<>();
+    @DatabaseField(dataType = DataType.SERIALIZABLE)
+    private ArrayList<VaultEntryAnnotation> annotations = new ArrayList<>();
 
     public VaultEntry() {
         // all persisted classes must define a no-arg constructor with at least package visibility
@@ -128,7 +129,7 @@ public class VaultEntry {
         this.annotations.add(annotation);
     }
 
-    public void setAnnotation(List<VaultEntryAnnotation> annotations) {
+    public void setAnnotation(ArrayList<VaultEntryAnnotation> annotations) {
         this.annotations = annotations;
     }
 

@@ -16,14 +16,12 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
-import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.io.File;
+import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -47,7 +45,6 @@ public abstract class CsvImporter extends FileImporter {
 
     @Override
     public boolean importData() {
-        super.importFilePath = new File(importFilePath).getName();
         preprocessingIfNeeded(importFilePath);
 
         FileInputStream fis = null;
@@ -62,7 +59,7 @@ public abstract class CsvImporter extends FileImporter {
             if (fis != null) {
                 try {
                     fis.close();
-                } catch (IOException ex) {
+                } catch (Exception ex) {
                     // not interesting :D
                 }
             }

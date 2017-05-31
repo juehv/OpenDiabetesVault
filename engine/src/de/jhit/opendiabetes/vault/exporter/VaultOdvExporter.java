@@ -17,9 +17,9 @@
 package de.jhit.opendiabetes.vault.exporter;
 
 import com.csvreader.CsvWriter;
-import de.jhit.opendiabetes.vault.container.VaultCsvEntry;
+import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
+import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.DigestOutputStream;
@@ -27,7 +27,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
@@ -37,21 +36,21 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
  * @author juehv
  */
 public class VaultOdvExporter extends VaultCsvExporter {
-
+    
     public static final String DATA_ZIP_ENTRY = "data.csv";
     public static final String SIGNATURE_ZIP_ENTRY = "sig.txt";
-
+    
     public VaultOdvExporter(ExporterOptions options, VaultDao db, String filePath) {
         super(options, db, filePath);
     }
-
+    
     @Override
     public int exportDataToFile() {
         return super.exportDataToFile();
     }
-
+    
     @Override
-    protected void writeToFile(List<VaultCsvEntry> csvEntries) throws IOException {
+    protected void writeToFile(List<CsvEntry> csvEntries) throws IOException {
         // Setup compression stuff
         ZipOutputStream zos = new ZipOutputStream(fileOutpuStream);
         zos.setMethod(ZipOutputStream.DEFLATED);
@@ -71,10 +70,10 @@ public class VaultOdvExporter extends VaultCsvExporter {
         zos.putNextEntry(new ZipEntry(DATA_ZIP_ENTRY));
         CsvWriter cwriter = new CsvWriter(dos, VaultCsvEntry.CSV_DELIMITER,
                 Charset.forName("UTF-8"));
-
-        cwriter.writeRecord(VaultCsvEntry.getCsvHeaderRecord());
-        for (VaultCsvEntry item : csvEntries) {
-            cwriter.writeRecord(item.toCsvRecord(DOUBLE_FORMAT));
+        
+        cwriter.writeRecord(csvEntries.get(0).getCsvHeaderRecord());
+        for (CsvEntry item : csvEntries) {
+            cwriter.writeRecord(item.toCsvRecord());
         }
         cwriter.flush();
 

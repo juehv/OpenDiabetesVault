@@ -19,7 +19,6 @@ package de.jhit.opendiabetes.vault.importer;
 import de.jhit.opendiabetes.vault.exporter.VaultOdvExporter;
 import static de.jhit.opendiabetes.vault.importer.Importer.LOG;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,7 +44,6 @@ public class VaultOdvImporter extends VaultCsvImporter {
 
     @Override
     public boolean importData() {
-        super.importFilePath = new File(importFilePath).getName();
         preprocessingIfNeeded(importFilePath);
 
         try {

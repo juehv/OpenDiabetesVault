@@ -16,65 +16,33 @@
  */
 package de.jhit.opendiabetes.vault.exporter;
 
-import com.csvreader.CsvWriter;
-import de.jhit.opendiabetes.vault.container.VaultCsvEntry;
+import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
+import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Jens
  */
-public class VaultCsvExporter {
+public class VaultCsvExporter extends CsvFileExporter {
 
-    public final static int RESULT_OK = 0;
-    public final static int RESULT_ERROR = -1;
-    public final static int RESULT_NO_DATA = -2;
-    public final static int RESULT_FILE_ACCESS_ERROR = -3;
-
-    protected static final Logger LOG = Logger.getLogger(VaultCsvExporter.class.getName());
-    protected static final String DOUBLE_FORMAT = "%1$.2f";
-
-    private final ExporterOptions options;
     private final VaultDao db;
-    private final String filePath;
-    protected FileOutputStream fileOutpuStream;
 
     public VaultCsvExporter(ExporterOptions options, VaultDao db, String filePath) {
-        this.options = options;
+        super(options, filePath);
         this.db = db;
-        this.filePath = filePath;
     }
 
-    public int exportDataToFile() {
+    public List<VaultEntry> queryData() {
         List<VaultEntry> entrys;
-        List<VaultCsvEntry> csvEntrys;
-
-        // check file stuff        
-        File checkFile = new File(filePath);
-        if (checkFile.exists()
-                && (!checkFile.isFile() || !checkFile.canWrite())) {
-            return RESULT_FILE_ACCESS_ERROR;
-        }
-        try {
-            fileOutpuStream = new FileOutputStream(checkFile);
-        } catch (FileNotFoundException ex) {
-            LOG.log(Level.SEVERE, "Error accessing file for output stream", ex);
-            return RESULT_FILE_ACCESS_ERROR;
-        }
 
         // query entrys
         if (options.isImportPeriodRestricted) {
@@ -84,38 +52,17 @@ public class VaultCsvExporter {
             entrys = db.queryAllVaultEntrys();
         }
 
-        if (entrys == null || entrys.isEmpty()) {
-            return RESULT_NO_DATA;
-        }
-
-        // create csv data
-        csvEntrys = prepareData(entrys);
-
-        // write to file
-        try {
-            writeToFile(csvEntrys);
-        } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error writing odv csv file: {0}" + filePath, ex);
-            return RESULT_ERROR;
-        }
-        return RESULT_OK;
+        return entrys;
     }
 
-    protected void writeToFile(List<VaultCsvEntry> csvEntries) throws IOException {
-        CsvWriter cwriter = new CsvWriter(fileOutpuStream, VaultCsvEntry.CSV_DELIMITER,
-                Charset.forName("UTF-8"));
+    @Override
+    protected List<CsvEntry> prepareData() {
+        List<CsvEntry> returnValues = new ArrayList<>();
 
-        cwriter.writeRecord(VaultCsvEntry.getCsvHeaderRecord());
-        for (VaultCsvEntry item : csvEntries) {
-            cwriter.writeRecord(item.toCsvRecord(DOUBLE_FORMAT));
+        List<VaultEntry> tmpValues = queryData();
+        if (tmpValues == null || tmpValues.isEmpty()) {
+            return null;
         }
-        cwriter.flush();
-        cwriter.close();
-        fileOutpuStream.close();
-    }
-
-    private List<VaultCsvEntry> prepareData(List<VaultEntry> tmpValues) {
-        List<VaultCsvEntry> returnValues = new ArrayList<>();
 
         // list is ordered by timestamp from database (or should be ordered otherwise)
         Date fromTimestamp = tmpValues.get(0).getTimestamp();

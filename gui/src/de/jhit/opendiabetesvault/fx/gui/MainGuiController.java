@@ -5,31 +5,39 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
-import de.jhit.opendiabetes.vault.container.VaultCsvEntry;
-import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
-import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
-import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
-import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
-import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
-import de.jhit.opendiabetes.vault.util.FileCopyUtil;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.container.SliceEntry;
+import de.jhit.opendiabetes.vault.container.SliceType;
+import de.jhit.opendiabetes.vault.container.csv.SliceCsVEntry;
+import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.exporter.CsvFileExporter;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
+import de.jhit.opendiabetes.vault.exporter.SliceLayoutCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultOdvExporter;
 import de.jhit.opendiabetes.vault.importer.FileImporter;
+import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
+import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
+import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
 import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
 import de.jhit.opendiabetes.vault.importer.VaultOdvImporter;
 import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOptions;
 import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
+import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
+import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
+import de.jhit.opendiabetes.vault.util.FileCopyUtil;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -678,7 +686,7 @@ public class MainGuiController implements Initializable {
                                         exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second      
 
                         // standard export
-                        VaultCsvExporter exporter = new VaultCsvExporter(eOptions,
+                        CsvFileExporter exporter = new VaultCsvExporter(eOptions,
                                 VaultDao.getInstance(),
                                 odvExpotFileName);
                         int result = exporter.exportDataToFile();
@@ -694,15 +702,60 @@ public class MainGuiController implements Initializable {
                         }
 
                         // novel odv export
+                        odvExpotFileName = new File(path).getAbsolutePath()
+                                + "/"
+                                + "export-"
+                                + VaultCsvEntry.VERSION_STRING
+                                + "-"
+                                + formatter.format(new Date())
+                                + ".odv";
                         exporter = new VaultOdvExporter(eOptions,
                                 VaultDao.getInstance(),
-                                odvExpotFileName + ".odv");
+                                odvExpotFileName);
                         int result2 = exporter.exportDataToFile();
-                        if (result != VaultCsvExporter.RESULT_OK) {
+                        if (result2 != VaultCsvExporter.RESULT_OK) {
                             Platform.runLater(() -> {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
                                         "Could not export to odv csv file: "
                                         + result2 + "\nSee logfile for details.",
+                                        ButtonType.CLOSE);
+                                alert.setHeaderText(null);
+                                alert.show();
+                            });
+                        }
+
+                        // slice exporter
+                        List<SliceEntry> entries = new ArrayList<>();
+                        // today    
+                        Calendar date = new GregorianCalendar();
+                        // reset hour, minutes, seconds and millis
+                        date.set(Calendar.HOUR_OF_DAY, 0);
+                        date.set(Calendar.MINUTE, 0);
+                        date.set(Calendar.SECOND, 0);
+                        date.set(Calendar.MILLISECOND, 0);
+                        Date today = TimestampUtils.createCleanTimestamp(date.getTime());
+
+                        for (int i = 14; i >= 0; i--) {
+                            entries.add(new SliceEntry(
+                                    TimestampUtils.addMinutesToTimestamp(today, i * -1440),
+                                    360,
+                                    SliceType.SLICE_STANDARD));
+                        }
+                        odvExpotFileName = new File(path).getAbsolutePath()
+                                + "/"
+                                + "slice-"
+                                + SliceCsVEntry.VERSION_STRING
+                                + "-"
+                                + formatter.format(new Date())
+                                + ".csv";
+                        exporter = new SliceLayoutCsvExporter(eOptions,
+                                odvExpotFileName, entries);
+                        int result3 = exporter.exportDataToFile();
+                        if (result3 != VaultCsvExporter.RESULT_OK) {
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                                        "Could not export to odv csv file: "
+                                        + result3 + "\nSee logfile for details.",
                                         ButtonType.CLOSE);
                                 alert.setHeaderText(null);
                                 alert.show();
