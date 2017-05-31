@@ -16,12 +16,13 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
-import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
-import static de.jhit.opendiabetes.vault.importer.Importer.LOG;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import static de.jhit.opendiabetes.vault.importer.Importer.LOG;
+import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -217,7 +218,9 @@ public class MedtronicCsvImporter extends CsvImporter {
                     if (m.matches()) {
                         String meterSerial = m.group(2);
                         if (meterSerial.isEmpty()) {
-                            tmpEntry.setAnnotation(meterSerial);
+                            VaultEntryAnnotation annotation = VaultEntryAnnotation.GLUCOSE_BG_METER_SERIAL;
+                            annotation.setValue(meterSerial);
+                            tmpEntry.addAnnotation(annotation);
                             tmpEntry.setType(VaultEntryType.GLUCOSE_BG);
                         }
                     }

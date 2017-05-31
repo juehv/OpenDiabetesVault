@@ -18,7 +18,9 @@ package de.jhit.opendiabetes.vault.container;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -58,7 +60,7 @@ public class VaultEntry {
     private long rawId = ID_UNUSED;
 
     @DatabaseField(columnName = ANNOTATION_FIELD_NAME, canBeNull = false)
-    private String annotation = "";
+    private List<VaultEntryAnnotation> annotations = new ArrayList<>();
 
     public VaultEntry() {
         // all persisted classes must define a no-arg constructor with at least package visibility
@@ -75,7 +77,7 @@ public class VaultEntry {
         this.timestamp = copy.timestamp;
         this.value = copy.value;
         this.value2 = copy.value2;
-        this.annotation = copy.annotation;
+        this.annotations = copy.annotations;
     }
 
     public long getId() {
@@ -118,12 +120,16 @@ public class VaultEntry {
         this.value2 = value2;
     }
 
-    public String getAnnotation() {
-        return annotation;
+    public List<VaultEntryAnnotation> getAnnotations() {
+        return annotations;
     }
 
-    public void setAnnotation(String annotation) {
-        this.annotation = annotation;
+    public void addAnnotation(VaultEntryAnnotation annotation) {
+        this.annotations.add(annotation);
+    }
+
+    public void setAnnotation(List<VaultEntryAnnotation> annotations) {
+        this.annotations = annotations;
     }
 
     @Override
@@ -134,7 +140,7 @@ public class VaultEntry {
         hash = 67 * hash + (int) (Double.doubleToLongBits(this.value) ^ (Double.doubleToLongBits(this.value) >>> 32));
         hash = 67 * hash + (int) (Double.doubleToLongBits(this.value2) ^ (Double.doubleToLongBits(this.value2) >>> 32));
         hash = 67 * hash + (int) (this.rawId ^ (this.rawId >>> 32));
-        hash = 67 * hash + Objects.hashCode(this.annotation);
+        hash = 67 * hash + Objects.hashCode(this.annotations);
         return hash;
     }
 
@@ -162,7 +168,7 @@ public class VaultEntry {
         if (!Objects.equals(this.value2, other.value2)) {
             return false;
         }
-        if (!Objects.equals(this.annotation, other.annotation)) {
+        if (!Objects.equals(this.annotations, other.annotations)) {
             return false;
         }
         return true;
@@ -170,7 +176,7 @@ public class VaultEntry {
 
     @Override
     public String toString() {
-        return "VaultEntry{" + "id=" + id + ", type=" + type + ", timestamp=" + timestamp + ", value=" + value + ", value2=" + value2 + ", rawId=" + rawId + ", annotaion=" + annotation + '}';
+        return "VaultEntry{" + "id=" + id + ", type=" + type + ", timestamp=" + timestamp + ", value=" + value + ", value2=" + value2 + ", rawId=" + rawId + ", annotaion=" + annotations + '}';
     }
 
 }

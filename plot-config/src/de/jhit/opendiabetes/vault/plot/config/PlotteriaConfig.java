@@ -15,7 +15,7 @@ public class PlotteriaConfig {
     private int minCgmBgValue = 50;
 
     private double legendXOffset = -0.05;
-    private double legendYOffset = 0.27;
+    private double legendYOffset = 0.295;
 
     // Plot booleans
     private boolean statisticsFlag = false;
@@ -48,16 +48,17 @@ public class PlotteriaConfig {
     private String pumpColor = "#000000";
     private String symbolsBackgroundColor = "#FFE5BA";
     private String cgmBgLimitMarkerColor = "#FFFFFF";
+    private String stress0Color = "#ffffff";
     private String stress1Color = "#d5d5ff";
     private String stress2Color = "#ababff";
     private String stress3Color = "#8181ff";
-    private String stress4Color = "#5757ff";
+    private String stress4Color = "#ff0000";
     private String exerciseWalkColor = "#E9C7B9";
     private String exerciseRunColor = "#BBE9B9";
     private String exerciseBicycleColor = "#B9C8E9";
     private String exerciseOtherColor = "#E5B9E9";
-    private String lightSleepColor = "#f3f3f3";
-    private String deepSleepColor = "#d9d9d9";
+    private String lightSleepColor = "#d9d9d9";
+    private String deepSleepColor = "#b3b3b3";
 
     // Axis Labels
     private boolean showXaxisLabel = false;

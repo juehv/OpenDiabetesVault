@@ -18,9 +18,10 @@ package de.jhit.opendiabetes.vault.exporter;
 
 import com.csvreader.CsvWriter;
 import de.jhit.opendiabetes.vault.container.VaultCsvEntry;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -254,6 +255,21 @@ public class VaultCsvExporter {
                         default:
                             LOG.severe("ASSERTION ERROR!");
                             throw new AssertionError();
+                    }
+
+                    if (!tmpEntry.getAnnotations().isEmpty()) {
+                        for (VaultEntryAnnotation annotation : tmpEntry.getAnnotations()) {
+                            switch (annotation) {
+                                case GLUCOSE_BG_METER_SERIAL:
+                                case GLUCOSE_RISE_20_MIN:
+                                case GLUCOSE_RISE_LAST:
+                                    tmpCsvEntry.addGlucoseAnnotation(annotation.toStringWithValue());
+                                    break;
+                                default:
+                                    LOG.severe("ASSERTION ERROR!");
+                                    throw new AssertionError();
+                            }
+                        }
                     }
 
                 }
