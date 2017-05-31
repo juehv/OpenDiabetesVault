@@ -25,7 +25,14 @@ import java.util.regex.Pattern;
 public enum VaultEntryAnnotation {
     GLUCOSE_RISE_LAST,
     GLUCOSE_RISE_20_MIN,
-    GLUCOSE_BG_METER_SERIAL;
+    GLUCOSE_BG_METER_SERIAL,
+    //
+    EXERCISE_TrackerWalk,
+    EXERCISE_TrackerBicycle,
+    EXERCISE_TrackerRun,
+    EXERCISE_GoogleWalk,
+    EXERCISE_GoogleBicycle,
+    EXERCISE_GoogleRun;
 
     private final Pattern valuePattern;
     private String value = "";

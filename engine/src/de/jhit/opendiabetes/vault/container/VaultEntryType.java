@@ -31,13 +31,9 @@ public enum VaultEntryType {
     BASAL_INTERPRETER,
     // Exercise
     EXERCISE_Manual,
-    EXERCISE_TrackerWalk,
-    EXERCISE_TrackerBicycle,
-    EXERCISE_TrackerRun,
-    EXERCISE_GoogleWalk,
-    EXERCISE_GoogleBicycle,
-    EXERCISE_GoogleRun,
-    EXERCISE_MERGE_INTERPRETER,
+    EXERCISE_Walk,
+    EXERCISE_Bicycle,
+    EXERCISE_Run,
     // Glucose
     GLUCOSE_CGM,
     GLUCOSE_CGM_RAW,
