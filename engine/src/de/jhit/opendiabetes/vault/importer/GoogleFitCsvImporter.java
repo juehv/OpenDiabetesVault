@@ -18,6 +18,7 @@ package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
 import de.jhit.opendiabetes.vault.importer.validator.GoogleFitCsvValidator;
@@ -34,7 +35,7 @@ public class GoogleFitCsvImporter extends CsvImporter {
     public GoogleFitCsvImporter(String importFilePath) {
         this(importFilePath, new GoogleFitCsvValidator(), ',');
     }
-    
+
     public GoogleFitCsvImporter(String importFilePath, CsvValidator validator, char delimiter) {
         super(importFilePath, validator, delimiter);
     }
@@ -66,19 +67,22 @@ public class GoogleFitCsvImporter extends CsvImporter {
 
         // estimate the activity within this slot
         if (runTime > bikeTime && runTime > walkTime) {
-            newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_GoogleRun,
+            newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_RUN,
                     timestamp, durationInMinutes);
             newVaultEntry.setValue2(maxSpeed);
+            newVaultEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_GoogleRun);
             retVal.add(newVaultEntry);
         } else if (bikeTime > runTime && bikeTime > walkTime) {
-            newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_GoogleBicycle,
+            newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_BICYCLE,
                     timestamp, durationInMinutes);
             newVaultEntry.setValue2(maxSpeed);
+            newVaultEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_GoogleBicycle);
             retVal.add(newVaultEntry);
         } else {
-            newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_GoogleWalk,
+            newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_WALK,
                     timestamp, durationInMinutes);
             newVaultEntry.setValue2(maxSpeed);
+            newVaultEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_GoogleWalk);
             retVal.add(newVaultEntry);
         }
 

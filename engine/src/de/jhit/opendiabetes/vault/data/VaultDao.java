@@ -17,7 +17,6 @@
 package de.jhit.opendiabetes.vault.data;
 
 import com.j256.ormlite.dao.CloseableIterator;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.HsqldbDatabaseType;
@@ -31,6 +30,7 @@ import com.j256.ormlite.table.TableUtils;
 import de.jhit.opendiabetes.vault.container.RawEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -185,19 +185,13 @@ public class VaultDao {
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
                     .where()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleBicycle)
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_BICYCLE)
                     .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleRun)
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_RUN)
                     .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_GoogleWalk)
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_WALK)
                     .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerBicycle)
-                    .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerRun)
-                    .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_TrackerWalk)
-                    .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_Manual)
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.EXERCISE_MANUAL)
                     .and()
                     .between(VaultEntry.TIMESTAMP_FIELD_NAME, from, to)
                     .prepare();
@@ -268,9 +262,9 @@ public class VaultDao {
             PreparedQuery<VaultEntry> query
                     = vaultDao.queryBuilder().orderBy("timestamp", true)
                     .where()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_Manual)
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_MANUAL)
                     .or()
-                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_Profile)
+                    .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_PROFILE)
                     .or()
                     .eq(VaultEntry.TYPE_FIELD_NAME, VaultEntryType.BASAL_INTERPRETER)
                     .and()

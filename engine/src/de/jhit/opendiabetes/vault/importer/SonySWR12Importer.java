@@ -16,10 +16,11 @@
  */
 package de.jhit.opendiabetes.vault.importer;
 
-import de.jhit.opendiabetes.vault.importer.validator.SonySWR12Validator;
 import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.importer.validator.SonySWR12Validator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -108,15 +109,17 @@ public class SonySWR12Importer extends CsvImporter {
                 break;
             case RUN:
                 tmpEntry = new VaultEntry(
-                        VaultEntryType.EXERCISE_TrackerRun,
+                        VaultEntryType.EXERCISE_RUN,
                         timestamp,
                         timeSpan);
+                tmpEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_TrackerRun);
                 break;
             case WALK:
                 tmpEntry = new VaultEntry(
-                        VaultEntryType.EXERCISE_TrackerWalk,
+                        VaultEntryType.EXERCISE_WALK,
                         timestamp,
                         timeSpan);
+                tmpEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_TrackerWalk);
                 break;
             default:
                 Logger.getLogger(this.getClass().getName()).fine("AssertionError");

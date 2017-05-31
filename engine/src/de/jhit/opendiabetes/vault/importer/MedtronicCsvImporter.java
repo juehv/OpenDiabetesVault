@@ -182,7 +182,7 @@ public class MedtronicCsvImporter extends CsvImporter {
         switch (type) {
             case BASAL:
                 tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.BASAL_Profile, rawValues,
+                        VaultEntryType.BASAL_PROFILE, rawValues,
                         RATE_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
@@ -190,7 +190,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                 break;
             case BASAL_TMP_PERCENT:
                 tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.BASAL_Manual, rawValues,
+                        VaultEntryType.BASAL_MANUAL, rawValues,
                         PERCENT_OF_RATE_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     tmpEntry = annotateBasalEntry(tmpEntry, rawValues, type,
@@ -200,7 +200,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                 break;
             case BASAL_TMP_RATE:
                 tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.BASAL_Manual, rawValues,
+                        VaultEntryType.BASAL_MANUAL, rawValues,
                         RATE_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     tmpEntry = annotateBasalEntry(tmpEntry, rawValues, type,
@@ -239,7 +239,7 @@ public class MedtronicCsvImporter extends CsvImporter {
             case BOLUS_WIZARD:
                 // meal information
                 tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.MEAL_BolusExpert, rawValues,
+                        VaultEntryType.MEAL_BOLUS_CALCULATOR, rawValues,
                         CARB_INPUT_PATTERN, creader.getValues());
                 if (tmpEntry != null && tmpEntry.getValue() > 0.0) {
                     retVal.add(tmpEntry);
@@ -254,7 +254,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                 break;
             case BOLUS_NORMAL:
                 tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.BOLUS_Normal, rawValues,
+                        VaultEntryType.BOLUS_NORMAL, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
@@ -262,7 +262,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                 break;
             case BOLUS_SQUARE:
                 tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.BOLUS_Square, rawValues,
+                        VaultEntryType.BOLUS_SQARE, rawValues,
                         AMOUNT_PATTERN, creader.getValues());
                 if (tmpEntry != null) {
                     tmpEntry = extractSecondValue(tmpEntry, rawValues,
@@ -275,14 +275,14 @@ public class MedtronicCsvImporter extends CsvImporter {
                 break;
             case EXERCICE:
                 tmpEntry = extractDoubleEntry(timestamp,
-                        VaultEntryType.EXERCISE_Manual, rawValues,
+                        VaultEntryType.EXERCISE_MANUAL, rawValues,
                         DURATION_PATTERN, creader.getValues());
 
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
                 } else {
                     // add marker without duration for old pumps
-                    retVal.add(new VaultEntry(VaultEntryType.EXERCISE_Manual,
+                    retVal.add(new VaultEntry(VaultEntryType.EXERCISE_MANUAL,
                             timestamp, VaultEntry.VALUE_UNUSED));
                 }
                 break;

@@ -16,10 +16,10 @@
  */
 package de.jhit.opendiabetes.vault.exporter;
 
-import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
-import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
+import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
+import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
@@ -130,34 +130,31 @@ public class VaultCsvExporter extends CsvFileExporter {
                         case GLUCOSE_BOLUS_CALCULATION:
                             tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());
                             break;
-                        case BASAL_Manual:
-                        case BASAL_Profile:
+                        case BASAL_MANUAL:
+                        case BASAL_PROFILE:
                         case BASAL_INTERPRETER:
                             tmpCsvEntry.setBasalValue(tmpEntry.getValue());
                             tmpCsvEntry.addBasalAnnotation(tmpEntry.getType().toString());
                             break;
-                        case BOLUS_Square:
+                        case BOLUS_SQARE:
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
                             tmpCsvEntry.addBolusAnnotation(
                                     tmpEntry.getType().toString()
                                     + "=" + String.format(Locale.ENGLISH, DOUBLE_FORMAT, tmpEntry.getValue2()));
                             break;
-                        case BOLUS_Normal:
+                        case BOLUS_NORMAL:
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
                             tmpCsvEntry.addBolusAnnotation(
                                     tmpEntry.getType().toString());
                             break;
-                        case MEAL_BolusExpert:
-                        case MEAL_Manual:
+                        case MEAL_BOLUS_CALCULATOR:
+                        case MEAL_MANUAL:
                             tmpCsvEntry.setMealValue(tmpEntry.getValue());
                             break;
-                        case EXERCISE_GoogleBicycle:
-                        case EXERCISE_GoogleWalk:
-                        case EXERCISE_GoogleRun:
-                        case EXERCISE_Manual:
-                        case EXERCISE_TrackerBicycle:
-                        case EXERCISE_TrackerRun:
-                        case EXERCISE_TrackerWalk:
+                        case EXERCISE_BICYCLE:
+                        case EXERCISE_WALK:
+                        case EXERCISE_RUN:
+                        case EXERCISE_MANUAL:
                             tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
                             tmpCsvEntry.addExerciseAnnotation(tmpEntry.getType().toString());
                             break;
@@ -200,7 +197,7 @@ public class VaultCsvExporter extends CsvFileExporter {
                             tmpCsvEntry.setSleepValue(tmpEntry.getValue());
                             break;
                         default:
-                            LOG.severe("ASSERTION ERROR!");
+                            LOG.severe("TYPE ASSERTION ERROR!");
                             throw new AssertionError();
                     }
 
@@ -212,8 +209,16 @@ public class VaultCsvExporter extends CsvFileExporter {
                                 case GLUCOSE_RISE_LAST:
                                     tmpCsvEntry.addGlucoseAnnotation(annotation.toStringWithValue());
                                     break;
+                                case EXERCISE_GoogleBicycle:
+                                case EXERCISE_GoogleRun:
+                                case EXERCISE_GoogleWalk:
+                                case EXERCISE_TrackerBicycle:
+                                case EXERCISE_TrackerRun:
+                                case EXERCISE_TrackerWalk:
+                                    tmpCsvEntry.addExerciseAnnotation(annotation.toStringWithValue());
+                                    break;
                                 default:
-                                    LOG.severe("ASSERTION ERROR!");
+                                    LOG.severe("ANNOTATION ASSERTION ERROR!");
                                     throw new AssertionError();
                             }
                         }

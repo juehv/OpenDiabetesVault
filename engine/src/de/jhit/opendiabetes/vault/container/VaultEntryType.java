@@ -22,18 +22,17 @@ package de.jhit.opendiabetes.vault.container;
  */
 public enum VaultEntryType {
     // Bolus
-// Bolus
-    BOLUS_Normal,
-    BOLUS_Square,
+    BOLUS_NORMAL,
+    BOLUS_SQARE,
     // Basal
-    BASAL_Profile,
-    BASAL_Manual,
+    BASAL_PROFILE,
+    BASAL_MANUAL,
     BASAL_INTERPRETER,
     // Exercise
-    EXERCISE_Manual,
-    EXERCISE_Walk,
-    EXERCISE_Bicycle,
-    EXERCISE_Run,
+    EXERCISE_MANUAL,
+    EXERCISE_WALK,
+    EXERCISE_BICYCLE,
+    EXERCISE_RUN,
     // Glucose
     GLUCOSE_CGM,
     GLUCOSE_CGM_RAW,
@@ -43,8 +42,8 @@ public enum VaultEntryType {
     GLUCOSE_BG_MANUAL,
     GLUCOSE_BOLUS_CALCULATION,
     // Meal
-    MEAL_BolusExpert,
-    MEAL_Manual,
+    MEAL_BOLUS_CALCULATOR,
+    MEAL_MANUAL,
     // Pump Events
     PUMP_REWIND,
     PUMP_PRIME,

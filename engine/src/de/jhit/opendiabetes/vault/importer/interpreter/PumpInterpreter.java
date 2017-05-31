@@ -236,7 +236,7 @@ public class PumpInterpreter extends VaultInterpreter {
         List<VaultEntry> killedBasalEvents = new ArrayList<>();
 
         for (VaultEntry item : data) {
-            if (item.getType() == VaultEntryType.BASAL_Manual
+            if (item.getType() == VaultEntryType.BASAL_MANUAL
                     && item instanceof MedtronicAnnotatedVaultEntry) {
                 MedtronicAnnotatedVaultEntry basalItem
                         = (MedtronicAnnotatedVaultEntry) item;
@@ -261,12 +261,11 @@ public class PumpInterpreter extends VaultInterpreter {
                 }
                 if (affectedHistoricElements.isEmpty()) {
                     // try to get it from DB
-                    VaultEntry tmpItem = db.queryLatestEventBefore(
-                            TimestampUtils.createCleanTimestamp(
+                    VaultEntry tmpItem = db.queryLatestEventBefore(TimestampUtils.createCleanTimestamp(
                                     new Date(Math.round(
                                             basalItem.getTimestamp().getTime()
                                             - basalItem.getDuration()))),
-                            VaultEntryType.BASAL_Profile);
+                            VaultEntryType.BASAL_PROFILE);
                     
                     if (tmpItem != null) {
                         affectedHistoricElements.add(tmpItem);
@@ -291,7 +290,7 @@ public class PumpInterpreter extends VaultInterpreter {
                         double newBasalValue = currentBasalValue
                                 * basalItem.getValue() * 0.01;
                         basalEvents.add(new VaultEntry(
-                                VaultEntryType.BASAL_Manual,
+                                VaultEntryType.BASAL_MANUAL,
                                 startTimestamp,
                                 newBasalValue));
 
@@ -301,28 +300,28 @@ public class PumpInterpreter extends VaultInterpreter {
                             newBasalValue = currentBasalValue
                                     * basalItem.getValue() * 0.01;
                             basalEvents.add(new VaultEntry(
-                                    VaultEntryType.BASAL_Manual,
+                                    VaultEntryType.BASAL_MANUAL,
                                     affectedHistoricElements.get(i).getTimestamp(),
                                     newBasalValue));
                         }
 
                         // restore rate from jungest profile event afterwords
                         basalEvents.add(new VaultEntry(
-                                VaultEntryType.BASAL_Profile,
+                                VaultEntryType.BASAL_PROFILE,
                                 basalItem.getTimestamp(),
                                 affectedHistoricElements.get(0).getValue()));
                         break;
                     case BASAL_TMP_RATE:
                         // add new rate
                         basalEvents.add(new VaultEntry(
-                                VaultEntryType.BASAL_Manual,
+                                VaultEntryType.BASAL_MANUAL,
                                 new Date((long) (basalItem.getTimestamp().getTime()
                                         - basalItem.getDuration())),
                                 basalItem.getValue()));
 
                         // restore rate from jungest profile event afterwords
                         basalEvents.add(new VaultEntry(
-                                VaultEntryType.BASAL_Profile,
+                                VaultEntryType.BASAL_PROFILE,
                                 basalItem.getTimestamp(),
                                 affectedHistoricElements.get(0).getValue()));
                         break;
@@ -332,7 +331,7 @@ public class PumpInterpreter extends VaultInterpreter {
                 }
 
                 killedBasalEvents.add(item);
-            } else if (item.getType() == VaultEntryType.BASAL_Profile) {
+            } else if (item.getType() == VaultEntryType.BASAL_PROFILE) {
                 historicBasalProfileEvents.add(item);
             }
         }

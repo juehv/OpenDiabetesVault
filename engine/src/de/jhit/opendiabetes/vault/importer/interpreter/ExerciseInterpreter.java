@@ -67,69 +67,65 @@ public class ExerciseInterpreter extends VaultInterpreter {
 
         for (VaultEntry item : data) {
             switch (item.getType()) {
-                case EXERCISE_TrackerBicycle:
-                case EXERCISE_TrackerRun:
-                case EXERCISE_TrackerWalk:
-                case EXERCISE_GoogleWalk:
-                case EXERCISE_GoogleRun:
-                case EXERCISE_GoogleBicycle:
+                case EXERCISE_BICYCLE:
+                case EXERCISE_RUN:
+                case EXERCISE_WALK:
+                    //FIXME respect annotations!!
                     // google activity type > tracker activity type
                     if (lastExerciseItem == null) {
                         // init item
                         lastExerciseItem = item;
                         typeBestEfford = item.getType();
-                    } else {
-                        if (Math.round(
-                                (item.getTimestamp().getTime()
-                                - lastExerciseItem.getTimestamp().getTime())
-                                / 60000)
-                                >= Math.round(myOptions.activitySliceThreshold
-                                        + lastExerciseItem.getValue())) {
-                            // within a slice
-                            lastExerciseItem.setValue(item.getValue() + lastExerciseItem.getValue()); // add time to value
-                            if (typeBestEfford != null
-                                    && item.getType().ordinal() > typeBestEfford.ordinal()) {
-                                typeBestEfford = item.getType();
-                            }
-                        } else {
-                            // new slice
-                            // check if found slice already exist from other source
-                            for (VaultEntry historyEntry : dbValues) {
-                                if (lastExerciseItem != null
-                                        && historyEntry.getTimestamp().after(lastExerciseItem.getTimestamp())
-                                        && Math.round(historyEntry.getTimestamp().getTime() / 60000)
-                                        <= Math.round(lastExerciseItem.getValue())) { // is within duration
-                                    // check if db value is more valuable
-                                    if (typeBestEfford != null
-                                            && historyEntry.getType().ordinal() > typeBestEfford.ordinal()) {
-                                        // --> DB Entry is better
-                                        if (historyEntry.getValue() > lastExerciseItem.getValue()) {
-                                            // kill item
-                                            lastExerciseItem = null;
-                                        } else {
-                                            // this entry has a longer duration
-                                            typeBestEfford = historyEntry.getType();
-                                        }
-                                    }
-                                } else if (lastExerciseItem != null
-                                        && historyEntry.getTimestamp().after(lastExerciseItem.getTimestamp())
-                                        && Math.round(historyEntry.getTimestamp().getTime() / 60000)
-                                        > Math.round(lastExerciseItem.getValue())) {
-                                    // we passed the current time point --> stop searching
-                                    break;
-                                }
-                            }
-                            // save old slice
-                            if (lastExerciseItem != null
-                                    && lastExerciseItem.getValue() > myOptions.activityThreshold) {
-                                lastExerciseItem.setType(typeBestEfford);
-                                retVal.add(lastExerciseItem);
-                            }
-                            //  setup for new slice search
-                            lastExerciseItem = item;
+                    } else if (Math.round(
+                            (item.getTimestamp().getTime()
+                            - lastExerciseItem.getTimestamp().getTime())
+                            / 60000)
+                            >= Math.round(myOptions.activitySliceThreshold
+                                    + lastExerciseItem.getValue())) {
+                        // within a slice
+                        lastExerciseItem.setValue(item.getValue() + lastExerciseItem.getValue()); // add time to value
+                        if (typeBestEfford != null
+                                && item.getType().ordinal() > typeBestEfford.ordinal()) {
                             typeBestEfford = item.getType();
-
                         }
+                    } else {
+                        // new slice
+                        // check if found slice already exist from other source
+                        for (VaultEntry historyEntry : dbValues) {
+                            if (lastExerciseItem != null
+                                    && historyEntry.getTimestamp().after(lastExerciseItem.getTimestamp())
+                                    && Math.round(historyEntry.getTimestamp().getTime() / 60000)
+                                    <= Math.round(lastExerciseItem.getValue())) { // is within duration
+                                // check if db value is more valuable
+                                if (typeBestEfford != null
+                                        && historyEntry.getType().ordinal() > typeBestEfford.ordinal()) {
+                                    // --> DB Entry is better
+                                    if (historyEntry.getValue() > lastExerciseItem.getValue()) {
+                                        // kill item
+                                        lastExerciseItem = null;
+                                    } else {
+                                        // this entry has a longer duration
+                                        typeBestEfford = historyEntry.getType();
+                                    }
+                                }
+                            } else if (lastExerciseItem != null
+                                    && historyEntry.getTimestamp().after(lastExerciseItem.getTimestamp())
+                                    && Math.round(historyEntry.getTimestamp().getTime() / 60000)
+                                    > Math.round(lastExerciseItem.getValue())) {
+                                // we passed the current time point --> stop searching
+                                break;
+                            }
+                        }
+                        // save old slice
+                        if (lastExerciseItem != null
+                                && lastExerciseItem.getValue() > myOptions.activityThreshold) {
+                            lastExerciseItem.setType(typeBestEfford);
+                            retVal.add(lastExerciseItem);
+                        }
+                        //  setup for new slice search
+                        lastExerciseItem = item;
+                        typeBestEfford = item.getType();
+
                     }
                     break;
                 default:

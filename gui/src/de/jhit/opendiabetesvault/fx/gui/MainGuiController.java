@@ -735,7 +735,7 @@ public class MainGuiController implements Initializable {
                         date.set(Calendar.MILLISECOND, 0);
                         Date today = TimestampUtils.createCleanTimestamp(date.getTime());
 
-                        for (int i = 14; i >= 0; i--) {
+                        for (int i = 13; i >= 0; i--) {
                             entries.add(new SliceEntry(
                                     TimestampUtils.addMinutesToTimestamp(today, i * -1440),
                                     360,
