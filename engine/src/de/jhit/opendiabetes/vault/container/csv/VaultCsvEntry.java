@@ -17,6 +17,7 @@
 package de.jhit.opendiabetes.vault.container.csv;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -302,25 +303,30 @@ public class VaultCsvEntry extends CsvEntry {
 
     public String[] toCsvRecord(String decimalFormat) {
         ArrayList<String> csvRecord = new ArrayList<>();
+
         csvRecord.add(new SimpleDateFormat("dd.MM.yy").format(timestamp));
         csvRecord.add(new SimpleDateFormat("HH:mm").format(timestamp));
         if (bgValue > 0.0) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, bgValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, bgValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
         if (cgmValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
         if (cgmRawValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmRawValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmRawValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
         if (cgmAlertValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmAlertValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmAlertValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
@@ -335,7 +341,8 @@ public class VaultCsvEntry extends CsvEntry {
             csvRecord.add("");
         }
         if (basalValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, basalValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, basalValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
@@ -350,7 +357,8 @@ public class VaultCsvEntry extends CsvEntry {
             csvRecord.add("");
         }
         if (bolusValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, bolusValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, bolusValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
@@ -365,12 +373,14 @@ public class VaultCsvEntry extends CsvEntry {
             csvRecord.add("");
         }
         if (bolusCalculationValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, bolusCalculationValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, bolusCalculationValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
         if (mealValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, mealValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, mealValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
@@ -385,7 +395,8 @@ public class VaultCsvEntry extends CsvEntry {
             csvRecord.add("");
         }
         if (exerciseTimeValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, exerciseTimeValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, exerciseTimeValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
@@ -400,27 +411,32 @@ public class VaultCsvEntry extends CsvEntry {
             csvRecord.add("");
         }
         if (heartRateValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, heartRateValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, heartRateValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
         if (heartRateVariabilityValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, heartRateVariabilityValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, heartRateVariabilityValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
         if (stressBalanceValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, stressBalanceValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, stressBalanceValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
         if (stressValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, stressValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, stressValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }
         if (sleepValue > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, sleepValue));
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, sleepValue)
+                    .replaceAll(",", ""));
         } else {
             csvRecord.add("");
         }

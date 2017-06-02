@@ -22,7 +22,7 @@ package de.jhit.opendiabetes.vault.container.csv;
  */
 public abstract class CsvEntry {
 
-    public static final String DECIMAL_FORMAT = "%1$,.2f";
+    public static final String DECIMAL_FORMAT ="%1$.2f";
     public final static char CSV_DELIMITER = ',';
     public final static char CSV_LIST_DELIMITER = ':';
 
