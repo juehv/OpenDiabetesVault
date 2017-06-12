@@ -16,16 +16,15 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import java.io.Serializable;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
  *
  * @author juehv
  */
-@DatabaseTable(tableName = "VaultEntryAnnotations")
-public class VaultEntryAnnotation {
+public class VaultEntryAnnotation implements Serializable {
 
     public static enum TYPE {
         GLUCOSE_RISE_LAST,
@@ -41,27 +40,22 @@ public class VaultEntryAnnotation {
         EXERCISE_AUTOMATIC_OTHER;
     }
 
-    // needed for ormlite -.-
-    @DatabaseField(generatedId = true)
-    private long id;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "VaultEntry_id")
-    private VaultEntry parent;
-    // end
-
     private final Pattern valuePattern;
 
-    @DatabaseField(canBeNull = false)
-    private final TYPE type;
+    private TYPE type;
 
-    @DatabaseField(canBeNull = false)
     private String value = "";
 
     public VaultEntryAnnotation() {
-        type = TYPE.GLUCOSE_RISE_LAST;
-        valuePattern = Pattern.compile(".*" + type.toString() + "(=([\\w\\.]+))?.");
+        this("", TYPE.EXERCISE_AUTOMATIC_OTHER);
     }
 
     public VaultEntryAnnotation(TYPE type) {
+        this("", type);
+    }
+
+    public VaultEntryAnnotation(String vaulue, TYPE type) {
+        this.value = value;
         this.type = type;
         valuePattern = Pattern.compile(".*" + type.toString() + "(=([\\w\\.]+))?.");
     }
@@ -108,6 +102,33 @@ public class VaultEntryAnnotation {
 
     public String toStringWithValue() {
         return value.isEmpty() ? this.toString() : this.toString() + "=" + value;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final VaultEntryAnnotation other = (VaultEntryAnnotation) obj;
+        if (!Objects.equals(this.value, other.value)) {
+            return false;
+        }
+        if (this.type != other.type) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -16,12 +16,13 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -35,8 +36,10 @@ public class VaultEntry {
 
     public static final double VALUE_UNUSED = -5.0;
     public static final long ID_UNUSED = -5L;
+    private final Gson gson;
 
     // for QueryBuilder to be able to find the fields
+    public static final String ID_FIELD_NAME = "id";
     public static final String TYPE_FIELD_NAME = "type";
     public static final String TIMESTAMP_FIELD_NAME = "timestamp";
     public static final String VALUE_FIELD_NAME = "value";
@@ -44,7 +47,7 @@ public class VaultEntry {
     public static final String RAW_ID_FIELD_NAME = "rawId";
     public static final String ANNOTATION_FIELD_NAME = "annotation";
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(columnName = ID_FIELD_NAME, generatedId = true)
     private long id;
 
     @DatabaseField(columnName = TYPE_FIELD_NAME, canBeNull = false, dataType = DataType.ENUM_INTEGER)
@@ -62,20 +65,27 @@ public class VaultEntry {
     @DatabaseField(columnName = RAW_ID_FIELD_NAME, canBeNull = false)
     private long rawId = ID_UNUSED;
 
-    @ForeignCollectionField(columnName = ANNOTATION_FIELD_NAME, eager = true)
-    private Collection<VaultEntryAnnotation> annotations = new ArrayList<>();
+    private ArrayList<VaultEntryAnnotation> annotations = new ArrayList<>();
+
+    @DatabaseField(dataType = DataType.LONG_STRING, columnName = ANNOTATION_FIELD_NAME)
+    private String annotationsAsJson = "";
 
     public VaultEntry() {
         // all persisted classes must define a no-arg constructor with at least package visibility
+        GsonBuilder gb = new GsonBuilder();
+        gb.registerTypeAdapter(VaultEntryAnnotation.class, new VaultEntryAnnotationAdapter());
+        gson = gb.create();
     }
 
     public VaultEntry(VaultEntryType type, Date timestamp, double value) {
+        this();
         this.type = type;
         this.timestamp = timestamp;
         this.value = value;
     }
 
     public VaultEntry(VaultEntry copy) {
+        this();
         this.type = copy.type;
         this.timestamp = copy.timestamp;
         this.value = copy.value;
@@ -124,15 +134,18 @@ public class VaultEntry {
     }
 
     public List<VaultEntryAnnotation> getAnnotations() {
-        return new ArrayList<>(annotations);
+        annotationsFromJason();
+        return annotations;
     }
 
     public void addAnnotation(VaultEntryAnnotation annotation) {
         this.annotations.add(annotation);
+        annotationsToJson();
     }
 
     public void setAnnotation(ArrayList<VaultEntryAnnotation> annotations) {
         this.annotations = annotations;
+        annotationsToJson();
     }
 
     @Override
@@ -180,6 +193,19 @@ public class VaultEntry {
     @Override
     public String toString() {
         return "VaultEntry{" + "id=" + id + ", type=" + type + ", timestamp=" + timestamp + ", value=" + value + ", value2=" + value2 + ", rawId=" + rawId + ", annotaion=" + annotations + '}';
+    }
+
+    private void annotationsToJson() {
+        annotationsAsJson = gson.toJson(annotations);
+    }
+
+    private void annotationsFromJason() {
+        if (!annotationsAsJson.isEmpty()) {
+            annotations = gson.fromJson(annotationsAsJson,
+                    new TypeToken<List<VaultEntryAnnotation>>() {
+            }.getType());
+        }
+        annotationsAsJson = "";
     }
 
 }
