@@ -16,37 +16,67 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.util.regex.Pattern;
 
 /**
  *
  * @author juehv
  */
-public enum VaultEntryAnnotation {
-    GLUCOSE_RISE_LAST,
-    GLUCOSE_RISE_20_MIN,
-    GLUCOSE_BG_METER_SERIAL,
-    //
-    EXERCISE_TrackerWalk,
-    EXERCISE_TrackerBicycle,
-    EXERCISE_TrackerRun,
-    EXERCISE_GoogleWalk,
-    EXERCISE_GoogleBicycle,
-    EXERCISE_GoogleRun;
+@DatabaseTable(tableName = "VaultEntryAnnotations")
+public class VaultEntryAnnotation {
+
+    public static enum TYPE {
+        GLUCOSE_RISE_LAST,
+        GLUCOSE_RISE_20_MIN,
+        GLUCOSE_BG_METER_SERIAL,
+        //
+        EXERCISE_TrackerWalk,
+        EXERCISE_TrackerBicycle,
+        EXERCISE_TrackerRun,
+        EXERCISE_GoogleWalk,
+        EXERCISE_GoogleBicycle,
+        EXERCISE_GoogleRun,
+        EXERCISE_AUTOMATIC_OTHER;
+    }
+
+    // needed for ormlite -.-
+    @DatabaseField(generatedId = true)
+    private long id;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "VaultEntry_id")
+    private VaultEntry parent;
+    // end
 
     private final Pattern valuePattern;
+
+    @DatabaseField(canBeNull = false)
+    private final TYPE type;
+
+    @DatabaseField(canBeNull = false)
     private String value = "";
 
-    private VaultEntryAnnotation() {
-        valuePattern = Pattern.compile(".*" + this.toString() + "(=([\\w\\.]+))?.");
+    public VaultEntryAnnotation() {
+        type = TYPE.GLUCOSE_RISE_LAST;
+        valuePattern = Pattern.compile(".*" + type.toString() + "(=([\\w\\.]+))?.");
+    }
+
+    public VaultEntryAnnotation(TYPE type) {
+        this.type = type;
+        valuePattern = Pattern.compile(".*" + type.toString() + "(=([\\w\\.]+))?.");
+    }
+
+    public TYPE getType() {
+        return type;
     }
 
     public String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public VaultEntryAnnotation setValue(String value) {
         this.value = value;
+        return this;
     }
 
     // TODO reimplement with pattern matching
@@ -71,8 +101,13 @@ public enum VaultEntryAnnotation {
 //        }
 //        return returnValue;
 //    }
+    @Override
+    public String toString() {
+        return type.toString();
+    }
+
     public String toStringWithValue() {
-        return "";//value.isEmpty() ? this.toString() : this.toString() + "=" + value;
+        return value.isEmpty() ? this.toString() : this.toString() + "=" + value;
     }
 
 }

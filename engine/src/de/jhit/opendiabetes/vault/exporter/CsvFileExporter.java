@@ -40,7 +40,6 @@ public abstract class CsvFileExporter {
     public final static int RESULT_FILE_ACCESS_ERROR = -3;
 
     protected static final Logger LOG = Logger.getLogger(VaultCsvExporter.class.getName());
-    protected static final String DOUBLE_FORMAT = "%1$.2f";
 
     protected final ExporterOptions options;
     protected final String filePath;

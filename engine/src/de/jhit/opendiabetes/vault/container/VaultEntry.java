@@ -18,8 +18,10 @@ package de.jhit.opendiabetes.vault.container;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +47,7 @@ public class VaultEntry {
     @DatabaseField(generatedId = true)
     private long id;
 
-    @DatabaseField(columnName = TYPE_FIELD_NAME, canBeNull = false)
+    @DatabaseField(columnName = TYPE_FIELD_NAME, canBeNull = false, dataType = DataType.ENUM_INTEGER)
     private VaultEntryType type;
 
     @DatabaseField(columnName = TIMESTAMP_FIELD_NAME, canBeNull = false)
@@ -60,8 +62,8 @@ public class VaultEntry {
     @DatabaseField(columnName = RAW_ID_FIELD_NAME, canBeNull = false)
     private long rawId = ID_UNUSED;
 
-    @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private ArrayList<VaultEntryAnnotation> annotations = new ArrayList<>();
+    @ForeignCollectionField(columnName = ANNOTATION_FIELD_NAME, eager = true)
+    private Collection<VaultEntryAnnotation> annotations = new ArrayList<>();
 
     public VaultEntry() {
         // all persisted classes must define a no-arg constructor with at least package visibility
@@ -122,7 +124,7 @@ public class VaultEntry {
     }
 
     public List<VaultEntryAnnotation> getAnnotations() {
-        return annotations;
+        return new ArrayList<>(annotations);
     }
 
     public void addAnnotation(VaultEntryAnnotation annotation) {

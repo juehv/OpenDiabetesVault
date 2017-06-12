@@ -408,7 +408,7 @@ public class MainGuiController implements Initializable {
                 TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
                 TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000),
                 5,
-                20);
+                10);
 
         // do the work
         importPorgressBar.setProgress(
@@ -737,7 +737,7 @@ public class MainGuiController implements Initializable {
 
                         for (int i = 13; i >= 0; i--) {
                             entries.add(new SliceEntry(
-                                    TimestampUtils.addMinutesToTimestamp(today, i * -1440),
+                                    TimestampUtils.addMinutesToTimestamp(today, Math.round(i * -1440)),
                                     360,
                                     SliceType.SLICE_STANDARD));
                         }

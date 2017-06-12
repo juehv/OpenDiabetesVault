@@ -45,7 +45,6 @@ public class LauncherFx extends Application {
 //                System.err.println(e.toString());
 //            }
 //        });
-
         launch(args);
     }
 

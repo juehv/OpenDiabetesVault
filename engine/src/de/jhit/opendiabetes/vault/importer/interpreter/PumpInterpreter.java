@@ -189,9 +189,9 @@ public class PumpInterpreter extends VaultInterpreter {
             return data;
         }
 
-        List<VaultEntry> dbBasalData = db.queryBasalBetween(
-                TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), -1 * 24 * 60), // start 1 day with the search
-                data.get(data.size() - 1).getTimestamp());
+        Date ts1 = TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), -1 * 24 * 60);// start 1 day before with the search
+        Date ts2 = data.get(data.size() - 1).getTimestamp();
+        List<VaultEntry> dbBasalData = db.queryBasalBetween(ts1, ts2);
 
         List<VaultEntry> basalEvents = new ArrayList<>();
         for (VaultEntry suspendItem : data) {
@@ -262,11 +262,11 @@ public class PumpInterpreter extends VaultInterpreter {
                 if (affectedHistoricElements.isEmpty()) {
                     // try to get it from DB
                     VaultEntry tmpItem = db.queryLatestEventBefore(TimestampUtils.createCleanTimestamp(
-                                    new Date(Math.round(
-                                            basalItem.getTimestamp().getTime()
-                                            - basalItem.getDuration()))),
+                            new Date(Math.round(
+                                    basalItem.getTimestamp().getTime()
+                                    - basalItem.getDuration()))),
                             VaultEntryType.BASAL_PROFILE);
-                    
+
                     if (tmpItem != null) {
                         affectedHistoricElements.add(tmpItem);
                     } else {

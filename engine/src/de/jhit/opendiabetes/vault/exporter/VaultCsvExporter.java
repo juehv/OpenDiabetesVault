@@ -21,11 +21,11 @@ import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.util.EasyFormatter;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 
 /**
@@ -106,7 +106,7 @@ public class VaultCsvExporter extends CsvFileExporter {
                         case GLUCOSE_CGM_CALIBRATION:
                             tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString()
                                     + "="
-                                    + String.format(Locale.ENGLISH, DOUBLE_FORMAT, tmpEntry.getValue()));
+                                    + EasyFormatter.formatDouble(tmpEntry.getValue()));
                             break;
                         case GLUCOSE_CGM_RAW:
                             tmpCsvEntry.setCgmRawValue(tmpEntry.getValue());
@@ -140,7 +140,8 @@ public class VaultCsvExporter extends CsvFileExporter {
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
                             tmpCsvEntry.addBolusAnnotation(
                                     tmpEntry.getType().toString()
-                                    + "=" + String.format(Locale.ENGLISH, DOUBLE_FORMAT, tmpEntry.getValue2()));
+                                    + "="
+                                    + EasyFormatter.formatDouble(tmpEntry.getValue2()));
                             break;
                         case BOLUS_NORMAL:
                             tmpCsvEntry.setBolusValue(tmpEntry.getValue());
@@ -155,8 +156,12 @@ public class VaultCsvExporter extends CsvFileExporter {
                         case EXERCISE_WALK:
                         case EXERCISE_RUN:
                         case EXERCISE_MANUAL:
+                        case EXERCISE_OTHER:
                             tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
                             tmpCsvEntry.addExerciseAnnotation(tmpEntry.getType().toString());
+                            for (VaultEntryAnnotation item : tmpEntry.getAnnotations()) {
+                                tmpCsvEntry.addExerciseAnnotation(item.toStringWithValue());
+                            }
                             break;
                         case PUMP_FILL:
                         case PUMP_FILL_INTERPRETER:
@@ -170,7 +175,7 @@ public class VaultCsvExporter extends CsvFileExporter {
                         case PUMP_PRIME:
                             tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString()
                                     + "="
-                                    + String.format(Locale.ENGLISH, DOUBLE_FORMAT, tmpEntry.getValue()));
+                                    + EasyFormatter.formatDouble(tmpEntry.getValue()));
                             break;
                         case HEART_RATE:
                             tmpCsvEntry.setHeartRateValue(tmpEntry.getValue());
@@ -203,7 +208,7 @@ public class VaultCsvExporter extends CsvFileExporter {
 
                     if (!tmpEntry.getAnnotations().isEmpty()) {
                         for (VaultEntryAnnotation annotation : tmpEntry.getAnnotations()) {
-                            switch (annotation) {
+                            switch (annotation.getType()) {
                                 case GLUCOSE_BG_METER_SERIAL:
                                 case GLUCOSE_RISE_20_MIN:
                                 case GLUCOSE_RISE_LAST:
@@ -215,6 +220,7 @@ public class VaultCsvExporter extends CsvFileExporter {
                                 case EXERCISE_TrackerBicycle:
                                 case EXERCISE_TrackerRun:
                                 case EXERCISE_TrackerWalk:
+                                case EXERCISE_AUTOMATIC_OTHER:
                                     tmpCsvEntry.addExerciseAnnotation(annotation.toStringWithValue());
                                     break;
                                 default:

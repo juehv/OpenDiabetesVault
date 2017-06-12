@@ -21,6 +21,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.importer.validator.SonySWR12Validator;
+import de.jhit.opendiabetes.vault.util.EasyFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +60,7 @@ public class SonySWR12Importer extends CsvImporter {
         int rawValue = parseValidator.getValue(creader);
         long startTime = parseValidator.getStartTime(creader);
         long endTime = parseValidator.getEndTime(creader);
-        double timeSpan = (endTime - startTime) / 60000;
+        double durationInMinutes = (endTime - startTime) / 60000;
         VaultEntry tmpEntry = null;
 
         switch (type) {
@@ -67,13 +68,13 @@ public class SonySWR12Importer extends CsvImporter {
                 tmpEntry = new VaultEntry(
                         VaultEntryType.SLEEP_LIGHT,
                         timestamp,
-                        timeSpan);
+                        durationInMinutes);
                 break;
             case SLEEP_DEEP:
                 tmpEntry = new VaultEntry(
                         VaultEntryType.SLEEP_DEEP,
                         timestamp,
-                        timeSpan);
+                        durationInMinutes);
                 break;
             case HEART_RATE:
                 tmpEntry = new VaultEntry(
@@ -111,15 +112,19 @@ public class SonySWR12Importer extends CsvImporter {
                 tmpEntry = new VaultEntry(
                         VaultEntryType.EXERCISE_RUN,
                         timestamp,
-                        timeSpan);
-                tmpEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_TrackerRun);
+                        durationInMinutes);
+                tmpEntry.addAnnotation(new VaultEntryAnnotation(
+                        VaultEntryAnnotation.TYPE.EXERCISE_TrackerRun)
+                        .setValue(EasyFormatter.formatDouble(durationInMinutes)));
                 break;
             case WALK:
                 tmpEntry = new VaultEntry(
                         VaultEntryType.EXERCISE_WALK,
                         timestamp,
-                        timeSpan);
-                tmpEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_TrackerWalk);
+                        durationInMinutes);
+                tmpEntry.addAnnotation(new VaultEntryAnnotation(
+                        VaultEntryAnnotation.TYPE.EXERCISE_TrackerWalk)
+                        .setValue(EasyFormatter.formatDouble(durationInMinutes)));
                 break;
             default:
                 Logger.getLogger(this.getClass().getName()).fine("AssertionError");

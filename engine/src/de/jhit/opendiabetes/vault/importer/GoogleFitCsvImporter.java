@@ -20,11 +20,14 @@ import com.csvreader.CsvReader;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.exporter.CsvFileExporter;
 import de.jhit.opendiabetes.vault.importer.validator.CsvValidator;
 import de.jhit.opendiabetes.vault.importer.validator.GoogleFitCsvValidator;
+import de.jhit.opendiabetes.vault.util.EasyFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -70,19 +73,22 @@ public class GoogleFitCsvImporter extends CsvImporter {
             newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_RUN,
                     timestamp, durationInMinutes);
             newVaultEntry.setValue2(maxSpeed);
-            newVaultEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_GoogleRun);
+            newVaultEntry.addAnnotation((new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.EXERCISE_GoogleRun))
+                    .setValue(EasyFormatter.formatDouble(durationInMinutes)));
             retVal.add(newVaultEntry);
         } else if (bikeTime > runTime && bikeTime > walkTime) {
             newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_BICYCLE,
                     timestamp, durationInMinutes);
             newVaultEntry.setValue2(maxSpeed);
-            newVaultEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_GoogleBicycle);
+            newVaultEntry.addAnnotation((new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.EXERCISE_GoogleBicycle))
+                    .setValue(EasyFormatter.formatDouble(durationInMinutes)));
             retVal.add(newVaultEntry);
         } else {
             newVaultEntry = new VaultEntry(VaultEntryType.EXERCISE_WALK,
                     timestamp, durationInMinutes);
             newVaultEntry.setValue2(maxSpeed);
-            newVaultEntry.addAnnotation(VaultEntryAnnotation.EXERCISE_GoogleWalk);
+            newVaultEntry.addAnnotation((new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.EXERCISE_GoogleWalk))
+                    .setValue(EasyFormatter.formatDouble(durationInMinutes)));
             retVal.add(newVaultEntry);
         }
 

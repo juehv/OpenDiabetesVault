@@ -30,6 +30,7 @@ public enum VaultEntryType {
     BASAL_INTERPRETER,
     // Exercise
     EXERCISE_MANUAL,
+    EXERCISE_OTHER,
     EXERCISE_WALK,
     EXERCISE_BICYCLE,
     EXERCISE_RUN,

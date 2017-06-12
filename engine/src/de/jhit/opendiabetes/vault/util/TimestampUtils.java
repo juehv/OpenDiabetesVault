@@ -52,11 +52,11 @@ public class TimestampUtils {
         return calendar.getTime();
     }
 
-    public static Date addMinutesToTimestamp(Date timestamp, int minutes) {
+    public static Date addMinutesToTimestamp(Date timestamp, long minutes) {
         return new Date(addMinutesToTimestamp(timestamp.getTime(), minutes));
     }
 
-    public static long addMinutesToTimestamp(long timestamp, int minutes) {
+    public static long addMinutesToTimestamp(long timestamp, long minutes) {
         timestamp += minutes * 60000; // 1 m = 60000 ms
         return timestamp;
     }
