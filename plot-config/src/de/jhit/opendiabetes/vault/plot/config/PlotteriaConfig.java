@@ -2,8 +2,8 @@ package de.jhit.opendiabetes.vault.plot.config;
 
 public class PlotteriaConfig {
 
-    private int hmin = 70;
-    private int hmax = 180;
+    private int hmin = 70; // TODO improve name
+    private int hmax = 180; // TODO improve name
     private double barWidth = 0.004;
     private int bgCgmMaxValue = 300;
     private double maxBasalValue = 3.5;
@@ -19,7 +19,7 @@ public class PlotteriaConfig {
 
     // Plot booleans
     private boolean statisticsFlag = false;
-    private boolean filterBg = true; // TODO change name: filterBgManual
+    private boolean filterBgManual = true;
     private boolean plotCarb = true;
     private boolean plotBolus = true;
     private boolean plotBolusCalculation = true;
@@ -74,7 +74,8 @@ public class PlotteriaConfig {
 
     // Legend Labels
     private String bgLegend = "bg";
-    private String cgmLegend = "cgm";
+    private String cgmLegend = "cgm/fgm";
+    private String cgmAlertLegend = "cgm alert / fgm read";
     private String basalLegend = "basal";
     private String heartRateLegend = "heart rate";
     private String carbLegend = "carb";
@@ -83,21 +84,63 @@ public class PlotteriaConfig {
 
     // Symbol Labels
     private String exerciseLegend = "exercise";
-    private String pumpRewindLegend = "rewind";
-    private String pumpKatErrLegend = "katheder problem";
+    private String pumpRewindLegend = "pump fill"; // todo change variable name to pumpFillLegend
+    private String pumpKatErrLegend = "catheter problem";
 
+    // Stress Labels
+    private String stress0Label = "no data";
+    private String stress1Label = "rest";
+    private String stress2Label = "low Stress";
+    private String stress3Label = "mid Stress";
+    private String stress4Label = "high Stress";
+
+    // Markers https://matplotlib.org/api/markers_api.html
+    // "."	point
+    // ","	pixel
+    // "o"	circle
+    // "v"	triangle_down
+    // "^"	triangle_up
+    // "<"	triangle_left
+    // ">"	triangle_right
+    // "1"	tri_down
+    // "2"	tri_up
+    // "3"	tri_left
+    // "4"	tri_right
+    // "8"	octagon
+    // "s"	square
+    // "p"	pentagon
+    // "P"	plus (filled)
+    // "*"	star
+    // "h"	hexagon1
+    // "H"	hexagon2
+    // "+"	plus
+    // "x"	x
+    // "X"	x (filled)
+    // "D"	diamond
+    // "d"	thin_diamond
+    // "|"	vline
+    // "_"	hline
+    //
     // Symbol Markers
     private String rewindMarker = "*";
     private String katErrMarker = "p";
     private String exerciseMarker = "^";
 
+    // Plot Markers
+    private String cgmMarker = ".";
+    private String bolusCalculationMarker = "s";
+    private String heartRateMarker = ".";
+    private int cgmMarkerSize = 5;
+    private int bolusCalculationMarkerSize = 5;
+    private int heartRateMarkerSize = 2;
+
     // Locations
-    private String locTransitionLabel = "Transition";
-    private String locHomeLabel = "Home";
-    private String locWorkLabel = "Work";
-    private String locFoodLabel = "Food";
-    private String locSportsLabel = "Sports";
-    private String locOtherLabel = "Other";
+    private String locTransitionLabel = "transition";
+    private String locHomeLabel = "home";
+    private String locWorkLabel = "work";
+    private String locFoodLabel = "food";
+    private String locSportsLabel = "sports";
+    private String locOtherLabel = "other";
 
     private String locTransitionColor = "#6791E6";
     private String locHomeColor = "#9DE667";
@@ -107,25 +150,25 @@ public class PlotteriaConfig {
     private String locOtherColor = "#E667E2";
 
     // Exercise
-    private String exerciseWalkLabel = "Walk";
-    private String exerciseRunLabel = "Run";
-    private String exerciseBicycleLabel = "Bicycle";
-    private String exerciseOtherLabel = "Other";
+    private String exerciseWalkLabel = "walk";
+    private String exerciseRunLabel = "run";
+    private String exerciseBicycleLabel = "bicycle";
+    private String exerciseOtherLabel = "other";
 
     // Sleep
-    private String lightSleepLabel = "Light Sleep";
-    private String deepSleepLabel = "Deep Sleep";
+    private String lightSleepLabel = "light sleep";
+    private String deepSleepLabel = "deep sleep";
 
     // Linewidths
     private double heartRateLineWidth = 1.0;
     private double basalLineWidth = 1.0;
     private double cgmLineWidth = 2.0;
     private double bgLineWidth = 1.0;
-    //TODO add bolusCalculationLineWidth
+    private double bolusCalculationLineWidth = 1.0;
 
     // File Settings
-    private String filenamePrefix = "Plot";
-    private String filenameDateFormatString = "%d_%m_%y";
+    private String filenamePrefix = "Plot_";
+    private String filenameDateFormatString = "%y_%m_%d";
     private String fileExtension = ".pdf";
     private String plotListFileDaily = "plotListDaily.tex";
     private String plotListFileSlices = "plotListSlices.tex";
@@ -245,12 +288,12 @@ public class PlotteriaConfig {
         this.statisticsFlag = statisticsFlag;
     }
 
-    public boolean isFilterBg() {
-        return filterBg;
+    public boolean isFilterBgManual() {
+        return filterBgManual;
     }
 
-    public void setFilterBg(boolean filterBg) {
-        this.filterBg = filterBg;
+    public void setFilterBgManual(boolean filterBgManual) {
+        this.filterBgManual = filterBgManual;
     }
 
     public boolean isPlotCarb() {
@@ -461,6 +504,14 @@ public class PlotteriaConfig {
         this.cgmBgLimitMarkerColor = cgmBgLimitMarkerColor;
     }
 
+    public String getStress0Color() {
+        return stress0Color;
+    }
+
+    public void setStress0Color(String stress0Color) {
+        this.stress0Color = stress0Color;
+    }
+
     public String getStress1Color() {
         return stress1Color;
     }
@@ -621,6 +672,14 @@ public class PlotteriaConfig {
         this.cgmLegend = cgmLegend;
     }
 
+    public String getCgmAlertLegend() {
+        return cgmAlertLegend;
+    }
+
+    public void setCgmAlertLegend(String cgmAlertLegend) {
+        this.cgmAlertLegend = cgmAlertLegend;
+    }
+
     public String getBasalLegend() {
         return basalLegend;
     }
@@ -685,6 +744,46 @@ public class PlotteriaConfig {
         this.pumpKatErrLegend = pumpKatErrLegend;
     }
 
+    public String getStress0Label() {
+        return stress0Label;
+    }
+
+    public void setStress0Label(String stress0Label) {
+        this.stress0Label = stress0Label;
+    }
+
+    public String getStress1Label() {
+        return stress1Label;
+    }
+
+    public void setStress1Label(String stress1Label) {
+        this.stress1Label = stress1Label;
+    }
+
+    public String getStress2Label() {
+        return stress2Label;
+    }
+
+    public void setStress2Label(String stress2Label) {
+        this.stress2Label = stress2Label;
+    }
+
+    public String getStress3Label() {
+        return stress3Label;
+    }
+
+    public void setStress3Label(String stress3Label) {
+        this.stress3Label = stress3Label;
+    }
+
+    public String getStress4Label() {
+        return stress4Label;
+    }
+
+    public void setStress4Label(String stress4Label) {
+        this.stress4Label = stress4Label;
+    }
+
     public String getRewindMarker() {
         return rewindMarker;
     }
@@ -707,6 +806,54 @@ public class PlotteriaConfig {
 
     public void setExerciseMarker(String exerciseMarker) {
         this.exerciseMarker = exerciseMarker;
+    }
+
+    public String getCgmMarker() {
+        return cgmMarker;
+    }
+
+    public void setCgmMarker(String cgmMarker) {
+        this.cgmMarker = cgmMarker;
+    }
+
+    public String getBolusCalculationMarker() {
+        return bolusCalculationMarker;
+    }
+
+    public void setBolusCalculationMarker(String bolusCalculationMarker) {
+        this.bolusCalculationMarker = bolusCalculationMarker;
+    }
+
+    public String getHeartRateMarker() {
+        return heartRateMarker;
+    }
+
+    public void setHeartRateMarker(String heartRateMarker) {
+        this.heartRateMarker = heartRateMarker;
+    }
+
+    public int getCgmMarkerSize() {
+        return cgmMarkerSize;
+    }
+
+    public void setCgmMarkerSize(int cgmMarkerSize) {
+        this.cgmMarkerSize = cgmMarkerSize;
+    }
+
+    public int getBolusCalculationMarkerSize() {
+        return bolusCalculationMarkerSize;
+    }
+
+    public void setBolusCalculationMarkerSize(int bolusCalculationMarkerSize) {
+        this.bolusCalculationMarkerSize = bolusCalculationMarkerSize;
+    }
+
+    public int getHeartRateMarkerSize() {
+        return heartRateMarkerSize;
+    }
+
+    public void setHeartRateMarkerSize(int heartRateMarkerSize) {
+        this.heartRateMarkerSize = heartRateMarkerSize;
     }
 
     public String getLocTransitionLabel() {
@@ -883,6 +1030,14 @@ public class PlotteriaConfig {
 
     public void setBgLineWidth(double bgLineWidth) {
         this.bgLineWidth = bgLineWidth;
+    }
+
+    public double getBolusCalculationLineWidth() {
+        return bolusCalculationLineWidth;
+    }
+
+    public void setBolusCalculationLineWidth(double bolusCalculationLineWidth) {
+        this.bolusCalculationLineWidth = bolusCalculationLineWidth;
     }
 
     public String getFilenamePrefix() {
