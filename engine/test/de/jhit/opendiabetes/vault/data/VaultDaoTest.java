@@ -80,7 +80,7 @@ public class VaultDaoTest extends Assert {
                 VaultEntryAnnotation.TYPE.GLUCOSE_RISE_LAST);
         VaultEntry entry = new VaultEntry(VaultEntryType.EXERCISE_OTHER,
                 timestamp, 100.0);
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < 1000; i++) { // test if there is a overflow in the db
             entry.addAnnotation(annotation);
         }
         long id = result.putEntry(entry);
