@@ -138,29 +138,31 @@ public class ExerciseInterpreter extends VaultInterpreter {
                             double bike = 0.0;
                             double other = 0.0;
                             for (VaultEntryAnnotation annotation : annotations) {
-                                try {
-                                    switch (annotation.getType()) {
-                                        case EXERCISE_GoogleBicycle:
-                                        case EXERCISE_TrackerBicycle:
-                                            bike += Double.parseDouble(annotation.getValue());
-                                            break;
-                                        case EXERCISE_GoogleRun:
-                                        case EXERCISE_TrackerRun:
-                                            run += Double.parseDouble(annotation.getValue());
-                                            break;
-                                        case EXERCISE_GoogleWalk:
-                                        case EXERCISE_TrackerWalk:
-                                            walk += Double.parseDouble(annotation.getValue());
-                                            break;
-                                        case EXERCISE_AUTOMATIC_OTHER:
-                                            other += Double.parseDouble(annotation.getValue());
-                                            break;
-                                        default:
-                                            LOG.severe("ASSERTION ERROR in exercice type estimation");
-                                            throw new AssertionError("Case not allowed here !!");
+                                if (!annotation.getValue().isEmpty()) {
+                                    try {
+                                        switch (annotation.getType()) {
+                                            case EXERCISE_GoogleBicycle:
+                                            case EXERCISE_TrackerBicycle:
+                                                bike += Double.parseDouble(annotation.getValue());
+                                                break;
+                                            case EXERCISE_GoogleRun:
+                                            case EXERCISE_TrackerRun:
+                                                run += Double.parseDouble(annotation.getValue());
+                                                break;
+                                            case EXERCISE_GoogleWalk:
+                                            case EXERCISE_TrackerWalk:
+                                                walk += Double.parseDouble(annotation.getValue());
+                                                break;
+                                            case EXERCISE_AUTOMATIC_OTHER:
+                                                other += Double.parseDouble(annotation.getValue());
+                                                break;
+                                            default:
+                                                LOG.severe("ASSERTION ERROR in exercice type estimation");
+                                                throw new AssertionError("Case not allowed here !!");
+                                        }
+                                    } catch (NumberFormatException ex) {
+                                        LOG.log(Level.SEVERE, "Error parsing generated double while exercise type estimation", ex);
                                     }
-                                } catch (NumberFormatException ex) {
-                                    LOG.log(Level.SEVERE, "Error parsing generated double while exercise type estimation", ex);
                                 }
                             }
                             // get type with biggest share
@@ -211,9 +213,16 @@ public class ExerciseInterpreter extends VaultInterpreter {
             for (VaultEntryAnnotation seenAnnotaion : currentAnnotations) {
                 if (itemAnnoation.toString().equalsIgnoreCase(seenAnnotaion.toString())) {
                     try {
-                        seenAnnotaion.setValue(EasyFormatter.formatDouble(
-                                Double.parseDouble(seenAnnotaion.getValue())
-                                + Double.parseDouble(itemAnnoation.getValue())));
+                        if (!itemAnnoation.getValue().isEmpty()
+                                && !seenAnnotaion.getValue().isEmpty()) { // merge two values
+                            seenAnnotaion.setValue(EasyFormatter.formatDouble(
+                                    Double.parseDouble(seenAnnotaion.getValue())
+                                    + Double.parseDouble(itemAnnoation.getValue())));
+                        } else if (!itemAnnoation.getValue().isEmpty()
+                                && seenAnnotaion.getValue().isEmpty()) { // add value
+                            seenAnnotaion.setValue(itemAnnoation.getValue());
+                        }
+
                     } catch (NumberFormatException ex) {
                         LOG.log(Level.SEVERE, "Error parsing generated double while exercise annotation merging", ex);
                     }
