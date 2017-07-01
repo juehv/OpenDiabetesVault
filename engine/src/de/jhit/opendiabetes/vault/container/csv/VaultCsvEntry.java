@@ -17,7 +17,6 @@
 package de.jhit.opendiabetes.vault.container.csv;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,6 +54,7 @@ public class VaultCsvEntry extends CsvEntry {
     private double sleepValue = UNINITIALIZED_DOUBLE;
     private List<String> sleepAnnotation = new ArrayList<>();
     private List<String> locationAnnotation = new ArrayList<>();
+    private double mlCgmValue = UNINITIALIZED_DOUBLE;
 
     public Date getTimestamp() {
         return timestamp;
@@ -260,6 +260,14 @@ public class VaultCsvEntry extends CsvEntry {
         this.locationAnnotation.add(locationAnnotation);
     }
 
+    public double getMlCgmValue() {
+        return mlCgmValue;
+    }
+
+    public void setMlCgmValue(double mlCgmValue) {
+        this.mlCgmValue = mlCgmValue;
+    }
+    
     public boolean isEmpty() {
         return bgValue == UNINITIALIZED_DOUBLE
                 && cgmValue == UNINITIALIZED_DOUBLE
@@ -281,7 +289,8 @@ public class VaultCsvEntry extends CsvEntry {
                 && stressValue == UNINITIALIZED_DOUBLE
                 && sleepValue == UNINITIALIZED_DOUBLE
                 && sleepAnnotation.isEmpty()
-                && locationAnnotation.isEmpty();
+                && locationAnnotation.isEmpty()
+                && mlCgmValue == UNINITIALIZED_DOUBLE;
     }
 
     public String toCsvString() {
@@ -459,6 +468,12 @@ public class VaultCsvEntry extends CsvEntry {
             csvRecord.add(annotations.toString());
         } else {
             csvRecord.add("");
+        }        
+        if (mlCgmValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, mlCgmValue)
+                    .replaceAll(",", ""));
+        } else {
+            csvRecord.add("");
         }
 
         return csvRecord.toArray(new String[]{});
@@ -501,13 +516,15 @@ public class VaultCsvEntry extends CsvEntry {
             "stressValue",
             "sleepValue",
             "sleepAnnotation",
-            "locationAnnotation"
+            "locationAnnotation",
+            "mlCgmValue"
         };
     }
 
     @Override
     public String toString() {
-        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", cgmAnnotation=" + glucoseAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + '}';
+        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", glucoseAnnotation=" + glucoseAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusCalculationValue=" + bolusCalculationValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + ", mlCgmValue=" + mlCgmValue + '}';
     }
+
 
 }
