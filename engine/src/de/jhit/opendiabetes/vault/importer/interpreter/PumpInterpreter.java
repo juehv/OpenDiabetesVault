@@ -315,10 +315,12 @@ public class PumpInterpreter extends VaultInterpreter {
                         }
 
                         // restore rate from jungest profile event afterwords
-                        basalEvents.add(new VaultEntry(
-                                VaultEntryType.BASAL_PROFILE,
-                                basalItem.getTimestamp(),
-                                affectedHistoricElements.get(0).getValue()));
+                        if (affectedHistoricElements.size() > 0) {
+                            basalEvents.add(new VaultEntry(
+                                    VaultEntryType.BASAL_PROFILE,
+                                    basalItem.getTimestamp(),
+                                    affectedHistoricElements.get(0).getValue()));
+                        }
                         break;
                     case BASAL_TMP_RATE:
                         // add new rate
@@ -329,10 +331,12 @@ public class PumpInterpreter extends VaultInterpreter {
                                 basalItem.getValue()));
 
                         // restore rate from jungest profile event afterwords
-                        basalEvents.add(new VaultEntry(
-                                VaultEntryType.BASAL_PROFILE,
-                                basalItem.getTimestamp(),
-                                affectedHistoricElements.get(0).getValue()));
+                        if (affectedHistoricElements.size() > 0) {
+                            basalEvents.add(new VaultEntry(
+                                    VaultEntryType.BASAL_PROFILE,
+                                    basalItem.getTimestamp(),
+                                    affectedHistoricElements.get(0).getValue()));
+                        }
                         break;
                     default:
                         Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");
