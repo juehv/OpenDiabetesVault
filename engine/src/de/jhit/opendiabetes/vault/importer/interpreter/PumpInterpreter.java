@@ -22,6 +22,7 @@ import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -274,7 +275,10 @@ public class PumpInterpreter extends VaultInterpreter {
                                 + "because no profile elements are found\n{0}",
                                 basalItem.toString());
                         killedBasalEvents.add(item); // kill the item since we cannot calculate its meaning
-                        continue;
+                        if (basalItem.getRawType() == MedtronicCsvValidator.TYPE.BASAL_TMP_PERCENT
+                                && basalItem.getValue() > 0) {
+                            continue;
+                        }
                     }
                 }
 
@@ -285,24 +289,29 @@ public class PumpInterpreter extends VaultInterpreter {
                         Date startTimestamp = new Date((long) (basalItem.getTimestamp().getTime()
                                 - basalItem.getDuration()));
                         // first manual item needs special timestamp
-                        double currentBasalValue = affectedHistoricElements.get(
-                                affectedHistoricElements.size() - 1).getValue();
-                        double newBasalValue = currentBasalValue
-                                * basalItem.getValue() * 0.01;
+                        double newBasalValue = 0;
+                        if (basalItem.getValue() > 0) {
+                            double currentBasalValue = affectedHistoricElements.get(
+                                    affectedHistoricElements.size() - 1).getValue();
+                            newBasalValue = currentBasalValue
+                                    * basalItem.getValue() * 0.01;
+                        }
                         basalEvents.add(new VaultEntry(
                                 VaultEntryType.BASAL_MANUAL,
                                 startTimestamp,
                                 newBasalValue));
 
-                        for (int i = 0; i < affectedHistoricElements.size() - 2; i++) {
-                            currentBasalValue = affectedHistoricElements.get(i)
-                                    .getValue();
-                            newBasalValue = currentBasalValue
-                                    * basalItem.getValue() * 0.01;
-                            basalEvents.add(new VaultEntry(
-                                    VaultEntryType.BASAL_MANUAL,
-                                    affectedHistoricElements.get(i).getTimestamp(),
-                                    newBasalValue));
+                        if (basalItem.getValue() > 0) {
+                            for (int i = 0; i < affectedHistoricElements.size() - 2; i++) {
+                                double currentBasalValue = affectedHistoricElements.get(i)
+                                        .getValue();
+                                newBasalValue = currentBasalValue
+                                        * basalItem.getValue() * 0.01;
+                                basalEvents.add(new VaultEntry(
+                                        VaultEntryType.BASAL_MANUAL,
+                                        affectedHistoricElements.get(i).getTimestamp(),
+                                        newBasalValue));
+                            }
                         }
 
                         // restore rate from jungest profile event afterwords
