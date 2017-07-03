@@ -7,7 +7,7 @@ import java.io.Writer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class MainClass {
+public class Launcher {
 
 	public static void main(String[] args) {
 		PlotteriaConfig sampleConfig = new PlotteriaConfig();

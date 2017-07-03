@@ -2,17 +2,21 @@ package de.jhit.opendiabetes.vault.plot.config;
 
 public class PlotteriaConfig {
 
-    private int hmin = 70; // TODO improve name
-    private int hmax = 180; // TODO improve name
+    // limits
+    private boolean limitsManual = false;
+    private int hmin = 70;
+    private int hmax = 180;
     private double barWidth = 0.004;
     private int bgCgmMaxValue = 300;
     private double maxBasalValue = 3.5;
+    private double maxBasalBelowLegendValue = 2.0;
     private int cgmBgHighLimit = 300;
     private int cgmBgLimitMarkerLow = 60;
     private int cgmBgLimitMarkerHigh = 250;
-    private int minHrValue = 20;
-    private int maxHrValue = 160;
+    private double minHrValue = 30.0;
+    private double maxHrValue = 170.0;
     private int minCgmBgValue = 50;
+    private double maxBarValue = 14.0;
 
     private double legendXOffset = -0.05;
     private double legendYOffset = 0.295;
@@ -66,7 +70,7 @@ public class PlotteriaConfig {
     private String bolusLabel = "Bolus/Carb [IE/BE]";
     private String basalLabel = "Basal [IE]";
     private String bgLabel = "BG [mg/dl]";
-    private String hrLabel = "HeartRate [Hz]";
+    private String hrLabel = "Heart Rate [Hz]";
 
     private String titelDateFormat = "%a %d. %b";
 
@@ -74,7 +78,7 @@ public class PlotteriaConfig {
 
     // Legend Labels
     private String bgLegend = "bg";
-    private String cgmLegend = "cgm/fgm";
+    private String cgmLegend = "cgm / fgm";
     private String cgmAlertLegend = "cgm alert / fgm read";
     private String basalLegend = "basal";
     private String heartRateLegend = "heart rate";
@@ -84,15 +88,15 @@ public class PlotteriaConfig {
 
     // Symbol Labels
     private String exerciseLegend = "exercise";
-    private String pumpRewindLegend = "pump fill"; // todo change variable name to pumpFillLegend
-    private String pumpKatErrLegend = "catheter problem";
+    private String pumpRewindLegend = "rewind";
+    private String pumpKatErrLegend = "katheder problem";
 
     // Stress Labels
     private String stress0Label = "no data";
     private String stress1Label = "rest";
-    private String stress2Label = "low Stress";
-    private String stress3Label = "mid Stress";
-    private String stress4Label = "high Stress";
+    private String stress2Label = "low stress";
+    private String stress3Label = "mid stress";
+    private String stress4Label = "high stress";
 
     // Markers https://matplotlib.org/api/markers_api.html
     // "."	point
@@ -120,7 +124,6 @@ public class PlotteriaConfig {
     // "d"	thin_diamond
     // "|"	vline
     // "_"	hline
-    //
     // Symbol Markers
     private String rewindMarker = "*";
     private String katErrMarker = "p";
@@ -167,14 +170,30 @@ public class PlotteriaConfig {
     private double bolusCalculationLineWidth = 1.0;
 
     // File Settings
-    private String filenamePrefix = "Plot_";
-    private String filenameDateFormatString = "%y_%m_%d";
     private String fileExtension = ".pdf";
-    private String plotListFileDaily = "plotListDaily.tex";
-    private String plotListFileSlices = "plotListSlices.tex";
-    private String headerFileDaily = "headerDaily.tex";
-    private String headerFileSlices = "headerSlices.tex";
-    private String legendFile = "legend.pdf";
+
+    // TODO hardcode following options in script (but still maintainable)
+    // OR be consistend and make it available for all files
+    private String filenamePrefix = "plot_";
+    private String filenameDateFormatString = "%y%m%d";
+    private String plotListFileDaily = "tex_g_plotListDaily.tex";
+    private String plotListFileTinySlices = "tex_g_plotListTinySlices.tex";
+    private String plotListFileNormalSlices = "tex_g_plotListNormalSlices.tex";
+    private String plotListFileBigSlices = "tex_g_plotListBigSlices.tex";
+    private String headerFileDaily = "tex_g_headerDaily.tex";
+    private String headerFileTinySlices = "tex_g_headerTinySlices.tex";
+    private String headerFileNormalSlices = "tex_g_headerNormalSlices.tex";
+    private String headerFileBigSlices = "tex_g_headerBigSlices.tex";
+    private String legendFileSymbols = "legendSymbols.pdf";
+    private String legendFileDetailed = "legendDetailed.pdf";
+
+    public boolean isLimitsManual() {
+        return limitsManual;
+    }
+
+    public void setLimitsManual(boolean limitsManual) {
+        this.limitsManual = limitsManual;
+    }
 
     public int getHmin() {
         return hmin;
@@ -216,6 +235,14 @@ public class PlotteriaConfig {
         this.maxBasalValue = maxBasalValue;
     }
 
+    public double getMaxBasalBelowLegendValue() {
+        return maxBasalBelowLegendValue;
+    }
+
+    public void setMaxBasalBelowLegendValue(double maxBasalBelowLegendValue) {
+        this.maxBasalBelowLegendValue = maxBasalBelowLegendValue;
+    }
+
     public int getCgmBgHighLimit() {
         return cgmBgHighLimit;
     }
@@ -240,19 +267,19 @@ public class PlotteriaConfig {
         this.cgmBgLimitMarkerHigh = cgmBgLimitMarkerHigh;
     }
 
-    public int getMinHrValue() {
+    public double getMinHrValue() {
         return minHrValue;
     }
 
-    public void setMinHrValue(int minHrValue) {
+    public void setMinHrValue(double minHrValue) {
         this.minHrValue = minHrValue;
     }
 
-    public int getMaxHrValue() {
+    public double getMaxHrValue() {
         return maxHrValue;
     }
 
-    public void setMaxHrValue(int maxHrValue) {
+    public void setMaxHrValue(double maxHrValue) {
         this.maxHrValue = maxHrValue;
     }
 
@@ -262,6 +289,14 @@ public class PlotteriaConfig {
 
     public void setMinCgmBgValue(int minCgmBgValue) {
         this.minCgmBgValue = minCgmBgValue;
+    }
+
+    public double getMaxBarValue() {
+        return maxBarValue;
+    }
+
+    public void setMaxBarValue(double maxBarValue) {
+        this.maxBarValue = maxBarValue;
     }
 
     public double getLegendXOffset() {
@@ -1072,12 +1107,28 @@ public class PlotteriaConfig {
         this.plotListFileDaily = plotListFileDaily;
     }
 
-    public String getPlotListFileSlices() {
-        return plotListFileSlices;
+    public String getPlotListFileTinySlices() {
+        return plotListFileTinySlices;
     }
 
-    public void setPlotListFileSlices(String plotListFileSlices) {
-        this.plotListFileSlices = plotListFileSlices;
+    public void setPlotListFileTinySlices(String plotListFileTinySlices) {
+        this.plotListFileTinySlices = plotListFileTinySlices;
+    }
+
+    public String getPlotListFileNormalSlices() {
+        return plotListFileNormalSlices;
+    }
+
+    public void setPlotListFileNormalSlices(String plotListFileNormalSlices) {
+        this.plotListFileNormalSlices = plotListFileNormalSlices;
+    }
+
+    public String getPlotListFileBigSlices() {
+        return plotListFileBigSlices;
+    }
+
+    public void setPlotListFileBigSlices(String plotListFileBigSlices) {
+        this.plotListFileBigSlices = plotListFileBigSlices;
     }
 
     public String getHeaderFileDaily() {
@@ -1088,19 +1139,43 @@ public class PlotteriaConfig {
         this.headerFileDaily = headerFileDaily;
     }
 
-    public String getHeaderFileSlices() {
-        return headerFileSlices;
+    public String getHeaderFileTinySlices() {
+        return headerFileTinySlices;
     }
 
-    public void setHeaderFileSlices(String headerFileSlices) {
-        this.headerFileSlices = headerFileSlices;
+    public void setHeaderFileTinySlices(String headerFileTinySlices) {
+        this.headerFileTinySlices = headerFileTinySlices;
     }
 
-    public String getLegendFile() {
-        return legendFile;
+    public String getHeaderFileNormalSlices() {
+        return headerFileNormalSlices;
     }
 
-    public void setLegendFile(String legendFile) {
-        this.legendFile = legendFile;
+    public void setHeaderFileNormalSlices(String headerFileNormalSlices) {
+        this.headerFileNormalSlices = headerFileNormalSlices;
+    }
+
+    public String getHeaderFileBigSlices() {
+        return headerFileBigSlices;
+    }
+
+    public void setHeaderFileBigSlices(String headerFileBigSlices) {
+        this.headerFileBigSlices = headerFileBigSlices;
+    }
+
+    public String getLegendFileSymbols() {
+        return legendFileSymbols;
+    }
+
+    public void setLegendFileSymbols(String legendFileSymbols) {
+        this.legendFileSymbols = legendFileSymbols;
+    }
+
+    public String getLegendFileDetailed() {
+        return legendFileDetailed;
+    }
+
+    public void setLegendFileDetailed(String legendFileDetailed) {
+        this.legendFileDetailed = legendFileDetailed;
     }
 }
