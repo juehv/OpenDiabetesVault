@@ -45,18 +45,17 @@ public class SliceEntry {
     private Date timestamp;
 
     @DatabaseField(columnName = DURATION_FIELD_NAME, canBeNull = false)
-    private double duration;
+    private long duration;
 
-    @DatabaseField(columnName = TYPE_FIELD_NAME, canBeNull = false)
-    private SliceType type;
-
+//    @DatabaseField(columnName = TYPE_FIELD_NAME, canBeNull = false)
+//    private SliceType type;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private ArrayList<SliceFilterType> filterTypes = new ArrayList<>();
 
-    public SliceEntry(Date timestamp, double duration, SliceType type) {
+    public SliceEntry(Date timestamp, long duration) {
         this.timestamp = timestamp;
         this.duration = duration;
-        this.type = type;
+//        this.type = type;
     }
 
     public SliceEntry() {
@@ -74,22 +73,21 @@ public class SliceEntry {
         this.timestamp = timestamp;
     }
 
-    public double getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(double duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 
-    public SliceType getType() {
-        return type;
-    }
-
-    public void setType(SliceType type) {
-        this.type = type;
-    }
-
+//    public SliceType getType() {
+//        return type;
+//    }
+//
+//    public void setType(SliceType type) {
+//        this.type = type;
+//    }
     public List<SliceFilterType> getFilterTypes() {
         return filterTypes;
     }

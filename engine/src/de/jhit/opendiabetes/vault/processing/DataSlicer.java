@@ -16,10 +16,68 @@
  */
 package de.jhit.opendiabetes.vault.processing;
 
+import de.jhit.opendiabetes.vault.container.SliceEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author juehv
  */
 public class DataSlicer {
-    
+
+    private final List<SimpleFilter> registeredFilter = new ArrayList<>();
+    private final DataSlicerOptions options;
+
+    public DataSlicer(DataSlicerOptions options) {
+        this.options = options;
+    }
+
+    /**
+     * Slices dataset with respect to registered filters.
+     *
+     * @param data the data set which should be filtered
+     * @return a list of slice entrys matching the registered filters or an
+     * empty list if no filter matches
+     */
+    public List<SliceEntry> sliceData(List<VaultEntry> data) {
+        List<SliceEntry> retVal = new ArrayList<>();
+
+        // TODO this implementation is too simple and will not work
+        // since every entry contains just one value type ...
+        // for cross referencing filter (e.g. high bg value at night)
+        // we have to check several entries (e.g. bg value entries + sleep entries)
+        //
+        for (VaultEntry entry : data) {
+            boolean violate = false;
+            for (SimpleFilter filter : registeredFilter) {
+                if (!filter.matches(entry)) {
+                    violate = true;
+                    break;
+                }
+            }
+            if (!violate) {
+                retVal.add(new SliceEntry(
+                        TimestampUtils.addMinutesToTimestamp(
+                                entry.getTimestamp(),
+                                -1 * options.margin),
+                        options.duration));
+            }
+        }
+
+        return retVal;
+    }
+
+    /**
+     * Registeres a filter for slicing. Should be called before slicing.
+     * Registered filteres are always combined as logical AND.
+     *
+     * @param filter
+     */
+    public void registerFilter(SimpleFilter filter) {
+        registeredFilter.add(filter);
+    }
+
 }

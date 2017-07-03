@@ -48,11 +48,11 @@ public class SliceCsVEntry extends CsvEntry {
         } else {
             csvRecord.add("");
         }
-        if (data.getType() != null) {
-            csvRecord.add(data.getType().toString());
-        } else {
-            csvRecord.add("");
-        }
+//        if (data.getType() != null) {
+//            csvRecord.add(data.getType().toString());
+//        } else {
+//            csvRecord.add("");
+//        }
         if (!data.getFilterTypes().isEmpty()) {
             StringBuilder annotations = new StringBuilder();
             for (SliceFilterType item : data.getFilterTypes()) {
@@ -73,7 +73,6 @@ public class SliceCsVEntry extends CsvEntry {
             "date",
             "time",
             "duration",
-            "type",
             "filter"
         };
     }
