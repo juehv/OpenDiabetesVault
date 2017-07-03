@@ -52,6 +52,7 @@ public class ExerciseInterpreter extends VaultInterpreter {
 
         LOG.finer("Start activity data interpretation");
         data = filterActititys(data);
+        data = interpretStress(data);
 
         LOG.finer("Tracker data interpretation finished");
 
@@ -241,5 +242,44 @@ public class ExerciseInterpreter extends VaultInterpreter {
         return item != null && historyElement != null // not null
                 && TimestampUtils.addMinutesToTimestamp(historyElement.getTimestamp(), -1 * myOptions.activitySliceThreshold).after(item.getTimestamp()) // starts after current item (with respect to slice threshold)
                 && TimestampUtils.addMinutesToTimestamp(item.getTimestamp(), Math.round(item.getValue() + myOptions.activitySliceThreshold)).after(historyElement.getTimestamp()); // starts befor item ends (with respect to slice threshold)
+    }
+
+    private List<VaultEntry> interpretStress(List<VaultEntry> data) {
+        List<VaultEntry> addData = new ArrayList<>();
+        VaultEntry lastItem = null;
+        for (VaultEntry item : data) {
+            if (item.getType() == VaultEntryType.STRESS) {
+                if (lastItem == null) {
+                    //warm up 
+                    lastItem = item;
+                } else {
+                    if (item.getTimestamp().getTime()
+                            - lastItem.getTimestamp().getTime() > 6300000) { // > 10.5 min
+                        // add entry with 0, 10 minutes after last timestamp
+                        addData.add(new VaultEntry(VaultEntryType.STRESS,
+                                TimestampUtils.addMinutesToTimestamp(
+                                        lastItem.getTimestamp(), 10), 0));
+                    }
+
+                    lastItem = item;
+                }
+
+            }
+        }
+
+        // check last item again
+        if (lastItem != null
+                && data.get(data.size() - 1).getTimestamp().getTime()
+                - lastItem.getTimestamp().getTime() > 6300000) { // > 10.5 min
+            // add entry with 0 
+            addData.add(new VaultEntry(VaultEntryType.STRESS,
+                    TimestampUtils.addMinutesToTimestamp(
+                            lastItem.getTimestamp(), 10), 0));
+        }
+
+        data.addAll(addData);
+        Collections.sort(data, new SortVaultEntryByDate());
+
+        return data;
     }
 }
