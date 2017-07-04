@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -72,6 +73,46 @@ public class TimestampUtils {
             tmpInputDate = new Date(tmpInputDate.getTime() + offestInMilliseconds);
         }
         return tmpInputDate;
+    }
+
+    public static int getHourOfDay(Date timestamp) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timestamp);
+        return cal.get(Calendar.HOUR_OF_DAY);
+    }
+
+    public static int getMinuteOfHour(Date timestamp) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timestamp);
+        return cal.get(Calendar.MINUTE);
+    }
+
+    /**
+     *
+     * @param startTime Start of the time span
+     * @param endTime end of the time span
+     * @param timePoint checks if this time point is within timespan
+     * @param respectToDate if false, date will be ignored and just hour and
+     * minutes are checked
+     * @return
+     */
+    public static boolean withinTimeSpan(Date startTime, Date endTime,
+            Date timePoint) {
+        return startTime.before(timePoint) && endTime.after(timePoint)
+                || startTime.equals(timePoint) || endTime.equals(timePoint);
+
+    }
+
+    public static boolean withinTimeSpan(LocalTime startTime, LocalTime endTime, LocalTime timepoint) {
+        if (startTime.isBefore(endTime)) {
+            // timespan is wihtin a day
+            return (timepoint.isAfter(startTime) || timepoint.equals(startTime))
+                    && (timepoint.isBefore(endTime) || timepoint.equals(endTime));
+        } else {
+            // timespan is not within a day (through midnight, e.g.  23:30 - 0:15)
+            return (timepoint.isAfter(startTime) || timepoint.equals(startTime))
+                    || (timepoint.isBefore(endTime) || timepoint.equals(endTime));
+        }
     }
 
 }

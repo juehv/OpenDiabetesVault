@@ -18,7 +18,8 @@ package de.jhit.opendiabetes.vault.processing;
 
 import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ import java.util.List;
  */
 public class DataSlicer {
 
-    private final List<SimpleFilter> registeredFilter = new ArrayList<>();
+    private final List<Filter> registeredFilter = new ArrayList<>();
     private final DataSlicerOptions options;
 
     public DataSlicer(DataSlicerOptions options) {
@@ -44,29 +45,17 @@ public class DataSlicer {
      */
     public List<SliceEntry> sliceData(List<VaultEntry> data) {
         List<SliceEntry> retVal = new ArrayList<>();
+        FilterResult lastResult = null;
 
-        // TODO this implementation is too simple and will not work
-        // since every entry contains just one value type ...
-        // for cross referencing filter (e.g. high bg value at night)
-        // we have to check several entries (e.g. bg value entries + sleep entries)
-        //
-        for (VaultEntry entry : data) {
-            boolean violate = false;
-            for (SimpleFilter filter : registeredFilter) {
-                if (!filter.matches(entry)) {
-                    violate = true;
-                    break;
-                }
-            }
-            if (!violate) {
-                retVal.add(new SliceEntry(
-                        TimestampUtils.addMinutesToTimestamp(
-                                entry.getTimestamp(),
-                                -1 * options.margin),
-                        options.duration));
+        for (Filter filter : registeredFilter) {
+            if (lastResult == null) {
+                lastResult = filter.filter(data);
+            } else {
+                lastResult = filter.filter(lastResult.filteredData);
             }
         }
 
+        // TODO generate slice file 
         return retVal;
     }
 
@@ -76,7 +65,7 @@ public class DataSlicer {
      *
      * @param filter
      */
-    public void registerFilter(SimpleFilter filter) {
+    public void registerFilter(Filter filter) {
         registeredFilter.add(filter);
     }
 

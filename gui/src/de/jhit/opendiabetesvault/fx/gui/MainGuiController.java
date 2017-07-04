@@ -6,7 +6,6 @@
 package de.jhit.opendiabetesvault.fx.gui;
 
 import de.jhit.opendiabetes.vault.container.SliceEntry;
-import de.jhit.opendiabetes.vault.container.SliceType;
 import de.jhit.opendiabetes.vault.container.csv.SliceCsVEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
@@ -738,8 +737,7 @@ public class MainGuiController implements Initializable {
                         for (int i = 27; i >= 0; i--) {
                             entries.add(new SliceEntry(
                                     TimestampUtils.addMinutesToTimestamp(today, Math.round(i * -1440)),
-                                    360,
-                                    SliceType.SLICE_STANDARD));
+                                    360));
                         }
                         odvExpotFileName = new File(path).getAbsolutePath()
                                 + "/"

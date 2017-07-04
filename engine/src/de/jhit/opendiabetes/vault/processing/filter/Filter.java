@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing;
+package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import java.util.List;
 
 /**
  *
  * @author juehv
  */
-public interface SimpleFilter {
+public interface Filter {
 
-    boolean matches(VaultEntry entry);
+    FilterResult filter(List<VaultEntry> data);
 }

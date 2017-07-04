@@ -14,27 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing;
+package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import java.util.Date;
+import java.util.List;
+import javafx.util.Pair;
 
 /**
  *
  * @author juehv
  */
-public class TimeFilter implements SimpleFilter {
+public class FilterResult {
 
-    private final int startTime;
-    private final int endTime;
+    public final List<VaultEntry> filteredData;
+    public final List<Pair<Date, Date>> timeSeries;
 
-    public TimeFilter(int startTime, int endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
-    @Override
-    public boolean matches(VaultEntry entry) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public FilterResult(List<VaultEntry> filteredData, List<Pair<Date, Date>> timeSeries) {
+        this.filteredData = filteredData;
+        this.timeSeries = timeSeries;
     }
 
 }
