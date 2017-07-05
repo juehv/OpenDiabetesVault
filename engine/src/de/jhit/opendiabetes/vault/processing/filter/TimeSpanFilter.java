@@ -35,12 +35,10 @@ public class TimeSpanFilter implements Filter {
 
     private final LocalTime startTime;
     private final LocalTime endTime;
-    private final boolean inverted;
 
-    public TimeSpanFilter(LocalTime startTime, LocalTime endTime, boolean inverted) {
+    public TimeSpanFilter(LocalTime startTime, LocalTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.inverted = inverted;
     }
 
     @Override
@@ -68,15 +66,6 @@ public class TimeSpanFilter implements Filter {
 
         if (startOfCuttenTimeSeries != null) {
             timeSeries.add(new Pair<>(startOfCuttenTimeSeries, lastTimeStamp));
-        }
-
-        if (inverted) {
-            // filter is inverted --> filtered data will be removed from total data set
-            List<VaultEntry> tmp = new ArrayList<>(data);
-            tmp.removeAll(filteredData);
-            filteredData = tmp;
-
-            // TODO invert time series 
         }
 
         return new FilterResult(filteredData, timeSeries);
