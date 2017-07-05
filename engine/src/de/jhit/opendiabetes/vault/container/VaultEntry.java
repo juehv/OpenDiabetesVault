@@ -65,7 +65,7 @@ public class VaultEntry {
     @DatabaseField(columnName = RAW_ID_FIELD_NAME, canBeNull = false)
     private long rawId = ID_UNUSED;
 
-    private ArrayList<VaultEntryAnnotation> annotations = new ArrayList<>();
+    private List<VaultEntryAnnotation> annotations = new ArrayList<>();
 
     @DatabaseField(dataType = DataType.LONG_STRING, columnName = ANNOTATION_FIELD_NAME)
     private String annotationsAsJson = "";
@@ -82,6 +82,22 @@ public class VaultEntry {
         this.type = type;
         this.timestamp = timestamp;
         this.value = value;
+    }
+
+    public VaultEntry(VaultEntryType type, Date timestamp, double value, double value2) {
+        this(type, timestamp, value);
+        this.value2 = value2;
+    }
+
+    public VaultEntry(VaultEntryType type, Date timestamp, double value, List<VaultEntryAnnotation> annotations) {
+        this(type, timestamp, value);
+        this.annotations = annotations;
+    }
+
+    public VaultEntry(VaultEntryType type, Date timestamp, double value, double value2, List<VaultEntryAnnotation> annotations) {
+        this(type, timestamp, value);
+        this.value2 = value2;
+        this.annotations = annotations;
     }
 
     public VaultEntry(VaultEntry copy) {

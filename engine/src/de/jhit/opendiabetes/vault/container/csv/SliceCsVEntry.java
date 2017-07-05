@@ -44,7 +44,7 @@ public class SliceCsVEntry extends CsvEntry {
         csvRecord.add(new SimpleDateFormat("HH:mm").format(data.getTimestamp()));
 
         if (data.getDuration() > UNINITIALIZED_DOUBLE) {
-            csvRecord.add(String.format(Locale.ENGLISH, DECIMAL_FORMAT, data.getDuration()));
+            csvRecord.add(String.format(Locale.ENGLISH, DECIMAL_FORMAT, (double) data.getDuration()));
         } else {
             csvRecord.add("");
         }

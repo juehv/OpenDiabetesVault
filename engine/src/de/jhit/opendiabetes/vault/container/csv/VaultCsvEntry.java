@@ -29,7 +29,7 @@ import java.util.Locale;
  */
 public class VaultCsvEntry extends CsvEntry {
 
-    public final static String VERSION_STRING = "v9";
+    public final static String VERSION_STRING = "v10";
     public final static double UNINITIALIZED_DOUBLE = VaultEntry.VALUE_UNUSED;
 
     private Date timestamp;
@@ -55,6 +55,7 @@ public class VaultCsvEntry extends CsvEntry {
     private List<String> sleepAnnotation = new ArrayList<>();
     private List<String> locationAnnotation = new ArrayList<>();
     private double mlCgmValue = UNINITIALIZED_DOUBLE;
+    private double insulinSensitivityFactor = UNINITIALIZED_DOUBLE;
 
     public Date getTimestamp() {
         return timestamp;
@@ -267,7 +268,15 @@ public class VaultCsvEntry extends CsvEntry {
     public void setMlCgmValue(double mlCgmValue) {
         this.mlCgmValue = mlCgmValue;
     }
-    
+
+    public double getInsulinSensitivityFactor() {
+        return insulinSensitivityFactor;
+    }
+
+    public void setInsulinSensitivityFactor(double insulinSensitivityFactor) {
+        this.insulinSensitivityFactor = insulinSensitivityFactor;
+    }
+
     public boolean isEmpty() {
         return bgValue == UNINITIALIZED_DOUBLE
                 && cgmValue == UNINITIALIZED_DOUBLE
@@ -290,7 +299,8 @@ public class VaultCsvEntry extends CsvEntry {
                 && sleepValue == UNINITIALIZED_DOUBLE
                 && sleepAnnotation.isEmpty()
                 && locationAnnotation.isEmpty()
-                && mlCgmValue == UNINITIALIZED_DOUBLE;
+                && mlCgmValue == UNINITIALIZED_DOUBLE
+                && insulinSensitivityFactor == UNINITIALIZED_DOUBLE;
     }
 
     public String toCsvString() {
@@ -468,9 +478,15 @@ public class VaultCsvEntry extends CsvEntry {
             csvRecord.add(annotations.toString());
         } else {
             csvRecord.add("");
-        }        
+        }
         if (mlCgmValue > UNINITIALIZED_DOUBLE) {
             csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, mlCgmValue)
+                    .replaceAll(",", ""));
+        } else {
+            csvRecord.add("");
+        }
+        if (insulinSensitivityFactor > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, insulinSensitivityFactor)
                     .replaceAll(",", ""));
         } else {
             csvRecord.add("");
@@ -517,14 +533,14 @@ public class VaultCsvEntry extends CsvEntry {
             "sleepValue",
             "sleepAnnotation",
             "locationAnnotation",
-            "mlCgmValue"
+            "mlCgmValue",
+            "insulinSensitivityFactor"
         };
     }
 
     @Override
     public String toString() {
-        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", glucoseAnnotation=" + glucoseAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusCalculationValue=" + bolusCalculationValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + ", mlCgmValue=" + mlCgmValue + '}';
+        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", glucoseAnnotation=" + glucoseAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusCalculationValue=" + bolusCalculationValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + ", mlCgmValue=" + mlCgmValue + ", insulinSensitivityFactor=" + insulinSensitivityFactor + '}';
     }
-
 
 }

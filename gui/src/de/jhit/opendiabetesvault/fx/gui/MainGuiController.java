@@ -12,6 +12,7 @@ import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.CsvFileExporter;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.SliceLayoutCsvExporter;
+import de.jhit.opendiabetes.vault.exporter.SourceCodeExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultOdvExporter;
 import de.jhit.opendiabetes.vault.importer.FileImporter;
@@ -717,6 +718,29 @@ public class MainGuiController implements Initializable {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
                                         "Could not export to odv csv file: "
                                         + result2 + "\nSee logfile for details.",
+                                        ButtonType.CLOSE);
+                                alert.setHeaderText(null);
+                                alert.show();
+                            });
+                        }
+
+                        // code exporter
+                        odvExpotFileName = new File(path).getAbsolutePath()
+                                + "/"
+                                + "export-"
+                                + VaultCsvEntry.VERSION_STRING
+                                + "-"
+                                + formatter.format(new Date())
+                                + ".txt";
+                        exporter = new SourceCodeExporter(eOptions,
+                                VaultDao.getInstance(),
+                                odvExpotFileName);
+                        int result4 = exporter.exportDataToFile();
+                        if (result4 != VaultCsvExporter.RESULT_OK) {
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                                        "Could not export to code text file: "
+                                        + result4 + "\nSee logfile for details.",
                                         ButtonType.CLOSE);
                                 alert.setHeaderText(null);
                                 alert.show();
