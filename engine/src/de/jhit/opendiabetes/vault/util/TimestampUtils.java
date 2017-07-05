@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -70,6 +71,11 @@ public class TimestampUtils {
         return fromLocalDate(inputDate, 0);
     }
 
+    public static LocalTime dateToLocalTime(Date inputDate) {
+        //https://blog.progs.be/542/date-to-java-time
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(inputDate.getTime()), ZoneId.systemDefault()).toLocalTime();
+    }
+
     public static Date fromLocalDate(LocalDate inputDate, long offestInMilliseconds) {
         Date tmpInputDate = Date.from(Instant.from(inputDate
                 .atStartOfDay(ZoneId.systemDefault())));
@@ -100,7 +106,7 @@ public class TimestampUtils {
      * minutes are checked
      * @return
      */
-    public static boolean withinTimeSpan(Date startTime, Date endTime,
+    public static boolean withinDateTimeSpan(Date startTime, Date endTime,
             Date timePoint) {
         return startTime.before(timePoint) && endTime.after(timePoint)
                 || startTime.equals(timePoint) || endTime.equals(timePoint);
@@ -116,6 +122,20 @@ public class TimestampUtils {
             // timespan is not within a day (through midnight, e.g.  23:30 - 0:15)
             return (timepoint.isAfter(startTime) || timepoint.equals(startTime))
                     || (timepoint.isBefore(endTime) || timepoint.equals(endTime));
+        }
+    }
+
+    public static boolean withinTimeSpan(LocalTime startTime, LocalTime endTime, Date timepoint) {
+
+        LocalTime tp = dateToLocalTime(timepoint);
+        if (startTime.isBefore(endTime)) {
+            // timespan is wihtin a day
+            return (tp.isAfter(startTime) || tp.equals(startTime))
+                    && (tp.isBefore(endTime) || tp.equals(endTime));
+        } else {
+            // timespan is not within a day (through midnight, e.g.  23:30 - 0:15)
+            return (tp.isAfter(startTime) || tp.equals(startTime))
+                    || (tp.isBefore(endTime) || tp.equals(endTime));
         }
     }
 

@@ -17,6 +17,10 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import java.text.ParseException;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -54,16 +58,17 @@ public class TimeSpanFilterTest extends Assert {
      * Test of filter method, of class TimeSpanFilter.
      */
     @Test
-    public void testFilter() {
+    public void testFilter() throws ParseException {
         System.out.println("filter");
-        List<VaultEntry> data = null;
-        boolean inverted = false;
-        TimeSpanFilter instance = null;
-        FilterResult expResult = null;
+        List<VaultEntry> data = StaticDataset.getStaticDataset();
+        TimeSpanFilter instance = new TimeSpanFilter(LocalTime.parse("12:00"),
+                LocalTime.parse("12:30"));
         FilterResult result = instance.filter(data);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        for (VaultEntry entry : result.filteredData) {
+            assertTrue(TimestampUtils.withinTimeSpan(LocalTime.parse("12:00"),
+                    LocalTime.parse("12:30"), entry.getTimestamp()));
+        }
     }
 
 }
