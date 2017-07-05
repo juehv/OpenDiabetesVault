@@ -40,10 +40,10 @@ public class VaultEntrySourceCodeAdapter {
                 sb.append("tmpAnnotations.add(new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.");
                 sb.append(annotation.toString());
                 if (!annotation.getValue().isEmpty()) {
-                    sb.append(").setValue(");
+                    sb.append(").setValue(\"");
                     sb.append(annotation.getValue());
                 }
-                sb.append("));");
+                sb.append("\"));\n");
             }
         }
 

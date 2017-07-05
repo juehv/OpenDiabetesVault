@@ -61,7 +61,7 @@ public class SourceCodeExporter extends CsvFileExporter {
     protected void writeToFile(List<CsvEntry> csvEntries) throws IOException {
         BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath), Charset.forName("UTF-8"));
 
-        writer.write("public static List<VaultEntry> getStaticDataset() throws ParseException {");
+        writer.write("public static List<VaultEntry> getStaticDataset() throws ParseException {\n");
         writer.write(VaultEntrySourceCodeAdapter.getListInitCode());
 
         for (String entry : entries) {

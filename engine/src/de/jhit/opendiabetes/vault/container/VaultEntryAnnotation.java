@@ -54,7 +54,7 @@ public class VaultEntryAnnotation implements Serializable {
         this("", type);
     }
 
-    public VaultEntryAnnotation(String vaulue, TYPE type) {
+    public VaultEntryAnnotation(String value, TYPE type) {
         this.value = value;
         this.type = type;
         valuePattern = Pattern.compile(".*" + type.toString() + "(=([\\w\\.]+))?.");
