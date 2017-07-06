@@ -18,10 +18,7 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,10 +46,7 @@ public class TimeSpanFilter implements Filter {
         Date startOfCuttenTimeSeries = null;
         Date lastTimeStamp = null;
         for (VaultEntry entry : data) {
-            LocalTime timePoint = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(entry.getTimestamp().getTime()),
-                    ZoneId.systemDefault()).toLocalTime();
-            if (TimestampUtils.withinTimeSpan(startTime, endTime, timePoint)) {
+            if (TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp())) {
                 filteredData.add(entry);
                 if (startOfCuttenTimeSeries == null) {
                     startOfCuttenTimeSeries = entry.getTimestamp();
