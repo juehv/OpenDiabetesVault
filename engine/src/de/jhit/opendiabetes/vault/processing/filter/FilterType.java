@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 juehv
+ * Copyright (C) 2017 mswin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,29 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
-import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.List;
-
 /**
  *
- * @author juehv
+ * @author mswin
  */
-public interface Filter {
-
-    FilterResult filter(List<VaultEntry> data);
-
-    FilterType getType();
+public enum FilterType {
+    // basic time
+    TIME_SPAN,
+    TIME_POINT,
+    // available data
+    BOLUS_AVAILABLE,
+    BASAL_AVAILABLE,
+    BG_AVAILABLE,
+    CGM_AVAILABLE,
+    HR_AVAILABLE,
+    SLEEP_AVAILABLE,
+    STRESS_AVAILABLE,
+    EXERCISE_AVAILABLE,
+    // threshould
+    BOLUS_TH,
+    BASAL_TH,
+    BG_TH,
+    CGM_TH,
+    HR_TH,
+    STRESS_TH;
+        
 }
