@@ -17,7 +17,6 @@
 package de.jhit.opendiabetes.vault.processing;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import java.util.Date;
 import java.util.List;
 import javafx.util.Pair;
@@ -65,19 +64,6 @@ public class StaticInsulinSensivityCalculatorTest extends Assert {
         List<Pair<Date, Double>> expResult = null;
         List<Pair<Date, Double>> result = instance.calculateFromData(data);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of registerFilter method, of class StaticInsulinSensivityCalculator.
-     */
-    @Test
-    public void testRegisterFilter() {
-        System.out.println("registerFilter");
-        Filter filter = null;
-        StaticInsulinSensivityCalculator instance = null;
-        instance.registerFilter(filter);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
