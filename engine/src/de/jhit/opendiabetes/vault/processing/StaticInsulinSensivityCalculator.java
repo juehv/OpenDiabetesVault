@@ -16,10 +16,47 @@
  */
 package de.jhit.opendiabetes.vault.processing;
 
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javafx.util.Pair;
+
 /**
  *
  * @author juehv
  */
 public class StaticInsulinSensivityCalculator {
 
+    private final List<Filter> registeredFilter = new ArrayList<>();
+    private final StaticInsulinSensivityCalculatorOptions options;
+
+    public StaticInsulinSensivityCalculator(StaticInsulinSensivityCalculatorOptions options) {
+        this.options = options;
+    }
+
+    /**
+     * Calculate insulin sensitivity from given data
+     *
+     * @param data dataset
+     * @return List of calculated insulin sentivity for a given time point
+     * within the data set.
+     */
+    public List<Pair<Date, Double>> calculateFromData(List<VaultEntry> data) {
+        List<Pair<Date, Double>> retVal = new ArrayList<>();
+
+        // TODO implement here
+        return retVal;
+    }
+
+    /**
+     * Registeres a filter for sensitivity calculation. Should be called before
+     * calculation. Registered filteres are always combined as logical AND.
+     *
+     * @param filter
+     */
+    public void registerFilter(Filter filter) {
+        registeredFilter.add(filter);
+    }
 }
