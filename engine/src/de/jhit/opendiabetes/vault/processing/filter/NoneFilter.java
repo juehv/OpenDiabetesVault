@@ -35,4 +35,9 @@ public class NoneFilter implements Filter {
         return new FilterResult(data, timeSeries);
     }
 
+    @Override
+    public FilterType getType() {
+        return FilterType.NONE;
+    }
+
 }

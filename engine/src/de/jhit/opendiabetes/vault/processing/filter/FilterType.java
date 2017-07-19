@@ -39,6 +39,8 @@ public enum FilterType {
     BG_TH,
     CGM_TH,
     HR_TH,
-    STRESS_TH;
-        
+    STRESS_TH,
+    // filter nothing
+    NONE;
+
 }

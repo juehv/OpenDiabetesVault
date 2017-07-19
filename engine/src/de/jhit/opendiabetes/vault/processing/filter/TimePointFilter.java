@@ -40,4 +40,9 @@ public class TimePointFilter implements Filter {
         return filter.filter(data);
     }
 
+    @Override
+    public FilterType getType() {
+        return FilterType.TIME_POINT;
+    }
+
 }

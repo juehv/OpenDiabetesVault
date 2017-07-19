@@ -30,7 +30,6 @@ import javafx.util.Pair;
  */
 public class TimeSpanFilter implements Filter {
 
-    private final static FilterType type = FilterType.TIME_SPAN;
     private final LocalTime startTime;
     private final LocalTime endTime;
 
@@ -68,7 +67,7 @@ public class TimeSpanFilter implements Filter {
 
     @Override
     public FilterType getType() {
-        return type;
+        return FilterType.TIME_SPAN;
     }
 
 }
