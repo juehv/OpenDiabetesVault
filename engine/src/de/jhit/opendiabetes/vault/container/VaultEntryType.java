@@ -68,5 +68,8 @@ public enum VaultEntryType {
     LOC_WORK,
     LOC_FOOD,
     LOC_SPORTS,
-    LOC_OTHER;
+    LOC_OTHER,
+    // Machine Learning
+    ML_CGM_PREDICTION,
+    ML_INSULIN_SENSITIVTY;
 }

@@ -201,6 +201,12 @@ public class VaultCsvExporter extends CsvFileExporter {
                             tmpCsvEntry.addSleepAnnotation(tmpEntry.getType().toString());
                             tmpCsvEntry.setSleepValue(tmpEntry.getValue());
                             break;
+                        case ML_CGM_PREDICTION:
+                            tmpCsvEntry.setMlCgmValue(tmpEntry.getValue());
+                            break;
+                        case ML_INSULIN_SENSITIVTY:
+                            tmpCsvEntry.setInsulinSensitivityFactor(tmpEntry.getValue());
+                            break;
                         default:
                             LOG.severe("TYPE ASSERTION ERROR!");
                             throw new AssertionError();
@@ -223,6 +229,8 @@ public class VaultCsvExporter extends CsvFileExporter {
                                 case EXERCISE_AUTOMATIC_OTHER:
                                     tmpCsvEntry.addExerciseAnnotation(annotation.toStringWithValue());
                                     break;
+                                case ML_PREDICTION_TIME_BUCKET_SIZE:
+                                    tmpCsvEntry.addMlAnnotation(annotation.toStringWithValue());
                                 default:
                                     LOG.severe("ANNOTATION ASSERTION ERROR!");
                                     throw new AssertionError();

@@ -37,7 +37,8 @@ public class VaultEntryAnnotation implements Serializable {
         EXERCISE_GoogleWalk,
         EXERCISE_GoogleBicycle,
         EXERCISE_GoogleRun,
-        EXERCISE_AUTOMATIC_OTHER;
+        EXERCISE_AUTOMATIC_OTHER,
+        ML_PREDICTION_TIME_BUCKET_SIZE;
     }
 
     private final Pattern valuePattern;
