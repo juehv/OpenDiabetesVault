@@ -38,6 +38,10 @@ public class VaultEntryAnnotation implements Serializable {
         EXERCISE_GoogleBicycle,
         EXERCISE_GoogleRun,
         EXERCISE_AUTOMATIC_OTHER,
+        //
+        PUMP_ERROR_CODE,
+        PUMP_INFORMATION_CODE,
+        //
         ML_PREDICTION_TIME_BUCKET_SIZE;
     }
 

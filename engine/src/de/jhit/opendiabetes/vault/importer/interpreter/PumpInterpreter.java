@@ -17,12 +17,12 @@
 package de.jhit.opendiabetes.vault.importer.interpreter;
 
 import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
-import de.jhit.opendiabetes.vault.importer.Importer;
-import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.importer.Importer;
 import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
+import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +57,8 @@ public class PumpInterpreter extends VaultInterpreter {
         data = considerSuspendAsBasalOff(data);
         LOG.finer("Start fill canula interpretation");
         data = fillCanulaInterpretation(data);
+        LOG.finer("Start CGM Alert interpretation");
+        data = addBGValueToCgmAltertOnMedtronicPumps(data);
 
         LOG.finer("Pump data interpretation finished");
         return data;
@@ -195,11 +197,40 @@ public class PumpInterpreter extends VaultInterpreter {
         List<VaultEntry> dbBasalData = db.queryBasalBetween(ts1, ts2);
 
         List<VaultEntry> basalEvents = new ArrayList<>();
+        List<VaultEntry> killedBasalEvents = new ArrayList<>();
         for (VaultEntry suspendItem : data) {
             if (suspendItem.getType() == VaultEntryType.PUMP_SUSPEND) {
+                // find corresponding unsuspend
+                VaultEntry unsuspendEvent = null;
+                for (VaultEntry unspendItem : data) {
+                    if (unspendItem.getType() == VaultEntryType.PUMP_UNSUSPEND
+                            && unspendItem.getTimestamp().after(suspendItem.getTimestamp())) {
+                        // found it
+                        unsuspendEvent = unspendItem;
+                        break;
+                    }
+                }
+
                 // at start add basal 0
                 basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
                         suspendItem.getTimestamp(), 0.0));
+
+                if (unsuspendEvent != null) {
+                    // kill basal items between the suspension                
+                    for (VaultEntry killItem : data) {
+                        if ((killItem.getType() == VaultEntryType.BASAL_PROFILE
+                                || killItem.getType() == VaultEntryType.BASAL_MANUAL)
+                                && suspendItem.getTimestamp().before(killItem.getTimestamp())
+                                && unsuspendEvent.getTimestamp().after(killItem.getTimestamp())) {
+                            // found it
+                            killedBasalEvents.add(killItem);
+                            break;
+                        }
+                    }
+                } else {
+                    LOG.warning("Found no unsuspend item. Cannot kill basal profile items: "
+                            + suspendItem.toString());
+                }
 
                 // at end set basal to old value
                 VaultEntry lastKnownBasalEntry = null;
@@ -207,21 +238,23 @@ public class PumpInterpreter extends VaultInterpreter {
                     if (suspendItem.getTimestamp().after(basalItems.getTimestamp())) {
                         // update last known value
                         lastKnownBasalEntry = basalItems;
+                    } else if (lastKnownBasalEntry != null) {
+                        // use found item as reference
+                        basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
+                                TimestampUtils.addMinutesToTimestamp(suspendItem.getTimestamp(),
+                                        (int) Math.round(suspendItem.getValue())),
+                                lastKnownBasalEntry.getValue()));
                     } else {
-                        if (lastKnownBasalEntry != null) {
-                            // use found item as reference
-                            basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
-                                    TimestampUtils.addMinutesToTimestamp(suspendItem.getTimestamp(),
-                                            (int) Math.round(suspendItem.getValue())),
-                                    lastKnownBasalEntry.getValue()));
-                        } else {
-                            // nothing found as reference ...
-                            break;
-                        }
+                        // nothing found as reference ...
+                        LOG.log(Level.WARNING,
+                                "No basal profile item found for suspend restoring: {0}",
+                                suspendItem.toString());
+                        break;
                     }
                 }
             }
         }
+        data.removeAll(killedBasalEvents);
         data.addAll(basalEvents);
         return data;
     }
@@ -354,4 +387,31 @@ public class PumpInterpreter extends VaultInterpreter {
         return data;
     }
 
+    private List<VaultEntry> addBGValueToCgmAltertOnMedtronicPumps(List<VaultEntry> data) {
+        if (data == null || data.isEmpty()) {
+            return data;
+        }
+
+        double lastCgmValue = -1;
+        for (VaultEntry item : data) {
+            switch (item.getType()) {
+                case GLUCOSE_CGM:
+                    lastCgmValue = item.getValue();
+                    break;
+                case GLUCOSE_CGM_ALERT:
+                    if (lastCgmValue > 0) {
+                        item.setValue(lastCgmValue);
+                    } else {
+                        item.setValue(100);
+                        LOG.log(Level.WARNING, "No CGM Value available for Alert: {0}", item.toString());
+                    }
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
+        return data;
+    }
 }

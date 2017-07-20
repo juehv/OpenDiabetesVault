@@ -97,7 +97,7 @@ public class VaultCsvExporter extends CsvFileExporter {
                                 tmpCsvEntry.setCgmValue(tmpEntry.getValue());
                             } else {
                                 LOG.log(Level.WARNING,
-                                        "CGM Value for entry {0}, Drop {1}, hold: {2}",
+                                        "Found multiple CGM Value for timepoint {0}, Drop {1}, hold: {2}",
                                         new Object[]{tmpEntry.getTimestamp().toString(),
                                             tmpEntry.toString(),
                                             tmpCsvEntry.toString()});
@@ -114,14 +114,14 @@ public class VaultCsvExporter extends CsvFileExporter {
                         case GLUCOSE_BG:
                         case GLUCOSE_BG_MANUAL:
                             // TODO why does this happen ?
-                            // it often happens with identical values, but db is cleaned bevore ...
+                            // it often happens with identical values, but db has been cleaned bevore ...
                             if (tmpCsvEntry.getBgValue()
                                     == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
                                 tmpCsvEntry.setBgValue(tmpEntry.getValue());
                                 tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
                             } else {
                                 LOG.log(Level.WARNING,
-                                        "CGM Value for entry {0}, Drop {1}, hold: {2}",
+                                        "Found multiple BG Value for timepoint {0}, Drop {1}, hold: {2}",
                                         new Object[]{tmpEntry.getTimestamp().toString(),
                                             tmpEntry.toString(),
                                             tmpCsvEntry.toString()});
@@ -129,6 +129,11 @@ public class VaultCsvExporter extends CsvFileExporter {
                             break;
                         case GLUCOSE_BOLUS_CALCULATION:
                             tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());
+                            break;
+                        case CGM_CALIBRATION_ERROR:
+                        case CGM_REPLACED:
+                        case CGM_CONNECTION_ERROR:
+                            tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
                             break;
                         case BASAL_MANUAL:
                         case BASAL_PROFILE:
@@ -231,6 +236,11 @@ public class VaultCsvExporter extends CsvFileExporter {
                                     break;
                                 case ML_PREDICTION_TIME_BUCKET_SIZE:
                                     tmpCsvEntry.addMlAnnotation(annotation.toStringWithValue());
+                                    break;
+                                case PUMP_ERROR_CODE:
+                                case PUMP_INFORMATION_CODE:
+                                    tmpCsvEntry.addPumpAnnotation(annotation.toStringWithValue());
+                                    break;
                                 default:
                                     LOG.severe("ANNOTATION ASSERTION ERROR!");
                                     throw new AssertionError();

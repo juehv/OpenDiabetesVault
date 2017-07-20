@@ -84,6 +84,13 @@ public class VaultEntry {
         this.value = value;
     }
 
+    public VaultEntry(VaultEntryType type, Date timestamp) {
+        this();
+        this.type = type;
+        this.timestamp = timestamp;
+        this.value = VALUE_UNUSED;
+    }
+
     public VaultEntry(VaultEntryType type, Date timestamp, double value, double value2) {
         this(type, timestamp, value);
         this.value2 = value2;

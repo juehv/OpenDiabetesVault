@@ -17,6 +17,7 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
+import de.jhit.opendiabetes.vault.container.MedtronicAltertCodes;
 import de.jhit.opendiabetes.vault.container.MedtronicAnnotatedVaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
@@ -298,14 +299,52 @@ public class MedtronicCsvImporter extends CsvImporter {
 
                 break;
             case PUMP_ALERT:
+            case PUMP_ALERT_NGP:
                 tmpEntry = extractDoubleEntry(timestamp,
                         VaultEntryType.PUMP_NO_DELIVERY, rawValues,
                         RAW_TYPE_PATTERN, creader.getValues());
+
                 if (tmpEntry != null) {
-                    if (tmpEntry.getValue() != 4.0) {
-                        tmpEntry = new VaultEntry(VaultEntryType.PUMP_UNKNOWN_ERROR,
-                                timestamp, tmpEntry.getValue());
+                    MedtronicAltertCodes codeObj = MedtronicAltertCodes.fromCode(
+                            (int) Math.round(tmpEntry.getValue()));
+                    String codeString = codeObj == MedtronicAltertCodes.UNKNOWN_ALERT
+                            ? String.valueOf(Math.round(tmpEntry.getValue()))
+                            : codeObj.toString();
+
+                    switch (codeObj) {
+                        case NO_DELIVERY:
+                            // already done
+                            break;
+                        case LOW_WHEN_SUSPENDED:
+                        case LOW:
+                        case SUSPEND_ON_LOW:
+                        case SUSPEND_BEVORE_LOW:
+                        case RISE_ALERT:
+                        case UNSUSPEND_AFTER_LOW_PROTECTION:
+                        case UNSUSPEND_AFTER_LOW_PROTECTION_MAX_TIMESPAN:
+                        case HIGH:
+                        case APPROACHING_HIGH:
+                            tmpEntry.setType(VaultEntryType.GLUCOSE_CGM_ALERT);
+                            tmpEntry.setValue(VaultEntry.VALUE_UNUSED); // mark as unused to inform interpreter to add a BG value
+                            tmpEntry.addAnnotation(new VaultEntryAnnotation(codeString,
+                                    VaultEntryAnnotation.TYPE.PUMP_INFORMATION_CODE));
+                            break;
+                        case NO_SENSOR_CONNECTION:
+                            tmpEntry.setType(VaultEntryType.CGM_CONNECTION_ERROR);
+                            tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
+                            break;
+                        case CALIBRATION_ERROR:
+                            tmpEntry.setType(VaultEntryType.CGM_CALIBRATION_ERROR);
+                            tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
+                            break;
+                        default:
+                            tmpEntry.setType(VaultEntryType.PUMP_UNKNOWN_ERROR);
+                            tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
+                            tmpEntry.addAnnotation(new VaultEntryAnnotation(codeString,
+                                    VaultEntryAnnotation.TYPE.PUMP_ERROR_CODE));
+                            break;
                     }
+
                     retVal.add(tmpEntry);
                 }
 
@@ -316,7 +355,9 @@ public class MedtronicCsvImporter extends CsvImporter {
                     if (m.matches()) {
                         String matchedString = m.group(2);
                         VaultEntryType entryType;
-                        if (matchedString.contains("suspend")) {
+                        if (matchedString.contains("suspend")
+                                || matchedString.contains("predicted_low_sg")
+                                || matchedString.contains("lowsg_suspend")) {
                             entryType = VaultEntryType.PUMP_SUSPEND;
                         } else if (matchedString.contains("normal")) {
                             entryType = VaultEntryType.PUMP_UNSUSPEND;
