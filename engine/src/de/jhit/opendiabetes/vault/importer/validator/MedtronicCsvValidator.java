@@ -34,6 +34,7 @@ public class MedtronicCsvValidator extends CsvValidator {
     public static final String CARELINK_HEADER_DE_TIMESTAMP = "Zeitstempel";
     public static final String CARELINK_HEADER_DE_TYPE = "Roh-Typ";
     public static final String CARELINK_HEADER_DE_VALUE = "Roh-Werte";
+    public static final String CARELINK_HEADER_DE_SEQ_NUM = "Roh-Seq Num";
     public static final String TIME_FORMAT_DE = "dd.MM.yy HH:mm:ss";
 
     public static final String[] CARELINK_HEADER_DE = {
@@ -45,7 +46,7 @@ public class MedtronicCsvValidator extends CsvValidator {
     public static enum TYPE {
         REWIND("Rewind"), PRIME("Prime"),
         EXERCICE("JournalEntryExerciseMarker"),
-        BG_MANUAL("BGCapturedOnPump"), BG_RECEIVED("BGReceived"),
+        BG_CAPTURED_ON_PUMP("BGCapturedOnPump"), BG_RECEIVED("BGReceived"),
         SENSOR_CAL_BG("SensorCalBG"), SENSOR_CAL_FACTOR("SensorCalFactor"),
         SENSOR_VALUE("GlucoseSensorData"), SENSOR_ALERT("AlarmSensor"),
         BOLUS_WIZARD("BolusWizardBolusEstimate"), BOLUS_NORMAL("BolusNormal"),
@@ -81,6 +82,18 @@ public class MedtronicCsvValidator extends CsvValidator {
         switch (languageSelection) {
             case DE:
                 return creader.get(CARELINK_HEADER_DE_VALUE);
+            case EN:
+                throw new UnsupportedOperationException("Not supported yet.");
+            default:
+                Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");
+                throw new AssertionError();
+        }
+    }
+
+    public String getRawSeqNum(CsvReader creader) throws IOException {
+        switch (languageSelection) {
+            case DE:
+                return creader.get(CARELINK_HEADER_DE_SEQ_NUM);
             case EN:
                 throw new UnsupportedOperationException("Not supported yet.");
             default:
