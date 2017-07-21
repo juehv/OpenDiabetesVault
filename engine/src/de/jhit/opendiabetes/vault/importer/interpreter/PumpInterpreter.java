@@ -248,6 +248,12 @@ public class PumpInterpreter extends VaultInterpreter {
                 // at end set basal to old value
                 if (lastKnownBasalEntry == null) {
                     // no profile elements within the suspension --> we have to search the last known one
+                    for (VaultEntry basalEntry : data) {
+                        if (suspendItem.getType() == VaultEntryType.PUMP_SUSPEND) {
+
+                        }
+                    }
+
                     for (VaultEntry basalItems : dbBasalData) {
                         if (suspendItem.getTimestamp().after(basalItems.getTimestamp())) {
                             // update last known value
