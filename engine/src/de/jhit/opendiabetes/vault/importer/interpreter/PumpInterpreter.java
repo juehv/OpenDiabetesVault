@@ -240,43 +240,39 @@ public class PumpInterpreter extends VaultInterpreter {
                     }
                 } else {
                     // didn't find corresponding unsuspend item
-                    LOG.warning("Found no unsuspend item. Cannot kill basal profile items: "
-                            + suspendItem.toString());
+                    LOG.log(Level.WARNING,
+                            "Found no unsuspend item. "
+                            + "Cannot kill basal profile items: {0}",
+                            suspendItem.toString());
                     break;
                 }
 
                 // at end set basal to old value
                 if (lastKnownBasalEntry == null) {
-                    // no profile elements within the suspension --> we have to search the last known one
+                    // no profile elements within the suspension 
+                    // --> we have to search the last known one before the suspenstion
                     for (VaultEntry basalEntry : data) {
-                        if (suspendItem.getType() == VaultEntryType.PUMP_SUSPEND) {
-
-                        }
-                    }
-
-                    for (VaultEntry basalItems : dbBasalData) {
-                        if (suspendItem.getTimestamp().after(basalItems.getTimestamp())) {
-                            // update last known value
-                            lastKnownBasalEntry = basalItems;
-                        } else if (lastKnownBasalEntry != null) {
-                            // use found item as reference
-                            basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
-                                    TimestampUtils.addMinutesToTimestamp(suspendItem.getTimestamp(),
-                                            (int) Math.round(suspendItem.getValue())),
-                                    lastKnownBasalEntry.getValue()));
-                        } else {
-                            // nothing found as reference ...
-                            LOG.log(Level.WARNING,
-                                    "No basal profile item found for suspend restoring: {0}",
-                                    suspendItem.toString());
-                            break;
+                        if (basalEntry.getType() == VaultEntryType.BASAL_MANUAL
+                                || basalEntry.getType() == VaultEntryType.BASAL_PROFILE) { // no interpreter basal items, since suspension will interrupt tmp basal
+                            if (suspendItem.getTimestamp().after(basalEntry.getTimestamp())) {
+                                lastKnownBasalEntry = basalEntry;
+                            } else if (suspendItem.getTimestamp().before(basalEntry.getTimestamp())) { // we passed the suspension time point --> stop the search
+                                break;
+                            }
                         }
                     }
                 }
+
                 // add restore element
-                basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
-                        TimestampUtils.createCleanTimestamp(unsuspendEvent.getTimestamp()),
-                        lastKnownBasalEntry.getValue()));
+                if (lastKnownBasalEntry != null) {
+                    basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
+                            TimestampUtils.createCleanTimestamp(unsuspendEvent.getTimestamp()),
+                            lastKnownBasalEntry.getValue()));
+                } else {
+                    LOG.log(Level.WARNING,
+                            "Cant find a basal item to restore suspension for: {0}",
+                            suspendItem.toString());
+                }
             }
         }
         data.removeAll(killedBasalEvents);
