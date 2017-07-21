@@ -192,14 +192,17 @@ public class PumpInterpreter extends VaultInterpreter {
             return data;
         }
 
+        List<VaultEntry> basalEvents = new ArrayList<>();
+        List<VaultEntry> killedBasalEvents = new ArrayList<>();
+
+        // query db basal items
         Date ts1 = TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), -1 * 24 * 60);// start 1 day before with the search
         Date ts2 = data.get(data.size() - 1).getTimestamp();
         List<VaultEntry> dbBasalData = db.queryBasalBetween(ts1, ts2);
 
-        List<VaultEntry> basalEvents = new ArrayList<>();
-        List<VaultEntry> killedBasalEvents = new ArrayList<>();
         for (VaultEntry suspendItem : data) {
             if (suspendItem.getType() == VaultEntryType.PUMP_SUSPEND) {
+
                 // find corresponding unsuspend
                 VaultEntry unsuspendEvent = null;
                 for (VaultEntry unspendItem : data) {
@@ -215,43 +218,59 @@ public class PumpInterpreter extends VaultInterpreter {
                 basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
                         suspendItem.getTimestamp(), 0.0));
 
+                VaultEntry lastKnownBasalEntry = null;
                 if (unsuspendEvent != null) {
-                    // kill basal items between the suspension                
+                    // kill basal items between the suspension           
                     for (VaultEntry killItem : data) {
                         if ((killItem.getType() == VaultEntryType.BASAL_PROFILE
                                 || killItem.getType() == VaultEntryType.BASAL_MANUAL)
-                                && suspendItem.getTimestamp().before(killItem.getTimestamp())
-                                && unsuspendEvent.getTimestamp().after(killItem.getTimestamp())) {
-                            // found it
+                                && TimestampUtils.withinDateTimeSpan(
+                                        suspendItem.getTimestamp(),
+                                        unsuspendEvent.getTimestamp(),
+                                        killItem.getTimestamp())) {
+                            // found basal item within suspention time span
                             killedBasalEvents.add(killItem);
+                            lastKnownBasalEntry = killItem; // update last known basal entry
+                        } else if ((killItem.getType() == VaultEntryType.BASAL_PROFILE
+                                || killItem.getType() == VaultEntryType.BASAL_MANUAL)
+                                && killItem.getTimestamp().after(unsuspendEvent.getTimestamp())) {
+                            // we can stop when we exit the time span
                             break;
                         }
                     }
                 } else {
+                    // didn't find corresponding unsuspend item
                     LOG.warning("Found no unsuspend item. Cannot kill basal profile items: "
                             + suspendItem.toString());
+                    break;
                 }
 
                 // at end set basal to old value
-                VaultEntry lastKnownBasalEntry = null;
-                for (VaultEntry basalItems : dbBasalData) {
-                    if (suspendItem.getTimestamp().after(basalItems.getTimestamp())) {
-                        // update last known value
-                        lastKnownBasalEntry = basalItems;
-                    } else if (lastKnownBasalEntry != null) {
-                        // use found item as reference
-                        basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
-                                TimestampUtils.addMinutesToTimestamp(suspendItem.getTimestamp(),
-                                        (int) Math.round(suspendItem.getValue())),
-                                lastKnownBasalEntry.getValue()));
-                    } else {
-                        // nothing found as reference ...
-                        LOG.log(Level.WARNING,
-                                "No basal profile item found for suspend restoring: {0}",
-                                suspendItem.toString());
-                        break;
+                if (lastKnownBasalEntry == null) {
+                    // no profile elements within the suspension --> we have to search the last known one
+                    for (VaultEntry basalItems : dbBasalData) {
+                        if (suspendItem.getTimestamp().after(basalItems.getTimestamp())) {
+                            // update last known value
+                            lastKnownBasalEntry = basalItems;
+                        } else if (lastKnownBasalEntry != null) {
+                            // use found item as reference
+                            basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
+                                    TimestampUtils.addMinutesToTimestamp(suspendItem.getTimestamp(),
+                                            (int) Math.round(suspendItem.getValue())),
+                                    lastKnownBasalEntry.getValue()));
+                        } else {
+                            // nothing found as reference ...
+                            LOG.log(Level.WARNING,
+                                    "No basal profile item found for suspend restoring: {0}",
+                                    suspendItem.toString());
+                            break;
+                        }
                     }
                 }
+                // add restore element
+                basalEvents.add(new VaultEntry(VaultEntryType.BASAL_INTERPRETER,
+                        TimestampUtils.createCleanTimestamp(unsuspendEvent.getTimestamp()),
+                        lastKnownBasalEntry.getValue()));
             }
         }
         data.removeAll(killedBasalEvents);
@@ -303,15 +322,13 @@ public class PumpInterpreter extends VaultInterpreter {
 
                     if (tmpItem != null) {
                         affectedHistoricElements.add(tmpItem);
-                    } else {
+                    } else if ((basalItem.getRawType() == MedtronicCsvValidator.TYPE.BASAL_TMP_PERCENT
+                            && basalItem.getValue() > 0)) {
                         LOG.log(Level.WARNING, "Could not calculate tmp basal, "
                                 + "because no profile elements are found\n{0}",
                                 basalItem.toString());
                         killedBasalEvents.add(item); // kill the item since we cannot calculate its meaning
-                        if (basalItem.getRawType() == MedtronicCsvValidator.TYPE.BASAL_TMP_PERCENT
-                                && basalItem.getValue() > 0) {
-                            continue;
-                        }
+                        continue;
                     }
                 }
 
@@ -319,21 +336,27 @@ public class PumpInterpreter extends VaultInterpreter {
                 switch (basalItem.getRawType()) {
                     case BASAL_TMP_PERCENT:
                         // calculate new rate
-                        Date startTimestamp = new Date((long) (basalItem.getTimestamp().getTime()
-                                - basalItem.getDuration()));
-                        // first manual item needs special timestamp
+                        Date startTimestamp = TimestampUtils.createCleanTimestamp(
+                                new Date((long) (basalItem.getTimestamp().getTime()
+                                        - basalItem.getDuration())));
+
+                        // calculate basal value
                         double newBasalValue = 0;
-                        if (basalItem.getValue() > 0) {
+                        // first item need special treatment, since we need to use the start
+                        // timestamp of the tmp basal rate, not the timestamp of the profile item
+                        if (basalItem.getValue() > 0 && !affectedHistoricElements.isEmpty()) {
                             double currentBasalValue = affectedHistoricElements.get(
                                     affectedHistoricElements.size() - 1).getValue();
                             newBasalValue = currentBasalValue
                                     * basalItem.getValue() * 0.01;
                         }
+                        // add item
                         basalEvents.add(new VaultEntry(
                                 VaultEntryType.BASAL_MANUAL,
                                 startTimestamp,
                                 newBasalValue));
 
+                        // add the changes of basal rate within the tmp percentage timespan
                         if (basalItem.getValue() > 0) {
                             for (int i = 0; i < affectedHistoricElements.size() - 2; i++) {
                                 double currentBasalValue = affectedHistoricElements.get(i)
@@ -355,6 +378,7 @@ public class PumpInterpreter extends VaultInterpreter {
                                     affectedHistoricElements.get(0).getValue()));
                         }
                         break;
+
                     case BASAL_TMP_RATE:
                         // add new rate
                         basalEvents.add(new VaultEntry(
