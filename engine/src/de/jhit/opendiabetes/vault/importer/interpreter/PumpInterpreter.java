@@ -54,11 +54,15 @@ public class PumpInterpreter extends VaultInterpreter {
 
         LOG.finer("Start basal interpretation");
         data = applyTempBasalEvents(data);
+        Collections.sort(data, new SortVaultEntryByDate());
         data = considerSuspendAsBasalOff(data);
+        Collections.sort(data, new SortVaultEntryByDate());
         LOG.finer("Start fill canula interpretation");
         data = fillCanulaInterpretation(data);
+        Collections.sort(data, new SortVaultEntryByDate());
         LOG.finer("Start CGM Alert interpretation");
         data = addBGValueToCgmAltertOnMedtronicPumps(data);
+        Collections.sort(data, new SortVaultEntryByDate());
 
         LOG.finer("Pump data interpretation finished");
         return data;
@@ -195,11 +199,6 @@ public class PumpInterpreter extends VaultInterpreter {
         List<VaultEntry> basalEvents = new ArrayList<>();
         List<VaultEntry> killedBasalEvents = new ArrayList<>();
 
-        // query db basal items
-        Date ts1 = TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), -1 * 24 * 60);// start 1 day before with the search
-        Date ts2 = data.get(data.size() - 1).getTimestamp();
-        List<VaultEntry> dbBasalData = db.queryBasalBetween(ts1, ts2);
-
         for (VaultEntry suspendItem : data) {
             if (suspendItem.getType() == VaultEntryType.PUMP_SUSPEND) {
 
@@ -254,6 +253,23 @@ public class PumpInterpreter extends VaultInterpreter {
                     for (VaultEntry basalEntry : data) {
                         if (basalEntry.getType() == VaultEntryType.BASAL_MANUAL
                                 || basalEntry.getType() == VaultEntryType.BASAL_PROFILE) { // no interpreter basal items, since suspension will interrupt tmp basal
+                            if (suspendItem.getTimestamp().after(basalEntry.getTimestamp())) {
+                                lastKnownBasalEntry = basalEntry;
+                            } else if (suspendItem.getTimestamp().before(basalEntry.getTimestamp())) { // we passed the suspension time point --> stop the search
+                                break;
+                            }
+                        }
+                    }
+
+                    if (lastKnownBasalEntry == null) {
+                        // still nothing found, search in DB
+                        // query db
+                        Date ts1 = TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), -1 * 5 * 60);// start 5 hours before with the search
+                        Date ts2 = data.get(0).getTimestamp(); // we search just until the current dataset starts
+                        List<VaultEntry> dbBasalData = db.queryBasalBetween(ts1, ts2);
+
+                        // search for profile entry
+                        for (VaultEntry basalEntry : dbBasalData) { // no interpreter basal items, since suspension will interrupt tmp basal
                             if (suspendItem.getTimestamp().after(basalEntry.getTimestamp())) {
                                 lastKnownBasalEntry = basalEntry;
                             } else if (suspendItem.getTimestamp().before(basalEntry.getTimestamp())) { // we passed the suspension time point --> stop the search
