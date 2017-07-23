@@ -131,8 +131,10 @@ public class VaultCsvExporter extends CsvFileExporter {
                             tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());
                             break;
                         case CGM_CALIBRATION_ERROR:
-                        case CGM_REPLACED:
+                        case CGM_SENSOR_FINISHED:
+                        case CGM_SENSOR_START:
                         case CGM_CONNECTION_ERROR:
+                        case CGM_TIME_SYNC:
                             tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
                             break;
                         case BASAL_MANUAL:
@@ -172,9 +174,11 @@ public class VaultCsvExporter extends CsvFileExporter {
                         case PUMP_FILL_INTERPRETER:
                         case PUMP_NO_DELIVERY:
                         case PUMP_REWIND:
-                        case PUMP_UNKNOWN_ERROR:
+                        case PUMP_UNTRACKED_ERROR:
                         case PUMP_SUSPEND:
                         case PUMP_UNSUSPEND:
+                        case PUMP_RESERVOIR_EMPTY:
+                        case PUMP_TIME_SYNC:
                             tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString());
                             break;
                         case PUMP_PRIME:

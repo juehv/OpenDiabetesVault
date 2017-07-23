@@ -338,7 +338,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                             tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
                             break;
                         default:
-                            tmpEntry.setType(VaultEntryType.PUMP_UNKNOWN_ERROR);
+                            tmpEntry.setType(VaultEntryType.PUMP_UNTRACKED_ERROR);
                             tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
                             tmpEntry.addAnnotation(new VaultEntryAnnotation(codeString,
                                     VaultEntryAnnotation.TYPE.PUMP_ERROR_CODE));
@@ -362,7 +362,7 @@ public class MedtronicCsvImporter extends CsvImporter {
                         } else if (matchedString.contains("normal")) {
                             entryType = VaultEntryType.PUMP_UNSUSPEND;
                         } else {
-                            entryType = VaultEntryType.PUMP_UNKNOWN_ERROR;
+                            entryType = VaultEntryType.PUMP_UNTRACKED_ERROR;
                         }
                         tmpEntry = new VaultEntry(entryType,
                                 timestamp,
