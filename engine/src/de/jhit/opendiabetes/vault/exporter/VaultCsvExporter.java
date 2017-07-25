@@ -35,6 +35,7 @@ import java.util.logging.Level;
 public class VaultCsvExporter extends CsvFileExporter {
 
     private final VaultDao db;
+    private List<VaultEntry> delayBuffer = new ArrayList<>();
 
     public VaultCsvExporter(ExporterOptions options, VaultDao db, String filePath) {
         super(options, filePath);
@@ -70,11 +71,20 @@ public class VaultCsvExporter extends CsvFileExporter {
 
         if (!tmpValues.isEmpty()) {
             int i = 0;
+            delayBuffer = new ArrayList<>();
             while (!fromTimestamp.after(toTimestamp)) {
-
+                // start new timeslot (1m slots)
                 VaultCsvEntry tmpCsvEntry = new VaultCsvEntry();
                 tmpCsvEntry.setTimestamp(fromTimestamp);
 
+                // add delayed items
+                if (!delayBuffer.isEmpty()) {
+                    for (VaultEntry delayedItem : delayBuffer) {
+                        tmpCsvEntry = processVaultEntry(tmpCsvEntry, delayedItem);
+                    }
+                }
+
+                // search and add vault entries for this time slot
                 VaultEntry tmpEntry;
                 while (fromTimestamp.equals((tmpEntry = tmpValues.get(i)).getTimestamp())) {
                     if (i < tmpValues.size() - 1) {
@@ -84,184 +94,203 @@ public class VaultCsvExporter extends CsvFileExporter {
                         break;
                     }
 
-                    switch (tmpEntry.getType()) {
-                        case GLUCOSE_CGM_ALERT:
-                            tmpCsvEntry.setCgmAlertValue(tmpEntry.getValue());
-                            break;
-                        case GLUCOSE_CGM:
-                            // TODO y does this happen
-                            // --> when more than one cgm value per minute is available
-                            // but cgm ticks are every 15 minutes ...
-                            if (tmpCsvEntry.getCgmValue()
-                                    == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
-                                tmpCsvEntry.setCgmValue(tmpEntry.getValue());
-                            } else {
-                                LOG.log(Level.WARNING,
-                                        "Found multiple CGM Value for timepoint {0}, Drop {1}, hold: {2}",
-                                        new Object[]{tmpEntry.getTimestamp().toString(),
-                                            tmpEntry.toString(),
-                                            tmpCsvEntry.toString()});
-                            }
-                            break;
-                        case GLUCOSE_CGM_CALIBRATION:
-                            tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString()
-                                    + "="
-                                    + EasyFormatter.formatDouble(tmpEntry.getValue()));
-                            break;
-                        case GLUCOSE_CGM_RAW:
-                            tmpCsvEntry.setCgmRawValue(tmpEntry.getValue());
-                            break;
-                        case GLUCOSE_BG:
-                        case GLUCOSE_BG_MANUAL:
-                            // TODO why does this happen ?
-                            // it often happens with identical values, but db has been cleaned bevore ...
-                            if (tmpCsvEntry.getBgValue()
-                                    == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
-                                tmpCsvEntry.setBgValue(tmpEntry.getValue());
-                                tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
-                            } else {
-                                LOG.log(Level.WARNING,
-                                        "Found multiple BG Value for timepoint {0}, Drop {1}, hold: {2}",
-                                        new Object[]{tmpEntry.getTimestamp().toString(),
-                                            tmpEntry.toString(),
-                                            tmpCsvEntry.toString()});
-                            }
-                            break;
-                        case GLUCOSE_BOLUS_CALCULATION:
-                            tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());
-                            break;
-                        case CGM_CALIBRATION_ERROR:
-                        case CGM_SENSOR_FINISHED:
-                        case CGM_SENSOR_START:
-                        case CGM_CONNECTION_ERROR:
-                        case CGM_TIME_SYNC:
-                            tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
-                            break;
-                        case BASAL_MANUAL:
-                        case BASAL_PROFILE:
-                        case BASAL_INTERPRETER:
-                            tmpCsvEntry.setBasalValue(tmpEntry.getValue());
-                            tmpCsvEntry.addBasalAnnotation(tmpEntry.getType().toString());
-                            break;
-                        case BOLUS_SQARE:
-                            tmpCsvEntry.setBolusValue(tmpEntry.getValue());
-                            tmpCsvEntry.addBolusAnnotation(
-                                    tmpEntry.getType().toString()
-                                    + "="
-                                    + EasyFormatter.formatDouble(tmpEntry.getValue2()));
-                            break;
-                        case BOLUS_NORMAL:
-                            tmpCsvEntry.setBolusValue(tmpEntry.getValue());
-                            tmpCsvEntry.addBolusAnnotation(
-                                    tmpEntry.getType().toString());
-                            break;
-                        case MEAL_BOLUS_CALCULATOR:
-                        case MEAL_MANUAL:
-                            tmpCsvEntry.setMealValue(tmpEntry.getValue());
-                            break;
-                        case EXERCISE_BICYCLE:
-                        case EXERCISE_WALK:
-                        case EXERCISE_RUN:
-                        case EXERCISE_MANUAL:
-                        case EXERCISE_OTHER:
-                            tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
-                            tmpCsvEntry.addExerciseAnnotation(tmpEntry.getType().toString());
-                            for (VaultEntryAnnotation item : tmpEntry.getAnnotations()) {
-                                tmpCsvEntry.addExerciseAnnotation(item.toStringWithValue());
-                            }
-                            break;
-                        case PUMP_FILL:
-                        case PUMP_FILL_INTERPRETER:
-                        case PUMP_NO_DELIVERY:
-                        case PUMP_REWIND:
-                        case PUMP_UNTRACKED_ERROR:
-                        case PUMP_SUSPEND:
-                        case PUMP_UNSUSPEND:
-                        case PUMP_RESERVOIR_EMPTY:
-                        case PUMP_TIME_SYNC:
-                            tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString());
-                            break;
-                        case PUMP_PRIME:
-                            tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString()
-                                    + "="
-                                    + EasyFormatter.formatDouble(tmpEntry.getValue()));
-                            break;
-                        case HEART_RATE:
-                            tmpCsvEntry.setHeartRateValue(tmpEntry.getValue());
-                            break;
-                        case HEART_RATE_VARIABILITY:
-                            tmpCsvEntry.setHeartRateVariabilityValue(tmpEntry.getValue());
-                            tmpCsvEntry.setStressBalanceValue(tmpEntry.getValue2());
-                            break;
-                        case STRESS:
-                            tmpCsvEntry.setStressValue(tmpEntry.getValue());
-                            break;
-                        case LOC_FOOD:
-                        case LOC_HOME:
-                        case LOC_OTHER:
-                        case LOC_SPORTS:
-                        case LOC_TRANSISTION:
-                        case LOC_WORK:
-                            tmpCsvEntry.addLocationAnnotation(tmpEntry.getType().toString());
-                            break;
-                        case SLEEP_DEEP:
-                        case SLEEP_LIGHT:
-                        case SLEEP_REM:
-                            tmpCsvEntry.addSleepAnnotation(tmpEntry.getType().toString());
-                            tmpCsvEntry.setSleepValue(tmpEntry.getValue());
-                            break;
-                        case ML_CGM_PREDICTION:
-                            tmpCsvEntry.setMlCgmValue(tmpEntry.getValue());
-                            break;
-                        case ML_INSULIN_SENSITIVTY:
-                            tmpCsvEntry.setInsulinSensitivityFactor(tmpEntry.getValue());
-                            break;
-                        default:
-                            LOG.severe("TYPE ASSERTION ERROR!");
-                            throw new AssertionError();
-                    }
-
-                    if (!tmpEntry.getAnnotations().isEmpty()) {
-                        for (VaultEntryAnnotation annotation : tmpEntry.getAnnotations()) {
-                            switch (annotation.getType()) {
-                                case GLUCOSE_BG_METER_SERIAL:
-                                case GLUCOSE_RISE_20_MIN:
-                                case GLUCOSE_RISE_LAST:
-                                    tmpCsvEntry.addGlucoseAnnotation(annotation.toStringWithValue());
-                                    break;
-                                case EXERCISE_GoogleBicycle:
-                                case EXERCISE_GoogleRun:
-                                case EXERCISE_GoogleWalk:
-                                case EXERCISE_TrackerBicycle:
-                                case EXERCISE_TrackerRun:
-                                case EXERCISE_TrackerWalk:
-                                case EXERCISE_AUTOMATIC_OTHER:
-                                    tmpCsvEntry.addExerciseAnnotation(annotation.toStringWithValue());
-                                    break;
-                                case ML_PREDICTION_TIME_BUCKET_SIZE:
-                                    tmpCsvEntry.addMlAnnotation(annotation.toStringWithValue());
-                                    break;
-                                case PUMP_ERROR_CODE:
-                                case PUMP_INFORMATION_CODE:
-                                    tmpCsvEntry.addPumpAnnotation(annotation.toStringWithValue());
-                                    break;
-                                default:
-                                    LOG.severe("ANNOTATION ASSERTION ERROR!");
-                                    throw new AssertionError();
-                            }
-                        }
-                    }
-
                 }
+                tmpCsvEntry = processVaultEntry(tmpCsvEntry, tmpEntry);
 
+                // save entry if not empty
                 if (!tmpCsvEntry.isEmpty()) {
                     returnValues.add(tmpCsvEntry);
-                    //LOG.log(Level.INFO, "Export entry: {0}", tmpCsvEntry.toCsvString());
+                    LOG.log(Level.FINE, "Export entry: {0}", tmpCsvEntry.toCsvString());
                 }
+
+                // add 1 minute to timestamp for next timeslot
                 fromTimestamp = TimestampUtils.addMinutesToTimestamp(fromTimestamp, 1);
             }
         }
         return returnValues;
+    }
+
+    private VaultCsvEntry processVaultEntry(VaultCsvEntry tmpCsvEntry, VaultEntry tmpEntry) {
+        switch (tmpEntry.getType()) {
+            case GLUCOSE_CGM_ALERT:
+                tmpCsvEntry.setCgmAlertValue(tmpEntry.getValue());
+                break;
+            case GLUCOSE_CGM:
+                // TODO y does this happen
+                // --> when more than one cgm value per minute is available
+                // but cgm ticks are every 15 minutes ...
+                if (tmpCsvEntry.getCgmValue()
+                        == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
+                    tmpCsvEntry.setCgmValue(tmpEntry.getValue());
+                } else {
+                    LOG.log(Level.WARNING,
+                            "Found multiple CGM Value for timepoint {0}, Drop {1}, hold: {2}",
+                            new Object[]{tmpEntry.getTimestamp().toString(),
+                                tmpEntry.toString(),
+                                tmpCsvEntry.toString()});
+                }
+                break;
+            case GLUCOSE_CGM_CALIBRATION:
+                tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString()
+                        + "="
+                        + EasyFormatter.formatDouble(tmpEntry.getValue()));
+                break;
+            case GLUCOSE_CGM_RAW:
+                tmpCsvEntry.setCgmRawValue(tmpEntry.getValue());
+                break;
+            case GLUCOSE_BG:
+            case GLUCOSE_BG_MANUAL:
+                // TODO why does this happen ?
+                // it often happens with identical values, but db has been cleaned bevore ...
+                if (tmpCsvEntry.getBgValue()
+                        == VaultCsvEntry.UNINITIALIZED_DOUBLE) {
+                    tmpCsvEntry.setBgValue(tmpEntry.getValue());
+                    tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
+                } else {
+                    LOG.log(Level.WARNING,
+                            "Found multiple BG Value for timepoint {0}, Drop {1}, hold: {2}",
+                            new Object[]{tmpEntry.getTimestamp().toString(),
+                                tmpEntry.toString(),
+                                tmpCsvEntry.toString()});
+                }
+                break;
+            case GLUCOSE_BOLUS_CALCULATION:
+                tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());
+                break;
+            case CGM_CALIBRATION_ERROR:
+            case CGM_SENSOR_FINISHED:
+            case CGM_SENSOR_START:
+            case CGM_CONNECTION_ERROR:
+            case CGM_TIME_SYNC:
+                tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString());
+                break;
+            case BASAL_MANUAL:
+            case BASAL_PROFILE:
+            case BASAL_INTERPRETER:
+                tmpCsvEntry.setBasalValue(tmpEntry.getValue());
+                tmpCsvEntry.addBasalAnnotation(tmpEntry.getType().toString());
+                break;
+            case BOLUS_SQARE:
+                if (tmpCsvEntry.getBolusValue() != VaultCsvEntry.UNINITIALIZED_DOUBLE) {
+                    // delay entry if bolus is already set for this timeslot
+                    delayBuffer.add(tmpEntry);
+                    LOG.log(Level.INFO, "Delayed bolus entry: {0}", tmpEntry.toString());
+                    break;
+                }
+                tmpCsvEntry.setBolusValue(tmpEntry.getValue());
+                tmpCsvEntry.addBolusAnnotation(
+                        tmpEntry.getType().toString()
+                        + "="
+                        + EasyFormatter.formatDouble(tmpEntry.getValue2()));
+                break;
+            case BOLUS_NORMAL:
+                if (tmpCsvEntry.getBolusValue() != VaultCsvEntry.UNINITIALIZED_DOUBLE) {
+                    // delay entry if bolus is already set for this timeslot
+                    delayBuffer.add(tmpEntry);
+                    LOG.log(Level.INFO, "Delayed bolus entry: {0}", tmpEntry.toString());
+                    break;
+                }
+                tmpCsvEntry.setBolusValue(tmpEntry.getValue());
+                tmpCsvEntry.addBolusAnnotation(
+                        tmpEntry.getType().toString());
+                break;
+            case MEAL_BOLUS_CALCULATOR:
+            case MEAL_MANUAL:
+                tmpCsvEntry.setMealValue(tmpEntry.getValue());
+                break;
+            case EXERCISE_BICYCLE:
+            case EXERCISE_WALK:
+            case EXERCISE_RUN:
+            case EXERCISE_MANUAL:
+            case EXERCISE_OTHER:
+                tmpCsvEntry.setExerciseTimeValue(tmpEntry.getValue());
+                tmpCsvEntry.addExerciseAnnotation(tmpEntry.getType().toString());
+                for (VaultEntryAnnotation item : tmpEntry.getAnnotations()) {
+                    tmpCsvEntry.addExerciseAnnotation(item.toStringWithValue());
+                }
+                break;
+            case PUMP_FILL:
+            case PUMP_FILL_INTERPRETER:
+            case PUMP_NO_DELIVERY:
+            case PUMP_REWIND:
+            case PUMP_UNTRACKED_ERROR:
+            case PUMP_SUSPEND:
+            case PUMP_UNSUSPEND:
+            case PUMP_RESERVOIR_EMPTY:
+            case PUMP_TIME_SYNC:
+                tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString());
+                break;
+            case PUMP_PRIME:
+                tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString()
+                        + "="
+                        + EasyFormatter.formatDouble(tmpEntry.getValue()));
+                break;
+            case HEART_RATE:
+                tmpCsvEntry.setHeartRateValue(tmpEntry.getValue());
+                break;
+            case HEART_RATE_VARIABILITY:
+                tmpCsvEntry.setHeartRateVariabilityValue(tmpEntry.getValue());
+                tmpCsvEntry.setStressBalanceValue(tmpEntry.getValue2());
+                break;
+            case STRESS:
+                tmpCsvEntry.setStressValue(tmpEntry.getValue());
+                break;
+            case LOC_FOOD:
+            case LOC_HOME:
+            case LOC_OTHER:
+            case LOC_SPORTS:
+            case LOC_TRANSISTION:
+            case LOC_WORK:
+                tmpCsvEntry.addLocationAnnotation(tmpEntry.getType().toString());
+                break;
+            case SLEEP_DEEP:
+            case SLEEP_LIGHT:
+            case SLEEP_REM:
+                tmpCsvEntry.addSleepAnnotation(tmpEntry.getType().toString());
+                tmpCsvEntry.setSleepValue(tmpEntry.getValue());
+                break;
+            case ML_CGM_PREDICTION:
+                tmpCsvEntry.setMlCgmValue(tmpEntry.getValue());
+                break;
+            case ML_INSULIN_SENSITIVTY:
+                tmpCsvEntry.setInsulinSensitivityFactor(tmpEntry.getValue());
+                break;
+            default:
+                LOG.severe("TYPE ASSERTION ERROR!");
+                throw new AssertionError();
+        }
+
+        if (!tmpEntry.getAnnotations().isEmpty()) {
+            for (VaultEntryAnnotation annotation : tmpEntry.getAnnotations()) {
+                switch (annotation.getType()) {
+                    case GLUCOSE_BG_METER_SERIAL:
+                    case GLUCOSE_RISE_20_MIN:
+                    case GLUCOSE_RISE_LAST:
+                        tmpCsvEntry.addGlucoseAnnotation(annotation.toStringWithValue());
+                        break;
+                    case EXERCISE_GoogleBicycle:
+                    case EXERCISE_GoogleRun:
+                    case EXERCISE_GoogleWalk:
+                    case EXERCISE_TrackerBicycle:
+                    case EXERCISE_TrackerRun:
+                    case EXERCISE_TrackerWalk:
+                    case EXERCISE_AUTOMATIC_OTHER:
+                        tmpCsvEntry.addExerciseAnnotation(annotation.toStringWithValue());
+                        break;
+                    case ML_PREDICTION_TIME_BUCKET_SIZE:
+                        tmpCsvEntry.addMlAnnotation(annotation.toStringWithValue());
+                        break;
+                    case PUMP_ERROR_CODE:
+                    case PUMP_INFORMATION_CODE:
+                        tmpCsvEntry.addPumpAnnotation(annotation.toStringWithValue());
+                        break;
+                    default:
+                        LOG.severe("ANNOTATION ASSERTION ERROR!");
+                        throw new AssertionError();
+                }
+            }
+        }
+        return tmpCsvEntry;
     }
 
 }
