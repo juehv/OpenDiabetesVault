@@ -28,7 +28,6 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import de.jhit.opendiabetes.vault.container.RawEntry;
-import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
@@ -48,7 +47,7 @@ public class VaultDao {
 
     public static final long RESULT_ERROR = -1;
     private static final String DATABASE_URL = "jdbc:hsqldb:mem:odvault";
-//    private static final String DATABASE_URL = "jdbc:hsqldb:file:/home/juehv/test.db";
+    //private static final String DATABASE_URL = "jdbc:hsqldb:file:./test.db";
     private static final Logger LOG = Logger.getLogger(VaultDao.class.getName());
     private static VaultDao INSTANCE = null;
 
@@ -86,13 +85,19 @@ public class VaultDao {
         // create a connection source to our database
         connectionSource = new JdbcConnectionSource(DATABASE_URL, "sa", "",
                 new HsqldbDatabaseType());
-        // instantiate the DAO to handle Account with String id
+        // instantiate the DAO 
         vaultDao = DaoManager.createDao(connectionSource, VaultEntry.class);
+        if (!vaultDao.isTableExists()) {
+            TableUtils.createTableIfNotExists(connectionSource, VaultEntry.class);
+        } else {
+            LOG.warning("Found existing DB for VaultEntries. Reusing it!!");
+        }
+
         rawDao = DaoManager.createDao(connectionSource, RawEntry.class);
-        // if you need to create the 'accounts' table make this call
-        TableUtils.createTable(connectionSource, VaultEntry.class);
-        TableUtils.createTable(connectionSource, RawEntry.class);
-        TableUtils.createTable(connectionSource, SliceEntry.class);
+        if (!rawDao.isTableExists()) {
+            TableUtils.createTableIfNotExists(connectionSource, RawEntry.class);
+        }
+//        TableUtils.createTableIfNotExists(connectionSource, SliceEntry.class);
     }
 
     /**
@@ -110,12 +115,14 @@ public class VaultDao {
     }
 
     public long putRawEntry(RawEntry entry) {
-        try {
-            return rawDao.createIfNotExists(entry).getId();
-        } catch (SQLException ex) {
-            LOG.log(Level.SEVERE, "Error saving entry:\n" + entry.toString(), ex);
-            return RESULT_ERROR;
-        }
+        // TODO rethink raw entry tracking
+        return 0;
+//        try {
+//            return rawDao.createIfNotExists(entry).getId();
+//        } catch (SQLException ex) {
+//            LOG.log(Level.SEVERE, "Error saving entry:\n" + entry.toString(), ex);
+//            return RESULT_ERROR;
+//        }
     }
 
     public boolean removeDublicates() {

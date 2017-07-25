@@ -337,6 +337,25 @@ public class MedtronicCsvImporter extends CsvImporter {
                             tmpEntry.setType(VaultEntryType.CGM_CALIBRATION_ERROR);
                             tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
                             break;
+                        case EMPTY_RESERVOIR:
+                            tmpEntry.setType(VaultEntryType.PUMP_RESERVOIR_EMPTY);
+                            tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
+                            break;
+                        case INSULIN_FLOW_BLOCKED:
+                            tmpEntry.setType(VaultEntryType.PUMP_NO_DELIVERY);
+                            tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
+                            tmpEntry.addAnnotation(new VaultEntryAnnotation(codeString,
+                                    VaultEntryAnnotation.TYPE.PUMP_ERROR_CODE));
+                            break;
+                        case SENSOR_EXPIRED:
+                        case SENSOR_FINISHED:
+                            tmpEntry.setType(VaultEntryType.CGM_SENSOR_FINISHED);
+                            tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
+                            break;
+                        case SENSOR_INITIALIZATIN_STARTED:
+                            tmpEntry.setType(VaultEntryType.CGM_SENSOR_START);
+                            tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
+                            break;
                         default:
                             tmpEntry.setType(VaultEntryType.PUMP_UNTRACKED_ERROR);
                             tmpEntry.setValue(VaultEntry.VALUE_UNUSED);
