@@ -22,9 +22,9 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="474.0" prefWidth="431.0">
                             <children>
-                                <CheckBox fx:id="odvCheckBox" layoutX="14.0" layoutY="329.0" mnemonicParsing="false" text="OpenDiabetesVault CSV TODO" />
-                                <CheckBox fx:id="rocheCheckBox" layoutX="14.0" layoutY="266.0" mnemonicParsing="false" text="Roche Accu-Check CSV TODO" />
-                                <CheckBox fx:id="googleTracksCheckBox" layoutX="14.0" layoutY="203.0" mnemonicParsing="false" text="Google Tracks JSON TODO" />
+                                <CheckBox fx:id="odvCheckBox" layoutX="14.0" layoutY="329.0" mnemonicParsing="false" text="OpenDiabetesVault CSV" />
+                                <CheckBox fx:id="sonyCheckBox" layoutX="14.0" layoutY="266.0" mnemonicParsing="false" text="Sony SWR12 Dump" />
+                                <CheckBox fx:id="googleGatheredCheckBox" layoutX="14.0" layoutY="203.0" mnemonicParsing="false" text="Google Gathered JSON" />
                                 <CheckBox fx:id="googleFitCheckBox" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" text="Google Fit CSV Folder" />
                                 <CheckBox fx:id="abbottCheckBox" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Abbott FreestyleLibre TXT" />
                                 <CheckBox fx:id="medtronicCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Medtronic Carelink CSV" />
@@ -41,8 +41,8 @@
                                 <TextField fx:id="medtronicTextField" layoutX="14.0" layoutY="38.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                                 <TextField fx:id="abbottTextField" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                                 <TextField fx:id="googleFitTextField" layoutX="14.0" layoutY="164.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                                <TextField fx:id="googleTracksTextField" layoutX="14.0" layoutY="227.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
-                                <TextField fx:id="rocheTextField" layoutX="14.0" layoutY="290.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="googleGatheredTextField" layoutX="14.0" layoutY="227.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="sonyTextField" layoutX="14.0" layoutY="290.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                                 <TextField fx:id="odvTextField" layoutX="14.0" layoutY="353.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                                 <Label layoutX="136.0" layoutY="396.0" text="-" />
                                 <Hyperlink layoutX="165.0" layoutY="11.0" text="?" />
@@ -72,6 +72,7 @@
                                 <ProgressBar fx:id="exportPorgressBar" layoutX="20.0" layoutY="443.0" prefHeight="18.0" prefWidth="334.0" progress="0.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
                                 <CheckBox fx:id="exportPeriodAllCheckbox" layoutX="272.0" layoutY="396.0" mnemonicParsing="false" onAction="#handleExportPeriodCheckboxClicked" text="All" />
                                 <Label layoutX="136.0" layoutY="396.0" text="-" />
+                        <Button layoutX="14.0" layoutY="224.0" mnemonicParsing="false" onAction="#handleButtonProcessing" text="Test Processing" />
                             </children>
                         </AnchorPane>
                     </content>

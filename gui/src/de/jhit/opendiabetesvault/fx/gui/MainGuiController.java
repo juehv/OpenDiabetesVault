@@ -88,13 +88,13 @@ public class MainGuiController implements Initializable {
     @FXML
     private CheckBox googleFitCheckBox;
     @FXML
-    private TextField googleTracksTextField;
+    private TextField googleGatheredTextField;
     @FXML
-    private CheckBox googleTracksCheckBox;
+    private CheckBox googleGatheredCheckBox;
     @FXML
-    private TextField rocheTextField;
+    private TextField sonyTextField;
     @FXML
-    private CheckBox rocheCheckBox;
+    private CheckBox sonyCheckBox;
     @FXML
     private TextField odvTextField;
     @FXML
@@ -286,8 +286,8 @@ public class MainGuiController implements Initializable {
             files.forEach((item) -> {
                 sb.append(item.getAbsolutePath()).append(Constants.MULTI_FILE_PATH_DELIMITER);
             });
-            googleTracksTextField.setText(sb.toString().substring(0, sb.length() - 1));
-            googleTracksCheckBox.setSelected(true);
+            googleGatheredTextField.setText(sb.toString().substring(0, sb.length() - 1));
+            googleGatheredCheckBox.setSelected(true);
         }
     }
 
@@ -305,8 +305,8 @@ public class MainGuiController implements Initializable {
             files.forEach((item) -> {
                 sb.append(item.getAbsolutePath()).append(Constants.MULTI_FILE_PATH_DELIMITER);
             });
-            rocheTextField.setText(sb.toString().substring(0, sb.length() - 1));
-            rocheCheckBox.setSelected(true);
+            sonyTextField.setText(sb.toString().substring(0, sb.length() - 1));
+            sonyCheckBox.setSelected(true);
         }
     }
 
@@ -338,8 +338,8 @@ public class MainGuiController implements Initializable {
         if (!medtronicCheckBox.isSelected()
                 && !abbottCheckBox.isSelected()
                 && !googleFitCheckBox.isSelected()
-                && !googleTracksCheckBox.isSelected()
-                && !rocheCheckBox.isSelected()
+                && !googleGatheredCheckBox.isSelected()
+                && !sonyCheckBox.isSelected()
                 && !odvCheckBox.isSelected()) {
             Alert alert = new Alert(Alert.AlertType.WARNING,
                     "No data selected.\nPlease select a dataset and try again.",
@@ -367,17 +367,17 @@ public class MainGuiController implements Initializable {
             sb.append(googleFitTextField.getText());
 
         }
-        if (googleTracksCheckBox.isSelected() && !checkIfFilesExists(googleTracksTextField.getText())) {
+        if (googleGatheredCheckBox.isSelected() && !checkIfFilesExists(googleGatheredTextField.getText())) {
             if (sb.length() > 0) {
                 sb.append("\",\n\"");
             }
-            sb.append(googleTracksTextField.getText());
+            sb.append(googleGatheredTextField.getText());
         }
-        if (rocheCheckBox.isSelected() && !checkIfFilesExists(rocheTextField.getText())) {
+        if (sonyCheckBox.isSelected() && !checkIfFilesExists(sonyTextField.getText())) {
             if (sb.length() > 0) {
                 sb.append("\",\n\"");
             }
-            sb.append(rocheTextField.getText());
+            sb.append(sonyTextField.getText());
         }
         if (odvCheckBox.isSelected() && !checkIfFilesExists(odvTextField.getText())) {
             if (sb.length() > 0) {
@@ -467,8 +467,8 @@ public class MainGuiController implements Initializable {
                     Platform.runLater(() -> {
                         importPorgressBar.setProgress(0.50);
                     });
-                    if (googleTracksCheckBox.isSelected()) {
-                        for (String filePath : googleTracksTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                    if (googleGatheredCheckBox.isSelected()) {
+                        for (String filePath : googleGatheredTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {//TODO
                             }
                         }
@@ -483,12 +483,12 @@ public class MainGuiController implements Initializable {
                     Platform.runLater(() -> {
                         importPorgressBar.setProgress(0.65);
                     });
-                    if (rocheCheckBox.isSelected()) {
+                    if (sonyCheckBox.isSelected()) {
                         ExerciseInterpreter interpreter
                                 = new ExerciseInterpreter(
                                         new SonySWR12Importer(null),
                                         fOptions, VaultDao.getInstance());
-                        for (String filePath : rocheTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+                        for (String filePath : sonyTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {
                                 ((FileImporter) interpreter.getImporter()).setImportFilePath(filePath);
                                 interpreter.importAndInterpret();
@@ -500,7 +500,6 @@ public class MainGuiController implements Initializable {
                     });
                     if (odvCheckBox.isSelected()) {
                         for (String filePath : odvTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
-                            //FIXME Temporary add odv importer for testing
                             NonInterpreter interpreter = new NonInterpreter(
                                     new VaultOdvImporter(null),
                                     iOptions,
@@ -510,13 +509,6 @@ public class MainGuiController implements Initializable {
                                 interpreter.importAndInterpret();
                             }
                         }
-                        Platform.runLater(() -> {
-                            Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "ODV import is not implemented yet.",
-                                    ButtonType.CLOSE);
-                            alert.setHeaderText(null);
-                            alert.show();
-                        });
                     }
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE,
@@ -558,14 +550,14 @@ public class MainGuiController implements Initializable {
         saveMultiFileSelection(Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_KEY,
                 Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_COUNT_KEY,
                 googleFitTextField.getText());
-        prefs.putBoolean(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY, googleTracksCheckBox.isSelected());
+        prefs.putBoolean(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY, googleGatheredCheckBox.isSelected());
         saveMultiFileSelection(Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY,
                 Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_COUNT_KEY,
-                googleTracksTextField.getText());
-        prefs.putBoolean(Constants.IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY, rocheCheckBox.isSelected());
+                googleGatheredTextField.getText());
+        prefs.putBoolean(Constants.IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY, sonyCheckBox.isSelected());
         saveMultiFileSelection(Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY,
                 Constants.IMPORTER_ROCHE_IMPORT_PATH_COUNT_KEY,
-                rocheTextField.getText());
+                sonyTextField.getText());
         prefs.putBoolean(Constants.IMPORTER_ODV_IMPORT_CHECKBOX_KEY, odvCheckBox.isSelected());
         saveMultiFileSelection(Constants.IMPORTER_ODV_IMPORT_PATH_KEY,
                 Constants.IMPORTER_ODV_IMPORT_PATH_COUNT_KEY,
@@ -611,6 +603,19 @@ public class MainGuiController implements Initializable {
             exportPlotDailyTextField.setText(file.getAbsolutePath());
             exportPlotDailyCheckBox.setSelected(true);
         }
+    }
+
+    @FXML
+    private void handleButtonProcessing(ActionEvent event) {
+        // add your processing code here
+
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Processing finished.",
+                    ButtonType.CLOSE);
+            alert.setHeaderText(null);
+            alert.show();
+        });
     }
 
     @FXML
@@ -913,15 +918,15 @@ public class MainGuiController implements Initializable {
                 Constants.IMPORTER_GOOGLE_FIT_IMPORT_PATH_COUNT_KEY));
         googleFitCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_GOOGLE_FIT_IMPORT_CHECKBOX_KEY, false));
-        googleTracksTextField.setText(loadMultiFileSelection(
+        googleGatheredTextField.setText(loadMultiFileSelection(
                 Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_KEY,
                 Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_PATH_COUNT_KEY));
-        googleTracksCheckBox.setSelected(prefs.getBoolean(
+        googleGatheredCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_GOOGLE_TRACKS_IMPORT_CHECKBOX_KEY, false));
-        rocheTextField.setText(loadMultiFileSelection(
+        sonyTextField.setText(loadMultiFileSelection(
                 Constants.IMPORTER_ROCHE_IMPORT_PATH_KEY,
                 Constants.IMPORTER_ROCHE_IMPORT_PATH_COUNT_KEY));
-        rocheCheckBox.setSelected(prefs.getBoolean(
+        sonyCheckBox.setSelected(prefs.getBoolean(
                 Constants.IMPORTER_ROCHE_IMPORT_CHECKBOX_KEY, false));
         odvTextField.setText(loadMultiFileSelection(
                 Constants.IMPORTER_ODV_IMPORT_PATH_KEY,
