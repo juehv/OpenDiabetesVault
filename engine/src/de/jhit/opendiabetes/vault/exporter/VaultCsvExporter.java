@@ -82,6 +82,7 @@ public class VaultCsvExporter extends CsvFileExporter {
                     for (VaultEntry delayedItem : delayBuffer) {
                         tmpCsvEntry = processVaultEntry(tmpCsvEntry, delayedItem);
                     }
+                    delayBuffer = new ArrayList<>();
                 }
 
                 // search and add vault entries for this time slot
@@ -93,9 +94,8 @@ public class VaultCsvExporter extends CsvFileExporter {
                         i--;
                         break;
                     }
-
+                    tmpCsvEntry = processVaultEntry(tmpCsvEntry, tmpEntry);
                 }
-                tmpCsvEntry = processVaultEntry(tmpCsvEntry, tmpEntry);
 
                 // save entry if not empty
                 if (!tmpCsvEntry.isEmpty()) {
@@ -157,6 +157,11 @@ public class VaultCsvExporter extends CsvFileExporter {
             case GLUCOSE_BOLUS_CALCULATION:
                 tmpCsvEntry.setBolusCalculationValue(tmpEntry.getValue());
                 break;
+            case GLUCOSE_ELEVATION_30:
+                tmpCsvEntry.addGlucoseAnnotation(tmpEntry.getType().toString()
+                        + "="
+                        + EasyFormatter.formatDouble(tmpEntry.getValue()));
+                break;
             case CGM_CALIBRATION_ERROR:
             case CGM_SENSOR_FINISHED:
             case CGM_SENSOR_START:
@@ -216,6 +221,7 @@ public class VaultCsvExporter extends CsvFileExporter {
             case PUMP_UNTRACKED_ERROR:
             case PUMP_SUSPEND:
             case PUMP_UNSUSPEND:
+            case PUMP_AUTONOMOUS_SUSPEND:
             case PUMP_RESERVOIR_EMPTY:
             case PUMP_TIME_SYNC:
                 tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString());
@@ -255,6 +261,9 @@ public class VaultCsvExporter extends CsvFileExporter {
             case ML_INSULIN_SENSITIVTY:
                 tmpCsvEntry.setInsulinSensitivityFactor(tmpEntry.getValue());
                 break;
+            case OTHER_ANNOTATION:
+                // will be handled by annotations
+                break;
             default:
                 LOG.severe("TYPE ASSERTION ERROR!");
                 throw new AssertionError();
@@ -284,6 +293,8 @@ public class VaultCsvExporter extends CsvFileExporter {
                     case PUMP_INFORMATION_CODE:
                         tmpCsvEntry.addPumpAnnotation(annotation.toStringWithValue());
                         break;
+                    case USER_TEXT:
+                        tmpCsvEntry.addOtherAnnotation(annotation.toStringWithValue());
                     default:
                         LOG.severe("ANNOTATION ASSERTION ERROR!");
                         throw new AssertionError();

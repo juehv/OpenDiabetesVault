@@ -42,7 +42,9 @@ public class VaultEntryAnnotation implements Serializable {
         PUMP_ERROR_CODE,
         PUMP_INFORMATION_CODE,
         //
-        ML_PREDICTION_TIME_BUCKET_SIZE;
+        ML_PREDICTION_TIME_BUCKET_SIZE,
+        //
+        USER_TEXT;
     }
 
     private final Pattern valuePattern;

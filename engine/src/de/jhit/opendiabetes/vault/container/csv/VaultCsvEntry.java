@@ -57,6 +57,7 @@ public class VaultCsvEntry extends CsvEntry {
     private double mlCgmValue = UNINITIALIZED_DOUBLE;
     private List<String> mlAnnotation = new ArrayList<>();
     private double insulinSensitivityFactor = UNINITIALIZED_DOUBLE;
+    private List<String> otherAnnotation = new ArrayList<>();
 
     public Date getTimestamp() {
         return timestamp;
@@ -290,6 +291,18 @@ public class VaultCsvEntry extends CsvEntry {
         this.mlAnnotation = mlAnnotation;
     }
 
+    public List<String> getOtherAnnotation() {
+        return otherAnnotation;
+    }
+
+    public void setOtherAnnotation(List<String> otherAnnotation) {
+        this.otherAnnotation = otherAnnotation;
+    }
+
+    public void addOtherAnnotation(String userAnnotation) {
+        this.otherAnnotation.add(userAnnotation);
+    }
+
     public boolean isEmpty() {
         return bgValue == UNINITIALIZED_DOUBLE
                 && cgmValue == UNINITIALIZED_DOUBLE
@@ -314,7 +327,8 @@ public class VaultCsvEntry extends CsvEntry {
                 && locationAnnotation.isEmpty()
                 && mlCgmValue == UNINITIALIZED_DOUBLE
                 && mlAnnotation.isEmpty()
-                && insulinSensitivityFactor == UNINITIALIZED_DOUBLE;
+                && insulinSensitivityFactor == UNINITIALIZED_DOUBLE
+                && otherAnnotation.isEmpty();
     }
 
     public String toCsvString() {
@@ -515,6 +529,16 @@ public class VaultCsvEntry extends CsvEntry {
         } else {
             csvRecord.add("");
         }
+        if (!otherAnnotation.isEmpty()) {
+            StringBuilder annotations = new StringBuilder();
+            for (String item : otherAnnotation) {
+                annotations.insert(0, CSV_LIST_DELIMITER).insert(0, item);
+            }
+            annotations.deleteCharAt(annotations.length() - 1);
+            csvRecord.add(annotations.toString());
+        } else {
+            csvRecord.add("");
+        }
 
         return csvRecord.toArray(new String[]{});
     }
@@ -559,13 +583,14 @@ public class VaultCsvEntry extends CsvEntry {
             "locationAnnotation",
             "mlCgmValue",
             "mlAnnotation",
-            "insulinSensitivityFactor"
+            "insulinSensitivityFactor",
+            "otherAnnotation"
         };
     }
 
     @Override
     public String toString() {
-        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", glucoseAnnotation=" + glucoseAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusCalculationValue=" + bolusCalculationValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + ", mlCgmValue=" + mlCgmValue + ", mlAnnotation=" + mlAnnotation + ", insulinSensitivityFactor=" + insulinSensitivityFactor + '}';
+        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", glucoseAnnotation=" + glucoseAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusCalculationValue=" + bolusCalculationValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + ", mlCgmValue=" + mlCgmValue + ", mlAnnotation=" + mlAnnotation + ", insulinSensitivityFactor=" + insulinSensitivityFactor + ", otherAnnotation=" + otherAnnotation + '}';
     }
 
 }

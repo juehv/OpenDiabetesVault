@@ -315,10 +315,12 @@ public class MedtronicCsvImporter extends CsvImporter {
                         case NO_DELIVERY:
                             // already done
                             break;
-                        case LOW_WHEN_SUSPENDED:
-                        case LOW:
                         case SUSPEND_ON_LOW:
                         case SUSPEND_BEVORE_LOW:
+                            VaultEntry extraTmpEntry = new VaultEntry(VaultEntryType.PUMP_AUTONOMOUS_SUSPEND, timestamp);
+                            retVal.add(extraTmpEntry);
+                        case LOW_WHEN_SUSPENDED:
+                        case LOW:
                         case RISE_ALERT:
                         case UNSUSPEND_AFTER_LOW_PROTECTION:
                         case UNSUSPEND_AFTER_LOW_PROTECTION_MAX_TIMESPAN:

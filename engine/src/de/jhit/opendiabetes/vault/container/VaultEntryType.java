@@ -42,6 +42,7 @@ public enum VaultEntryType {
     GLUCOSE_BG,
     GLUCOSE_BG_MANUAL,
     GLUCOSE_BOLUS_CALCULATION,
+    GLUCOSE_ELEVATION_30,
     // CGM system
     CGM_SENSOR_FINISHED,
     CGM_SENSOR_START,
@@ -62,6 +63,7 @@ public enum VaultEntryType {
     PUMP_UNTRACKED_ERROR,
     PUMP_RESERVOIR_EMPTY,
     PUMP_TIME_SYNC,
+    PUMP_AUTONOMOUS_SUSPEND,
     // Sleep
     SLEEP_LIGHT,
     SLEEP_REM,
@@ -79,5 +81,7 @@ public enum VaultEntryType {
     LOC_OTHER,
     // Machine Learning
     ML_CGM_PREDICTION,
-    ML_INSULIN_SENSITIVTY;
+    ML_INSULIN_SENSITIVTY,
+    // More unspecific input
+    OTHER_ANNOTATION;
 }
