@@ -9,8 +9,9 @@ import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.csv.SliceCsVEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
-import de.jhit.opendiabetes.vault.exporter.CsvFileExporter;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
+import de.jhit.opendiabetes.vault.exporter.FileExporter;
+import de.jhit.opendiabetes.vault.exporter.JsonExporter;
 import de.jhit.opendiabetes.vault.exporter.SliceLayoutCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.SourceCodeExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
@@ -691,7 +692,7 @@ public class MainGuiController implements Initializable {
                                         exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second      
 
                         // standard export
-                        CsvFileExporter exporter = new VaultCsvExporter(eOptions,
+                        FileExporter exporter = new VaultCsvExporter(eOptions,
                                 VaultDao.getInstance(),
                                 odvExpotFileName);
                         int result = exporter.exportDataToFile(null);
@@ -783,6 +784,31 @@ public class MainGuiController implements Initializable {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
                                         "Could not export to odv csv file: "
                                         + result3 + "\nSee logfile for details.",
+                                        ButtonType.CLOSE);
+                                alert.setHeaderText(null);
+                                alert.show();
+                            });
+                        }
+
+                        // json exporter
+                        odvExpotFileName = new File(path).getAbsolutePath()
+                                + "/"
+                                + "export-"
+                                + VaultCsvEntry.VERSION_STRING
+                                + "-"
+                                + formatter.format(new Date())
+                                + ".json";
+                        exporter = new JsonExporter(eOptions,
+                                odvExpotFileName);
+                        int result5 = exporter.exportDataToFile(
+                                VaultDao.getInstance().queryVaultEntrysBetween(
+                                        eOptions.exportPeriodFrom,
+                                        eOptions.exportPeriodTo));
+                        if (result5 != VaultCsvExporter.RESULT_OK) {
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                                        "Could not export to code text file: "
+                                        + result5 + "\nSee logfile for details.",
                                         ButtonType.CLOSE);
                                 alert.setHeaderText(null);
                                 alert.show();

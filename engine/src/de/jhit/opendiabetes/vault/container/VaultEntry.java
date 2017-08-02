@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.Objects;
  * @author mswin
  */
 @DatabaseTable(tableName = "VaultEntries")
-public class VaultEntry {
+public class VaultEntry implements Serializable {
 
     public static final double VALUE_UNUSED = -5.0;
     public static final long ID_UNUSED = -5L;
@@ -73,7 +74,7 @@ public class VaultEntry {
     public VaultEntry() {
         // all persisted classes must define a no-arg constructor with at least package visibility
         GsonBuilder gb = new GsonBuilder();
-        gb.registerTypeAdapter(VaultEntryAnnotation.class, new VaultEntryAnnotationAdapter());
+        gb.registerTypeAdapter(VaultEntryAnnotation.class, new VaultEntryAnnotationGsonAdapter());
         gson = gb.create();
     }
 
@@ -171,6 +172,10 @@ public class VaultEntry {
         annotationsToJson();
     }
 
+    public String getAnnotationsAsJson() {
+        return annotationsAsJson;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -229,6 +234,13 @@ public class VaultEntry {
             }.getType());
         }
         annotationsAsJson = "";
+    }
+
+    public void setAnnotaionFromJson(String asString) {
+        if (asString != null && !asString.isEmpty()) {
+            this.annotationsAsJson = asString;
+            annotationsFromJason();
+        }
     }
 
 }
