@@ -17,7 +17,8 @@
 package de.jhit.opendiabetes.vault.exporter;
 
 import de.jhit.opendiabetes.vault.container.SliceEntry;
-import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.csv.ExportEntry;
 import de.jhit.opendiabetes.vault.container.csv.SliceCsVEntry;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +37,8 @@ public class SliceLayoutCsvExporter extends CsvFileExporter {
     }
 
     @Override
-    protected List<CsvEntry> prepareData() {
-        List<CsvEntry> retVal = new ArrayList<>();
+    protected List<ExportEntry> prepareData(List<VaultEntry> data) {
+        List<ExportEntry> retVal = new ArrayList<>();
         for (SliceEntry item : entries) {
             retVal.add(new SliceCsVEntry(item));
         }

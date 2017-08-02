@@ -18,81 +18,31 @@ package de.jhit.opendiabetes.vault.exporter;
 
 import com.csvreader.CsvWriter;
 import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
+import de.jhit.opendiabetes.vault.container.csv.ExportEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author juehv
  */
-public abstract class CsvFileExporter {
-
-    public final static int RESULT_OK = 0;
-    public final static int RESULT_ERROR = -1;
-    public final static int RESULT_NO_DATA = -2;
-    public final static int RESULT_FILE_ACCESS_ERROR = -3;
-
-    protected static final Logger LOG = Logger.getLogger(VaultCsvExporter.class.getName());
-
-    protected final ExporterOptions options;
-    protected final String filePath;
-    protected FileOutputStream fileOutpuStream;
+public abstract class CsvFileExporter extends FileExporter {
 
     protected CsvFileExporter(ExporterOptions options, String filePath) {
-        this.options = options;
-        this.filePath = filePath;
+        super(options, filePath);
     }
 
-    protected abstract List<CsvEntry> prepareData();
-
-    public int exportDataToFile() {
-        // check file stuff        
-        File checkFile = new File(filePath);
-        if (checkFile.exists()
-                && (!checkFile.isFile() || !checkFile.canWrite())) {
-            return RESULT_FILE_ACCESS_ERROR;
-        }
-        try {
-            fileOutpuStream = new FileOutputStream(checkFile);
-        } catch (FileNotFoundException ex) {
-            LOG.log(Level.SEVERE, "Error accessing file for output stream", ex);
-            return RESULT_FILE_ACCESS_ERROR;
-        }
-
-        // create csv data
-        List<CsvEntry> csvEntrys = prepareData();
-        if (csvEntrys == null || csvEntrys.isEmpty()) {
-            return RESULT_NO_DATA;
-        }
-
-        // write to file
-        try {
-            writeToFile(csvEntrys);
-        } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error writing odv csv file: {0}" + filePath, ex);
-            return RESULT_ERROR;
-        }
-        return RESULT_OK;
-    }
-
-    protected void writeToFile(List<CsvEntry> csvEntries) throws IOException {
+    protected void writeToFile(List<ExportEntry> csvEntries) throws IOException {
         CsvWriter cwriter = new CsvWriter(fileOutpuStream, VaultCsvEntry.CSV_DELIMITER,
                 Charset.forName("UTF-8"));
 
-        cwriter.writeRecord(csvEntries.get(0).getCsvHeaderRecord());
-        for (CsvEntry item : csvEntries) {
-            cwriter.writeRecord(item.toCsvRecord());
+        cwriter.writeRecord(((CsvEntry) csvEntries.get(0)).getCsvHeaderRecord());
+        for (ExportEntry item : csvEntries) {
+            cwriter.writeRecord(((CsvEntry) item).toCsvRecord());
         }
         cwriter.flush();
         cwriter.close();
-        fileOutpuStream.close();
     }
-
 }

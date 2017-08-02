@@ -18,7 +18,7 @@ package de.jhit.opendiabetes.vault.exporter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
-import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
+import de.jhit.opendiabetes.vault.container.csv.ExportEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.util.EasyFormatter;
@@ -57,8 +57,8 @@ public class VaultCsvExporter extends CsvFileExporter {
     }
 
     @Override
-    protected List<CsvEntry> prepareData() {
-        List<CsvEntry> returnValues = new ArrayList<>();
+    protected List<ExportEntry> prepareData(List<VaultEntry> data) {
+        List<ExportEntry> returnValues = new ArrayList<>();
 
         List<VaultEntry> tmpValues = queryData();
         if (tmpValues == null || tmpValues.isEmpty()) {

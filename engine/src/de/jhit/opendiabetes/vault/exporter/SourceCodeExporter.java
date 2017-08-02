@@ -19,6 +19,7 @@ package de.jhit.opendiabetes.vault.exporter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntrySourceCodeAdapter;
 import de.jhit.opendiabetes.vault.container.csv.CsvEntry;
+import de.jhit.opendiabetes.vault.container.csv.ExportEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,7 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Exports the data as big list of entries written in java source code
+ * Exports the data as big list of entries written in java source code TODO
+ * reimplement
  *
  * @author juehv
  */
@@ -58,7 +60,7 @@ public class SourceCodeExporter extends CsvFileExporter {
     }
 
     @Override
-    protected void writeToFile(List<CsvEntry> csvEntries) throws IOException {
+    protected void writeToFile(List<ExportEntry> csvEntries) throws IOException {
         BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath), Charset.forName("UTF-8"));
 
         writer.write("public static List<VaultEntry> getStaticDataset() throws ParseException {\n");
@@ -77,7 +79,7 @@ public class SourceCodeExporter extends CsvFileExporter {
     }
 
     @Override
-    protected List<CsvEntry> prepareData() {
+    protected List<ExportEntry> prepareData(List<VaultEntry> data) {
         List<VaultEntry> tmpValues = queryData();
         if (tmpValues == null || tmpValues.isEmpty()) {
             return null;
@@ -88,7 +90,7 @@ public class SourceCodeExporter extends CsvFileExporter {
         }
 
         // durty hack again to overcome savety features ...
-        ArrayList<CsvEntry> dummy = new ArrayList<>();
+        ArrayList<ExportEntry> dummy = new ArrayList<>();
         dummy.add(new CsvEntry() {
             @Override
             public String[] toCsvRecord() {

@@ -16,11 +16,17 @@
  */
 package de.jhit.opendiabetes.vault.container.csv;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author juehv
  */
-public abstract class CsvEntry {
+public abstract class CsvEntry implements ExportEntry {
 
     public static final String DECIMAL_FORMAT = "%1$.2f";
     public final static char CSV_DELIMITER = ',';
@@ -29,4 +35,33 @@ public abstract class CsvEntry {
     public abstract String[] toCsvRecord();
 
     public abstract String[] getCsvHeaderRecord();
+
+    @Override
+    public byte[] toByteEntryLine() throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        os = writeStringArray(os, toCsvRecord());
+
+        return os.toByteArray();
+    }
+
+    private ByteArrayOutputStream writeStringArray(ByteArrayOutputStream os, String[] array) throws IOException {
+        byte[] delimiterConverted = new String(new char[]{CSV_DELIMITER}).getBytes(Charset.forName("UTF-8"));
+        byte[] delimiter = new byte[]{};
+
+        for (String line : array) {
+            try {
+                os.write(delimiter);
+                os.write(line.getBytes(Charset.forName("UTF-8")));
+                delimiter = delimiterConverted;
+            } catch (IOException ex) {
+                Logger.getLogger(CsvEntry.class.getName()).log(Level.SEVERE,
+                        "Error converting String in UTF8", ex);
+                throw ex;
+            }
+        }
+
+        return os;
+    }
+
 }

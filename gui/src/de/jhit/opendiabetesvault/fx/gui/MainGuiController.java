@@ -694,7 +694,7 @@ public class MainGuiController implements Initializable {
                         CsvFileExporter exporter = new VaultCsvExporter(eOptions,
                                 VaultDao.getInstance(),
                                 odvExpotFileName);
-                        int result = exporter.exportDataToFile();
+                        int result = exporter.exportDataToFile(null);
                         if (result != VaultCsvExporter.RESULT_OK) {
                             Platform.runLater(() -> {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
@@ -717,7 +717,7 @@ public class MainGuiController implements Initializable {
                         exporter = new VaultOdvExporter(eOptions,
                                 VaultDao.getInstance(),
                                 odvExpotFileName);
-                        int result2 = exporter.exportDataToFile();
+                        int result2 = exporter.exportDataToFile(null);
                         if (result2 != VaultCsvExporter.RESULT_OK) {
                             Platform.runLater(() -> {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
@@ -740,7 +740,7 @@ public class MainGuiController implements Initializable {
                         exporter = new SourceCodeExporter(eOptions,
                                 VaultDao.getInstance(),
                                 odvExpotFileName);
-                        int result4 = exporter.exportDataToFile();
+                        int result4 = exporter.exportDataToFile(null);
                         if (result4 != VaultCsvExporter.RESULT_OK) {
                             Platform.runLater(() -> {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
@@ -777,7 +777,7 @@ public class MainGuiController implements Initializable {
                                 + ".csv";
                         exporter = new SliceLayoutCsvExporter(eOptions,
                                 odvExpotFileName, entries);
-                        int result3 = exporter.exportDataToFile();
+                        int result3 = exporter.exportDataToFile(null);
                         if (result3 != VaultCsvExporter.RESULT_OK) {
                             Platform.runLater(() -> {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
