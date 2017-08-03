@@ -28,16 +28,16 @@ import java.util.List;
  *
  * @author juehv
  */
-public class JsonPseudoEntry implements ExportEntry {
+public class OdvDbJsonPseudoEntry implements ExportEntry {
 
     private final List<VaultEntry> data;
 
-    private JsonPseudoEntry(List<VaultEntry> data) {
+    private OdvDbJsonPseudoEntry(List<VaultEntry> data) {
         this.data = data;
     }
 
-    public static JsonPseudoEntry fromVaultEntryList(List<VaultEntry> data) {
-        return new JsonPseudoEntry(data);
+    public static OdvDbJsonPseudoEntry fromVaultEntryList(List<VaultEntry> data) {
+        return new OdvDbJsonPseudoEntry(data);
     }
 
     @Override

@@ -18,7 +18,7 @@ package de.jhit.opendiabetes.vault.exporter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.csv.ExportEntry;
-import de.jhit.opendiabetes.vault.container.csv.JsonPseudoEntry;
+import de.jhit.opendiabetes.vault.container.csv.OdvDbJsonPseudoEntry;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +26,16 @@ import java.util.List;
  *
  * @author juehv
  */
-public class JsonExporter extends FileExporter {
+public class OdvDbJsonExporter extends FileExporter {
 
-    public JsonExporter(ExporterOptions options, String filePath) {
+    public OdvDbJsonExporter(ExporterOptions options, String filePath) {
         super(options, filePath);
     }
 
     @Override
     protected List<ExportEntry> prepareData(List<VaultEntry> data) {
         List<ExportEntry> container = new ArrayList<>();
-        container.add(JsonPseudoEntry.fromVaultEntryList(data));
+        container.add(OdvDbJsonPseudoEntry.fromVaultEntryList(data));
         return container;
     }
 

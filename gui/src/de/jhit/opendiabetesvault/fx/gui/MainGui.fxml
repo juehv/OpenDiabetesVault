@@ -22,7 +22,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="474.0" prefWidth="431.0">
                             <children>
-                                <CheckBox fx:id="odvCheckBox" layoutX="14.0" layoutY="329.0" mnemonicParsing="false" text="OpenDiabetesVault CSV" />
+                                <CheckBox fx:id="odvCheckBox" layoutX="14.0" layoutY="329.0" mnemonicParsing="false" text="OpenDiabetesVault DB JSON" />
                                 <CheckBox fx:id="sonyCheckBox" layoutX="14.0" layoutY="266.0" mnemonicParsing="false" text="Sony SWR12 Dump" />
                                 <CheckBox fx:id="googleGatheredCheckBox" layoutX="14.0" layoutY="203.0" mnemonicParsing="false" text="Google Gathered JSON" />
                                 <CheckBox fx:id="googleFitCheckBox" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" text="Google Fit CSV Folder" />

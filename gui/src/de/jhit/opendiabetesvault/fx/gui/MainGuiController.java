@@ -11,7 +11,7 @@ import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.FileExporter;
-import de.jhit.opendiabetes.vault.exporter.JsonExporter;
+import de.jhit.opendiabetes.vault.exporter.OdvDbJsonExporter;
 import de.jhit.opendiabetes.vault.exporter.SliceLayoutCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.SourceCodeExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
@@ -20,8 +20,8 @@ import de.jhit.opendiabetes.vault.importer.FileImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
 import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
+import de.jhit.opendiabetes.vault.importer.OdvDbJsonImporter;
 import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
-import de.jhit.opendiabetes.vault.importer.VaultOdvImporter;
 import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOptions;
 import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
@@ -317,7 +317,7 @@ public class MainGuiController implements Initializable {
         File lastPath = new File(prefs.get(Constants.IMPORTER_ODV_IMPORT_PATH_KEY + 0, ""));
 
         FileChooser fileChooser = new FileChooser();
-        configureFileChooser(fileChooser, lastPath, Constants.CSV_EXTENSION_FILTER);
+        configureFileChooser(fileChooser, lastPath, Constants.JSON_EXTENSION_FILTER);
         List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
         if (files != null && !files.isEmpty()) {
@@ -501,8 +501,13 @@ public class MainGuiController implements Initializable {
                     });
                     if (odvCheckBox.isSelected()) {
                         for (String filePath : odvTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
+//                            NonInterpreter interpreter = new NonInterpreter(
+//                                    new VaultOdvImporter(null),
+//                                    iOptions,
+//                                    VaultDao.getInstance());
+
                             NonInterpreter interpreter = new NonInterpreter(
-                                    new VaultOdvImporter(null),
+                                    new OdvDbJsonImporter(null),
                                     iOptions,
                                     VaultDao.getInstance());
                             if (filePath != null && !filePath.isEmpty()) {
@@ -798,7 +803,7 @@ public class MainGuiController implements Initializable {
                                 + "-"
                                 + formatter.format(new Date())
                                 + ".json";
-                        exporter = new JsonExporter(eOptions,
+                        exporter = new OdvDbJsonExporter(eOptions,
                                 odvExpotFileName);
                         int result5 = exporter.exportDataToFile(
                                 VaultDao.getInstance().queryVaultEntrysBetween(
