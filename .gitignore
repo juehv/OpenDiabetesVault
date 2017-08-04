@@ -6,3 +6,5 @@ export*.csv
 /plot/nbproject/private/
 /plot-config/nbproject/private/
 /plot-config/OpenDiabetesVault-PlotConfigGenerator/nbproject/private/
+nbproject/jfx*
+UPDATED.TXT

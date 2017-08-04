@@ -22,6 +22,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.importer.Importer;
 import de.jhit.opendiabetes.vault.importer.validator.MedtronicCsvValidator;
+import de.jhit.opendiabetes.vault.util.SlidingWindow;
 import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
@@ -61,7 +62,10 @@ public class PumpInterpreter extends VaultInterpreter {
         data = fillCanulaInterpretation(data);
         Collections.sort(data, new SortVaultEntryByDate());
         LOG.finer("Start CGM Alert interpretation");
-        data = addBGValueToCgmAltertOnMedtronicPumps(data);
+        data = addCgmValueToCgmAltertOnMedtronicPumps(data);
+        Collections.sort(data, new SortVaultEntryByDate());
+        LOG.finer("Start CGM elevation calculation");
+        data = calculateCgmElevation(data);
         Collections.sort(data, new SortVaultEntryByDate());
 
         LOG.finer("Pump data interpretation finished");
@@ -429,7 +433,7 @@ public class PumpInterpreter extends VaultInterpreter {
         return data;
     }
 
-    private List<VaultEntry> addBGValueToCgmAltertOnMedtronicPumps(List<VaultEntry> data) {
+    private List<VaultEntry> addCgmValueToCgmAltertOnMedtronicPumps(List<VaultEntry> data) {
         if (data == null || data.isEmpty()) {
             return data;
         }
@@ -453,6 +457,28 @@ public class PumpInterpreter extends VaultInterpreter {
 
             }
         }
+
+        return data;
+    }
+
+    private List<VaultEntry> calculateCgmElevation(List<VaultEntry> data) {
+        if (data == null || data.isEmpty()) {
+            return data;
+        }
+        //TODO add filter size to config
+        SlidingWindow sw = new SlidingWindow(30, VaultEntryType.GLUCOSE_CGM, 5.0);
+        List<VaultEntry> elevationItems = new ArrayList<>();
+
+        for (VaultEntry item : data) {
+            double elevation = sw.updateValue1WindowElevation(item);
+            if (Math.abs(elevation) > 0.0) {
+                elevationItems.add(new VaultEntry(
+                        VaultEntryType.GLUCOSE_ELEVATION_30,
+                        item.getTimestamp(),
+                        elevation));
+            }
+        }
+        data.addAll(elevationItems);
 
         return data;
     }
