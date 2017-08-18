@@ -58,12 +58,6 @@ public class DataSlicer {
             }
         }
 
-        // TODO generate slice file 
-        // TODO add output stage filter 
-        // --> first of series
-        // --> last of series
-        // --> mid point of series
-        // --> none (would return for every point in the series a slice entry)
         if (lastResult != null) {
             for (Pair<Date, Date> item : lastResult.timeSeries) {
                 Date tmpTimestamp = null;
