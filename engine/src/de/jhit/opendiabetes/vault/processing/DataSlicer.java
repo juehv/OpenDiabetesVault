@@ -21,7 +21,10 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
+import javafx.util.Pair;
 
 /**
  *
@@ -61,6 +64,31 @@ public class DataSlicer {
         // --> last of series
         // --> mid point of series
         // --> none (would return for every point in the series a slice entry)
+        if (lastResult != null) {
+            for (Pair<Date, Date> item : lastResult.timeSeries) {
+                Date tmpTimestamp = null;
+                switch (options.outputFilter) {
+                    case FIRST_OF_SERIES:
+                        tmpTimestamp = item.getKey();
+                        break;
+                    case MID_OF_SERIES:
+                        // TODO find the mid TIMEPOINT (not the timestamp in the middle)
+                        // calclulate timepoint in the middle between first and last timestamp of series
+                        // find the timestamp nearest to the calculated timepoint in filtered data
+                        break;
+                    case END_OF_SERIES:
+                        tmpTimestamp = item.getValue();
+                        break;
+                    default:
+                        Logger.getLogger(DataSlicer.class.getName()).severe("ASSERTION ERROR: Unknown filter case!");
+                        throw new AssertionError("Unknown output filter");
+                }
+                if (tmpTimestamp != null) {
+                    SliceEntry tmpEntry = new SliceEntry(tmpTimestamp, options.duration);
+                    retVal.add(tmpEntry);
+                }
+            }
+        }
         return retVal;
     }
 

@@ -22,12 +22,16 @@ package de.jhit.opendiabetes.vault.processing;
  */
 class DataSlicerOptions {
 
-    public final long margin;
-    public final long duration;
+    public static enum OutputFilter {
+        FIRST_OF_SERIES, MID_OF_SERIES, END_OF_SERIES;
+    }
 
-    public DataSlicerOptions(long margin, long duration) {
-        this.margin = margin;
+    public final long duration;
+    public final OutputFilter outputFilter;
+
+    public DataSlicerOptions(long duration, OutputFilter outputFilter) {
         this.duration = duration;
+        this.outputFilter = outputFilter;
     }
 
 }
