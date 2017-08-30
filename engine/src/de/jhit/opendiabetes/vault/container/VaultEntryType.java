@@ -64,6 +64,7 @@ public enum VaultEntryType {
     PUMP_RESERVOIR_EMPTY,
     PUMP_TIME_SYNC,
     PUMP_AUTONOMOUS_SUSPEND,
+    PUMP_CGM_PREDICTION,
     // Sleep
     SLEEP_LIGHT,
     SLEEP_REM,

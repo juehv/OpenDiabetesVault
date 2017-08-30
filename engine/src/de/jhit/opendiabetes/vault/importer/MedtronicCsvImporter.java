@@ -54,6 +54,7 @@ public class MedtronicCsvImporter extends CsvImporter {
     private static final Pattern PERCENT_OF_RATE_PATTERN = Pattern.compile("(.*\\s)?PERCENT_OF_RATE=(\\w*).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern METER_PATTERN = Pattern.compile("(.*\\s)?METER_SERIAL_NUMBER=(\\w*).*", Pattern.CASE_INSENSITIVE);
     private static final Pattern CALIBRATION_BG_PATTERN = Pattern.compile("(.*\\s)?LAST_CAL_BG=(\\w*).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PREDICTION_PATTERN = Pattern.compile("(.*\\s)?PREDICTED_SENSOR_GLUCOSE_AMOUNT=(\\w*).*", Pattern.CASE_INSENSITIVE);
 
     public MedtronicCsvImporter(String importFilePath) {
         this(importFilePath, ',');
@@ -448,6 +449,15 @@ public class MedtronicCsvImporter extends CsvImporter {
                 if (tmpEntry != null) {
                     retVal.add(tmpEntry);
                 }
+
+                // sensor value prediction
+                tmpEntry = extractDoubleEntry(timestamp,
+                        VaultEntryType.PUMP_CGM_PREDICTION, rawValues,
+                        PREDICTION_PATTERN, creader.getValues());
+                if (tmpEntry != null && tmpEntry.getValue() > 20.0) {
+                    retVal.add(tmpEntry);
+                }
+
                 break;
             default:
                 Logger.getLogger(this.getClass().getName()).severe("ASSERTION ERROR!");

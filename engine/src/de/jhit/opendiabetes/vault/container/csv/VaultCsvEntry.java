@@ -29,7 +29,7 @@ import java.util.Locale;
  */
 public class VaultCsvEntry extends CsvEntry {
 
-    public final static String VERSION_STRING = "v10";
+    public final static String VERSION_STRING = "v10_3";
     public final static double UNINITIALIZED_DOUBLE = VaultEntry.VALUE_UNUSED;
 
     private Date timestamp;
@@ -37,6 +37,7 @@ public class VaultCsvEntry extends CsvEntry {
     private double cgmValue = UNINITIALIZED_DOUBLE;
     private double cgmRawValue = UNINITIALIZED_DOUBLE;
     private double cgmAlertValue = UNINITIALIZED_DOUBLE;
+    private double pumpCgmPredictionValue = UNINITIALIZED_DOUBLE;
     private List<String> glucoseAnnotation = new ArrayList<>();
     private double basalValue = UNINITIALIZED_DOUBLE;
     private List<String> basalAnnotation = new ArrayList<>();
@@ -97,6 +98,14 @@ public class VaultCsvEntry extends CsvEntry {
 
     public void setCgmAlertValue(double cgmAlertValue) {
         this.cgmAlertValue = cgmAlertValue;
+    }
+
+    public double getPumpCgmPredictionValue() {
+        return pumpCgmPredictionValue;
+    }
+
+    public void setPumpCgmPredictionValue(double pumpCgmPredictionValue) {
+        this.pumpCgmPredictionValue = pumpCgmPredictionValue;
     }
 
     public List<String> getGlucoseAnnotation() {
@@ -308,6 +317,7 @@ public class VaultCsvEntry extends CsvEntry {
                 && cgmValue == UNINITIALIZED_DOUBLE
                 && cgmRawValue == UNINITIALIZED_DOUBLE
                 && cgmAlertValue == UNINITIALIZED_DOUBLE
+                && pumpCgmPredictionValue == UNINITIALIZED_DOUBLE
                 && glucoseAnnotation.isEmpty()
                 && basalValue == UNINITIALIZED_DOUBLE
                 && basalAnnotation.isEmpty()
@@ -373,6 +383,12 @@ public class VaultCsvEntry extends CsvEntry {
         }
         if (cgmAlertValue > UNINITIALIZED_DOUBLE) {
             csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, cgmAlertValue)
+                    .replaceAll(",", ""));
+        } else {
+            csvRecord.add("");
+        }
+        if (pumpCgmPredictionValue > UNINITIALIZED_DOUBLE) {
+            csvRecord.add(String.format(Locale.ENGLISH, decimalFormat, pumpCgmPredictionValue)
                     .replaceAll(",", ""));
         } else {
             csvRecord.add("");
@@ -564,6 +580,7 @@ public class VaultCsvEntry extends CsvEntry {
             "cgmValue",
             "cgmRawValue",
             "cgmAlertValue",
+            "pumpCgmPredictionValue",
             "glucoseAnnotation",
             "basalValue",
             "basalAnnotation",
@@ -590,7 +607,7 @@ public class VaultCsvEntry extends CsvEntry {
 
     @Override
     public String toString() {
-        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", glucoseAnnotation=" + glucoseAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusCalculationValue=" + bolusCalculationValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + ", mlCgmValue=" + mlCgmValue + ", mlAnnotation=" + mlAnnotation + ", insulinSensitivityFactor=" + insulinSensitivityFactor + ", otherAnnotation=" + otherAnnotation + '}';
+        return "VaultCsvEntry{" + "timestamp=" + timestamp + ", bgValue=" + bgValue + ", cgmValue=" + cgmValue + ", cgmRawValue=" + cgmRawValue + ", cgmAlertValue=" + cgmAlertValue + ", pumpCgmPredictionValue=" + pumpCgmPredictionValue + ", glucoseAnnotation=" + glucoseAnnotation + ", basalValue=" + basalValue + ", basalAnnotation=" + basalAnnotation + ", bolusValue=" + bolusValue + ", bolusCalculationValue=" + bolusCalculationValue + ", bolusAnnotation=" + bolusAnnotation + ", mealValue=" + mealValue + ", pumpAnnotation=" + pumpAnnotation + ", exerciseTimeValue=" + exerciseTimeValue + ", exerciseAnnotation=" + exerciseAnnotation + ", heartRateValue=" + heartRateValue + ", stressBalanceValue=" + stressBalanceValue + ", heartRateVariabilityValue=" + heartRateVariabilityValue + ", stressValue=" + stressValue + ", sleepValue=" + sleepValue + ", sleepAnnotation=" + sleepAnnotation + ", locationAnnotation=" + locationAnnotation + ", mlCgmValue=" + mlCgmValue + ", mlAnnotation=" + mlAnnotation + ", insulinSensitivityFactor=" + insulinSensitivityFactor + ", otherAnnotation=" + otherAnnotation + '}';
     }
 
 }

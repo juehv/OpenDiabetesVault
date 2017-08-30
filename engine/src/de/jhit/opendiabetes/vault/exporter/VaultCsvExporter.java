@@ -79,10 +79,13 @@ public class VaultCsvExporter extends CsvFileExporter {
 
                 // add delayed items
                 if (!delayBuffer.isEmpty()) {
-                    for (VaultEntry delayedItem : delayBuffer) {
+                    // need to copy the buffer since the loop may create new entries
+                    VaultEntry[] delayedEntries = delayBuffer.toArray(new VaultEntry[]{});
+                    delayBuffer.clear();
+                    for (VaultEntry delayedItem : delayedEntries) {
                         tmpCsvEntry = processVaultEntry(tmpCsvEntry, delayedItem);
+
                     }
-                    delayBuffer = new ArrayList<>();
                 }
 
                 // search and add vault entries for this time slot
@@ -230,6 +233,9 @@ public class VaultCsvExporter extends CsvFileExporter {
                 tmpCsvEntry.addPumpAnnotation(tmpEntry.getType().toString()
                         + "="
                         + EasyFormatter.formatDouble(tmpEntry.getValue()));
+                break;
+            case PUMP_CGM_PREDICTION:
+                tmpCsvEntry.setPumpCgmPredictionValue(tmpEntry.getValue());
                 break;
             case HEART_RATE:
                 tmpCsvEntry.setHeartRateValue(tmpEntry.getValue());

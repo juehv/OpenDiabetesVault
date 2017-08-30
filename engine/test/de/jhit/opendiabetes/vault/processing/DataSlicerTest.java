@@ -61,7 +61,7 @@ public class DataSlicerTest extends Assert {
     public void testSliceData() throws ParseException {
         System.out.println("sliceData");
         Filter filter = new NoneFilter();
-        DataSlicerOptions options = new DataSlicerOptions(0, 60);
+        DataSlicerOptions options = new DataSlicerOptions(60, DataSlicerOptions.OutputFilter.FIRST_OF_SERIES);
         DataSlicer instance = new DataSlicer(options);
         instance.registerFilter(filter);
 
