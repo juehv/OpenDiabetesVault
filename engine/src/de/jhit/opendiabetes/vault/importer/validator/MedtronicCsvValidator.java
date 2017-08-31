@@ -54,7 +54,7 @@ public class MedtronicCsvValidator extends CsvValidator {
         BASAL("BasalProfileStart"), BASAL_TMP_PERCENT("ChangeTempBasalPercent"),
         BASAL_TMP_RATE("ChangeTempBasal"),
         PUMP_ALERT("AlarmPump"), PUMP_SUSPEND_CHANGED("ChangeSuspendState"),
-        PUMP_ALERT_NGP("AlarmPumpNGP");
+        PUMP_ALERT_NGP("AlarmPumpNGP"), PUMP_TYME_SYNC("ChangeTime");
 
         final String name;
 

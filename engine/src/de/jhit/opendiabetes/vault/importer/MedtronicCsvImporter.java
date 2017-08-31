@@ -394,6 +394,11 @@ public class MedtronicCsvImporter extends CsvImporter {
                 }
 
                 break;
+            case PUMP_TYME_SYNC:
+                retVal.add(new VaultEntry(VaultEntryType.PUMP_TIME_SYNC,
+                        timestamp,
+                        VaultEntry.VALUE_UNUSED));
+                break;
             case REWIND:
                 retVal.add(new VaultEntry(VaultEntryType.PUMP_REWIND, timestamp,
                         VaultEntry.VALUE_UNUSED));
