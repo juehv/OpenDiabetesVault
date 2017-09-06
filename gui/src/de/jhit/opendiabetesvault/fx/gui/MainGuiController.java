@@ -5,6 +5,7 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
+import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
@@ -22,6 +23,8 @@ import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOption
 import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
+import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
+import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.File;
@@ -605,8 +608,26 @@ public class MainGuiController implements Initializable {
 
     @FXML
     private void handleButtonProcessing(ActionEvent event) {
-        // add your processing code here
+        List<VaultEntry> data = VaultDao.getInstance().queryVaultEntrysBetween(TimestampUtils.fromLocalDate(
+                exportPeriodFromPicker.getValue()),
+                TimestampUtils.fromLocalDate(
+                        exportPeriodToPicker.getValue(), 86399000));
 
+        // add your processing code here
+        //
+        // Sensitivity Calculation
+        StaticInsulinSensivityCalculatorOptions sCalOptions
+                = new StaticInsulinSensivityCalculatorOptions(
+                        180, // range
+                        60, // bolus span
+                        15); // cgm margin
+        StaticInsulinSensivityCalculator calc = new StaticInsulinSensivityCalculator(sCalOptions);
+        List<VaultEntry> result = calc.calculateFromDataAsValutEntry(data);
+        for (VaultEntry item : result) {
+            VaultDao.getInstance().putEntry(item);
+        }
+
+        // inform user
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                     "Processing finished.",

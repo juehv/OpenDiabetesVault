@@ -22,4 +22,14 @@ package de.jhit.opendiabetes.vault.processing;
  */
 public class StaticInsulinSensivityCalculatorOptions {
 
+    public final long range; // Range for bolus filtering in minutes
+    public final long bolusSpan; // bolus insulin acting observation
+    public final long cgmDelayedStart; //time after bolus until cgm should decrese
+
+    public StaticInsulinSensivityCalculatorOptions(long range, long bolusSpan, long cgmDelayedStart) {
+        this.range = range;
+        this.bolusSpan = bolusSpan;
+        this.cgmDelayedStart = cgmDelayedStart;
+    }
+
 }

@@ -24,6 +24,8 @@ public enum FilterType {
     // basic time
     TIME_SPAN,
     TIME_POINT,
+    DATE_TIME_POINT,
+    DATE_TIME_SPAN,
     // available data
     BOLUS_AVAILABLE,
     BASAL_AVAILABLE,

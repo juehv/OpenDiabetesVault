@@ -264,7 +264,7 @@ public class VaultCsvExporter extends CsvFileExporter {
             case ML_CGM_PREDICTION:
                 tmpCsvEntry.setMlCgmValue(tmpEntry.getValue());
                 break;
-            case ML_INSULIN_SENSITIVTY:
+            case DM_INSULIN_SENSITIVTY:
                 tmpCsvEntry.setInsulinSensitivityFactor(tmpEntry.getValue());
                 break;
             case OTHER_ANNOTATION:

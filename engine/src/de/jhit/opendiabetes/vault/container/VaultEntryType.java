@@ -22,6 +22,7 @@ package de.jhit.opendiabetes.vault.container;
  */
 public enum VaultEntryType {
     // Bolus
+// Bolus
     BOLUS_NORMAL,
     BOLUS_SQARE,
     // Basal
@@ -82,7 +83,8 @@ public enum VaultEntryType {
     LOC_OTHER,
     // Machine Learning
     ML_CGM_PREDICTION,
-    ML_INSULIN_SENSITIVTY,
+    // Date Mining
+    DM_INSULIN_SENSITIVTY,
     // More unspecific input
     OTHER_ANNOTATION;
 }
