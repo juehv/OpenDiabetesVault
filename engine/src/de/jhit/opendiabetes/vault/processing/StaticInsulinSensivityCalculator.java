@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import static java.util.concurrent.TimeUnit.*;
 import javafx.util.Pair;
 
 public class StaticInsulinSensivityCalculator {
@@ -68,16 +67,16 @@ public class StaticInsulinSensivityCalculator {
         EventFilter eventFilter = new EventFilter();
         VaultEntryType type = BOLUS_NORMAL;
         // Save timestamp of each bolus event
-        List<Date> bolusEvents = eventFilter.filter(data, type, options.range);
+        List<Date> bolusEvents = eventFilter.filter(data, type, options.observationRange);
 
         // Cut time series including bolus event in middle
         for (Date date : bolusEvents) {
-            DateTimePointFilter filter = new DateTimePointFilter(date, (int) options.range);
+            DateTimePointFilter filter = new DateTimePointFilter(date, (int) options.observationRange);
             cutTimeSeries.add(new Pair(date, (filter.filter(data)).filteredData));
         }
 
         // Merging bolus events within max bolusSpan mins distance
-        long span = MILLISECONDS.convert(options.bolusSpan, MINUTES);
+        long span = options.getBolusMergingSpanInMilliseconds();
         for (Pair<Date, List<VaultEntry>> pair : cutTimeSeries) {
             Date bolus = pair.getKey();
             for (Iterator<VaultEntry> iterator = pair.getValue().iterator(); iterator.hasNext();) {
@@ -138,7 +137,7 @@ public class StaticInsulinSensivityCalculator {
             bolusDate = new Date(0);
             cgmBegin = 0.0;
             cgmEnd = 0.0;
-            long delayedStart = MILLISECONDS.convert(options.cgmDelayedStart, MINUTES);
+            long delayedStart = options.getBolusActingDelayInMilliseconds();
             for (VaultEntry entry : pair.getValue()) {
                 // Bolus event is found, save the bolus value for later calculation
                 if (entry.getType().equals(BOLUS_NORMAL) && !bolusFound && entry.getTimestamp().equals(bolus)) {

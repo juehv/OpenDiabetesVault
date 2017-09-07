@@ -608,19 +608,24 @@ public class MainGuiController implements Initializable {
 
     @FXML
     private void handleButtonProcessing(ActionEvent event) {
-        List<VaultEntry> data = VaultDao.getInstance().queryVaultEntrysBetween(TimestampUtils.fromLocalDate(
-                exportPeriodFromPicker.getValue()),
-                TimestampUtils.fromLocalDate(
-                        exportPeriodToPicker.getValue(), 86399000));
+        List<VaultEntry> data = null;
+        if (exportPeriodAllCheckbox.isSelected()) {
+            data = VaultDao.getInstance().queryAllVaultEntrys();
+        } else {
+            data = VaultDao.getInstance().queryVaultEntrysBetween(TimestampUtils.fromLocalDate(
+                    exportPeriodFromPicker.getValue()),
+                    TimestampUtils.fromLocalDate(
+                            exportPeriodToPicker.getValue(), 86399000));
+        }
 
         // add your processing code here
         //
         // Sensitivity Calculation
         StaticInsulinSensivityCalculatorOptions sCalOptions
                 = new StaticInsulinSensivityCalculatorOptions(
-                        180, // range
-                        60, // bolus span
-                        15); // cgm margin
+                        180, // observation range
+                        30, // bolus merging span
+                        15); // bolus actiong delay
         StaticInsulinSensivityCalculator calc = new StaticInsulinSensivityCalculator(sCalOptions);
         List<VaultEntry> result = calc.calculateFromDataAsValutEntry(data);
         for (VaultEntry item : result) {
@@ -639,7 +644,7 @@ public class MainGuiController implements Initializable {
 
     @FXML
     private void handleButtonExportClicked(ActionEvent event) {
-        // check if sth is selected
+        // check if anything is selected
         if (!exportOdvCheckBox.isSelected()
                 && !exportPlotDailyCheckBox.isSelected()) {
             Alert alert = new Alert(Alert.AlertType.WARNING,
@@ -681,51 +686,72 @@ public class MainGuiController implements Initializable {
                 Cursor cursorBackup = ap.getScene().getCursor();
                 ap.getScene().setCursor(Cursor.WAIT);
 
-                // export Data
-                try {
+                // query data
+                List<VaultEntry> data = null;
+                if (exportPeriodAllCheckbox.isSelected()) {
+                    data = VaultDao.getInstance().queryAllVaultEntrys();
+                } else {
+                    data = VaultDao.getInstance().queryVaultEntrysBetween(TimestampUtils.fromLocalDate(
+                            exportPeriodFromPicker.getValue()),
+                            TimestampUtils.fromLocalDate(
+                                    exportPeriodToPicker.getValue(), 86399000));
+                }
+
+                if (data == null || data.isEmpty()) {
                     Platform.runLater(() -> {
-                        exportPorgressBar.setProgress(0.05);
+                        Alert alert = new Alert(Alert.AlertType.ERROR,
+                                "No data found in specified time span!",
+                                ButtonType.CLOSE);
+                        alert.setHeaderText(null);
+                        alert.show();
                     });
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMM-HHmmss");
-                    String odvExpotFileName = "export-"
-                            + VaultCsvEntry.VERSION_STRING
-                            + "-"
-                            + formatter.format(new Date())
-                            + ".csv"; //TODO read format from options
-                    if (exportOdvCheckBox.isSelected() || exportPlotDailyCheckBox.isSelected()) {
-                        String path;
-                        if (exportOdvCheckBox.isSelected()) {
-                            path = exportOdvTextField.getText();
-                        } else {
-                            path = System.getProperty("java.io.tmpdir");
-                        }
-                        odvExpotFileName = new File(path).getAbsolutePath()
-                                + "/" + odvExpotFileName;
+                } else {
 
-                        ExporterOptions eOptions = new ExporterOptions(
-                                !exportPeriodAllCheckbox.isSelected(),
-                                TimestampUtils.fromLocalDate(
-                                        exportPeriodFromPicker.getValue()),
-                                TimestampUtils.fromLocalDate(
-                                        exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second      
+                    // export Data
+                    try {
+                        Platform.runLater(() -> {
+                            exportPorgressBar.setProgress(0.05);
+                        });
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMM-HHmmss");
+                        String odvExpotFileName = "export-"
+                                + VaultCsvEntry.VERSION_STRING
+                                + "-"
+                                + formatter.format(new Date())
+                                + ".csv"; //TODO read format from options
+                        if (exportOdvCheckBox.isSelected() || exportPlotDailyCheckBox.isSelected()) {
+                            String path;
+                            if (exportOdvCheckBox.isSelected()) {
+                                path = exportOdvTextField.getText();
+                            } else {
+                                path = System.getProperty("java.io.tmpdir");
+                            }
+                            odvExpotFileName = new File(path).getAbsolutePath()
+                                    + "/" + odvExpotFileName;
 
-                        // standard export
-                        FileExporter exporter = new VaultCsvExporter(eOptions,
-                                VaultDao.getInstance(),
-                                odvExpotFileName);
-                        int result = exporter.exportDataToFile(null);
-                        if (result != VaultCsvExporter.RESULT_OK) {
-                            Platform.runLater(() -> {
-                                Alert alert = new Alert(Alert.AlertType.ERROR,
-                                        "Could not export to odv csv file: "
-                                        + result + "\nSee logfile for details.",
-                                        ButtonType.CLOSE);
-                                alert.setHeaderText(null);
-                                alert.show();
-                            });
-                        }
+                            ExporterOptions eOptions = new ExporterOptions(
+                                    !exportPeriodAllCheckbox.isSelected(),
+                                    TimestampUtils.fromLocalDate(
+                                            exportPeriodFromPicker.getValue()),
+                                    TimestampUtils.fromLocalDate(
+                                            exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second      
 
-                        // novel odv export
+                            // standard export
+                            FileExporter exporter = new VaultCsvExporter(eOptions,
+                                    VaultDao.getInstance(),
+                                    odvExpotFileName);
+                            int result = exporter.exportDataToFile(null);
+                            if (result != VaultCsvExporter.RESULT_OK) {
+                                Platform.runLater(() -> {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR,
+                                            "Could not export to odv csv file: "
+                                            + result + "\nSee logfile for details.",
+                                            ButtonType.CLOSE);
+                                    alert.setHeaderText(null);
+                                    alert.show();
+                                });
+                            }
+
+                            // odv export
 //                        odvExpotFileName = new File(path).getAbsolutePath()
 //                                + "/"
 //                                + "export-"
@@ -740,14 +766,14 @@ public class MainGuiController implements Initializable {
 //                        if (result2 != VaultCsvExporter.RESULT_OK) {
 //                            Platform.runLater(() -> {
 //                                Alert alert = new Alert(Alert.AlertType.ERROR,
-//                                        "Could not export to odv csv file: "
+//                                        "Could not export to odv container file: "
 //                                        + result2 + "\nSee logfile for details.",
 //                                        ButtonType.CLOSE);
 //                                alert.setHeaderText(null);
 //                                alert.show();
 //                            });
 //                        }
-                        // code exporter
+                            // code exporter
 //                        odvExpotFileName = new File(path).getAbsolutePath()
 //                                + "/"
 //                                + "export-"
@@ -769,7 +795,7 @@ public class MainGuiController implements Initializable {
 //                                alert.show();
 //                            });
 //                        }
-                        // slice exporter
+                            // slice exporter
 //                        List<SliceEntry> entries = new ArrayList<>();
 //                        // today    
 //                        Calendar date = new GregorianCalendar();
@@ -798,82 +824,81 @@ public class MainGuiController implements Initializable {
 //                        if (result3 != VaultCsvExporter.RESULT_OK) {
 //                            Platform.runLater(() -> {
 //                                Alert alert = new Alert(Alert.AlertType.ERROR,
-//                                        "Could not export to odv csv file: "
+//                                        "Could not export to slice csv file: "
 //                                        + result3 + "\nSee logfile for details.",
 //                                        ButtonType.CLOSE);
 //                                alert.setHeaderText(null);
 //                                alert.show();
 //                            });
 //                        }
-                        // json exporter
-                        odvExpotFileName = new File(path).getAbsolutePath()
-                                + "/"
-                                + "export-"
-                                + VaultCsvEntry.VERSION_STRING
-                                + "-"
-                                + formatter.format(new Date())
-                                + ".json";
-                        exporter = new OdvDbJsonExporter(eOptions,
-                                odvExpotFileName);
-                        int result5 = exporter.exportDataToFile(
-                                VaultDao.getInstance().queryVaultEntrysBetween(
-                                        eOptions.exportPeriodFrom,
-                                        eOptions.exportPeriodTo));
-                        if (result5 != VaultCsvExporter.RESULT_OK) {
-                            Platform.runLater(() -> {
-                                Alert alert = new Alert(Alert.AlertType.ERROR,
-                                        "Could not export to code text file: "
-                                        + result5 + "\nSee logfile for details.",
-                                        ButtonType.CLOSE);
-                                alert.setHeaderText(null);
-                                alert.show();
-                            });
+                            // json exporter
+                            odvExpotFileName = new File(path).getAbsolutePath()
+                                    + "/"
+                                    + "export-"
+                                    + VaultCsvEntry.VERSION_STRING
+                                    + "-"
+                                    + formatter.format(new Date())
+                                    + ".json";
+                            exporter = new OdvDbJsonExporter(eOptions,
+                                    odvExpotFileName);
+                            int result5 = exporter.exportDataToFile(
+                                    data);
+                            if (result5 != VaultCsvExporter.RESULT_OK) {
+                                Platform.runLater(() -> {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR,
+                                            "Could not export to json file: "
+                                            + result5 + "\nSee logfile for details.",
+                                            ButtonType.CLOSE);
+                                    alert.setHeaderText(null);
+                                    alert.show();
+                                });
+                            }
                         }
-                    }
-                    Platform.runLater(() -> {
-                        exportPorgressBar.setProgress(0.5);
-                    });
-                    if (exportPlotDailyCheckBox.isSelected()) {
-                        //TODO move to engine
-                        String tmpPath = System.getProperty("java.io.tmpdir");
-                        // kill old dir
-                        File tmpDir = new File(tmpPath + "/plot");
-                        if (tmpDir.exists()) {
-                            tmpDir.delete();
-                        }
-                        FileCopyUtil.copyDirectory(new File("../plot"),
-                                tmpDir);
+                        Platform.runLater(() -> {
+                            exportPorgressBar.setProgress(0.5);
+                        });
+                        if (exportPlotDailyCheckBox.isSelected()) {
+                            //TODO move to engine
+                            String tmpPath = System.getProperty("java.io.tmpdir");
+                            // kill old dir
+                            File tmpDir = new File(tmpPath + "/plot");
+                            if (tmpDir.exists()) {
+                                tmpDir.delete();
+                            }
+                            FileCopyUtil.copyDirectory(new File("../plot"),
+                                    tmpDir);
 
-                        //Plot single days
-                        String cmd = "python ./plot.py " + odvExpotFileName;
-                        ProcessBuilder pb = new ProcessBuilder(cmd);
-                        pb.directory(tmpDir);
-                        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-                        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-                        Process p = pb.start();
-                        synchronized (p) {
-                            p.wait();
-                        }
-                        // create sheet
-                        cmd = "pdflatex buildPDF.tex";
-                        pb = new ProcessBuilder(cmd);
-                        pb.directory(tmpDir);
-                        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-                        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-                        p = pb.start();
-                        synchronized (p) {
-                            p.wait();
-                        }
+                            //Plot single days
+                            String cmd = "python ./plot.py " + odvExpotFileName;
+                            ProcessBuilder pb = new ProcessBuilder(cmd);
+                            pb.directory(tmpDir);
+                            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+                            Process p = pb.start();
+                            synchronized (p) {
+                                p.wait();
+                            }
+                            // create sheet
+                            cmd = "pdflatex buildPDF.tex";
+                            pb = new ProcessBuilder(cmd);
+                            pb.directory(tmpDir);
+                            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+                            p = pb.start();
+                            synchronized (p) {
+                                p.wait();
+                            }
 
-                        // copy result
-                        FileCopyUtil.copyFile(
-                                new File(tmpPath + "/plot/buildPDF.pdf"),
-                                new File(exportPlotDailyTextField.getText()
-                                        + "/export-" + formatter.format(new Date()) + ".pdf"));
+                            // copy result
+                            FileCopyUtil.copyFile(
+                                    new File(tmpPath + "/plot/buildPDF.pdf"),
+                                    new File(exportPlotDailyTextField.getText()
+                                            + "/export-" + formatter.format(new Date()) + ".pdf"));
+                        }
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE,
+                                "Error while exporting files.", ex);
                     }
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(MainGuiController.class.getName()).log(Level.SEVERE,
-                            "Error while exporting files.", ex);
                 }
                 Platform.runLater(() -> {
                     exportPorgressBar.setProgress(1.0);
