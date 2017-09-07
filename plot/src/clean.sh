@@ -8,5 +8,7 @@ rm -f *.log
 rm -f *.ilg
 rm -f *.ind
 rm -f *.idx
-rm -f plotList.tex
-rm -f header.tex
+rm -f tex_g*.tex
+rm -rf out
+rm -f export-*.odv
+rm -f export-*.txt 
