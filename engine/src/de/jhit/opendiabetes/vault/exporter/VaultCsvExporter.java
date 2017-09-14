@@ -299,6 +299,11 @@ public class VaultCsvExporter extends CsvFileExporter {
                     case PUMP_INFORMATION_CODE:
                         tmpCsvEntry.addPumpAnnotation(annotation.toStringWithValue());
                         break;
+                    case CGM_VENDOR_DEXCOM:
+                    case CGM_VENDOR_LIBRE:
+                    case CGM_VENDOR_MEDTRONIC:
+                        tmpCsvEntry.addGlucoseAnnotation(annotation.toStringWithValue());
+                        break;
                     case USER_TEXT:
                         tmpCsvEntry.addOtherAnnotation(annotation.toStringWithValue());
                     default:
