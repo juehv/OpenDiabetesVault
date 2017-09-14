@@ -35,6 +35,9 @@ public enum FilterType {
     SLEEP_AVAILABLE,
     STRESS_AVAILABLE,
     EXERCISE_AVAILABLE,
+    // data absence
+    MEAL_ABSENCE,
+    BOLUS_ABSENCE,
     // threshould
     BOLUS_TH,
     BASAL_TH,

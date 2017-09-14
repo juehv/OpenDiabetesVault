@@ -20,7 +20,7 @@ package de.jhit.opendiabetes.vault.processing;
  *
  * @author juehv
  */
-class DataSlicerOptions {
+public class DataSlicerOptions {
 
     public static enum OutputFilter {
         FIRST_OF_SERIES, MID_OF_SERIES, END_OF_SERIES;

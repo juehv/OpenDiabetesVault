@@ -5,12 +5,15 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
+import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.csv.SliceCsVEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.FileExporter;
 import de.jhit.opendiabetes.vault.exporter.OdvDbJsonExporter;
+import de.jhit.opendiabetes.vault.exporter.SliceLayoutCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import de.jhit.opendiabetes.vault.importer.FileImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
@@ -23,8 +26,11 @@ import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOption
 import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
+import de.jhit.opendiabetes.vault.processing.DataSlicer;
+import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
+import de.jhit.opendiabetes.vault.processing.filter.MealAbsenceFilter;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.File;
@@ -606,6 +612,8 @@ public class MainGuiController implements Initializable {
         }
     }
 
+    private List<SliceEntry> slices = null;
+
     @FXML
     private void handleButtonProcessing(ActionEvent event) {
         List<VaultEntry> data = null;
@@ -631,6 +639,12 @@ public class MainGuiController implements Initializable {
         for (VaultEntry item : result) {
             VaultDao.getInstance().putEntry(item);
         }
+        //
+        //Slicing Basal Rate Tests
+        DataSlicerOptions slicerOptions = new DataSlicerOptions(60, DataSlicerOptions.OutputFilter.FIRST_OF_SERIES);
+        DataSlicer slicer = new DataSlicer(slicerOptions);
+        slicer.registerFilter(new MealAbsenceFilter(4 * 60));
+        slices = slicer.sliceData(data);
 
         // inform user
         Platform.runLater(() -> {
@@ -796,41 +810,28 @@ public class MainGuiController implements Initializable {
 //                            });
 //                        }
                             // slice exporter
-//                        List<SliceEntry> entries = new ArrayList<>();
-//                        // today    
-//                        Calendar date = new GregorianCalendar();
-//                        // reset hour, minutes, seconds and millis
-//                        date.set(Calendar.HOUR_OF_DAY, 0);
-//                        date.set(Calendar.MINUTE, 0);
-//                        date.set(Calendar.SECOND, 0);
-//                        date.set(Calendar.MILLISECOND, 0);
-//                        Date today = TimestampUtils.createCleanTimestamp(date.getTime());
-//
-//                        for (int i = 27; i >= 0; i--) {
-//                            entries.add(new SliceEntry(
-//                                    TimestampUtils.addMinutesToTimestamp(today, Math.round(i * -1440)),
-//                                    360));
-//                        }
-//                        odvExpotFileName = new File(path).getAbsolutePath()
-//                                + "/"
-//                                + "slice-"
-//                                + SliceCsVEntry.VERSION_STRING
-//                                + "-"
-//                                + formatter.format(new Date())
-//                                + ".csv";
-//                        exporter = new SliceLayoutCsvExporter(eOptions,
-//                                odvExpotFileName, entries);
-//                        int result3 = exporter.exportDataToFile(null);
-//                        if (result3 != VaultCsvExporter.RESULT_OK) {
-//                            Platform.runLater(() -> {
-//                                Alert alert = new Alert(Alert.AlertType.ERROR,
-//                                        "Could not export to slice csv file: "
-//                                        + result3 + "\nSee logfile for details.",
-//                                        ButtonType.CLOSE);
-//                                alert.setHeaderText(null);
-//                                alert.show();
-//                            });
-//                        }
+                            if (slices != null) {
+                                odvExpotFileName = new File(path).getAbsolutePath()
+                                        + "/"
+                                        + "slice-"
+                                        + SliceCsVEntry.VERSION_STRING
+                                        + "-"
+                                        + formatter.format(new Date())
+                                        + ".csv";
+                                exporter = new SliceLayoutCsvExporter(eOptions,
+                                        odvExpotFileName, slices);
+                                int result3 = exporter.exportDataToFile(null);
+                                if (result3 != VaultCsvExporter.RESULT_OK) {
+                                    Platform.runLater(() -> {
+                                        Alert alert = new Alert(Alert.AlertType.ERROR,
+                                                "Could not export to slice csv file: "
+                                                + result3 + "\nSee logfile for details.",
+                                                ButtonType.CLOSE);
+                                        alert.setHeaderText(null);
+                                        alert.show();
+                                    });
+                                }
+                            }
                             // json exporter
                             odvExpotFileName = new File(path).getAbsolutePath()
                                     + "/"
