@@ -713,87 +713,87 @@ public class MainGuiController implements Initializable {
                         }
 
                         // novel odv export
-                        odvExpotFileName = new File(path).getAbsolutePath()
-                                + "/"
-                                + "export-"
-                                + VaultCsvEntry.VERSION_STRING
-                                + "-"
-                                + formatter.format(new Date())
-                                + ".odv";
-                        exporter = new VaultOdvExporter(eOptions,
-                                VaultDao.getInstance(),
-                                odvExpotFileName);
-                        int result2 = exporter.exportDataToFile(null);
-                        if (result2 != VaultCsvExporter.RESULT_OK) {
-                            Platform.runLater(() -> {
-                                Alert alert = new Alert(Alert.AlertType.ERROR,
-                                        "Could not export to odv csv file: "
-                                        + result2 + "\nSee logfile for details.",
-                                        ButtonType.CLOSE);
-                                alert.setHeaderText(null);
-                                alert.show();
-                            });
-                        }
+//                        odvExpotFileName = new File(path).getAbsolutePath()
+//                                + "/"
+//                                + "export-"
+//                                + VaultCsvEntry.VERSION_STRING
+//                                + "-"
+//                                + formatter.format(new Date())
+//                                + ".odv";
+//                        exporter = new VaultOdvExporter(eOptions,
+//                                VaultDao.getInstance(),
+//                                odvExpotFileName);
+//                        int result2 = exporter.exportDataToFile(null);
+//                        if (result2 != VaultCsvExporter.RESULT_OK) {
+//                            Platform.runLater(() -> {
+//                                Alert alert = new Alert(Alert.AlertType.ERROR,
+//                                        "Could not export to odv csv file: "
+//                                        + result2 + "\nSee logfile for details.",
+//                                        ButtonType.CLOSE);
+//                                alert.setHeaderText(null);
+//                                alert.show();
+//                            });
+//                        }
 
                         // code exporter
-                        odvExpotFileName = new File(path).getAbsolutePath()
-                                + "/"
-                                + "export-"
-                                + VaultCsvEntry.VERSION_STRING
-                                + "-"
-                                + formatter.format(new Date())
-                                + ".txt";
-                        exporter = new SourceCodeExporter(eOptions,
-                                VaultDao.getInstance(),
-                                odvExpotFileName);
-                        int result4 = exporter.exportDataToFile(null);
-                        if (result4 != VaultCsvExporter.RESULT_OK) {
-                            Platform.runLater(() -> {
-                                Alert alert = new Alert(Alert.AlertType.ERROR,
-                                        "Could not export to code text file: "
-                                        + result4 + "\nSee logfile for details.",
-                                        ButtonType.CLOSE);
-                                alert.setHeaderText(null);
-                                alert.show();
-                            });
-                        }
+//                        odvExpotFileName = new File(path).getAbsolutePath()
+//                                + "/"
+//                                + "export-"
+//                                + VaultCsvEntry.VERSION_STRING
+//                                + "-"
+//                                + formatter.format(new Date())
+//                                + ".txt";
+//                        exporter = new SourceCodeExporter(eOptions,
+//                                VaultDao.getInstance(),
+//                                odvExpotFileName);
+//                        int result4 = exporter.exportDataToFile(null);
+//                        if (result4 != VaultCsvExporter.RESULT_OK) {
+//                            Platform.runLater(() -> {
+//                                Alert alert = new Alert(Alert.AlertType.ERROR,
+//                                        "Could not export to code text file: "
+//                                        + result4 + "\nSee logfile for details.",
+//                                        ButtonType.CLOSE);
+//                                alert.setHeaderText(null);
+//                                alert.show();
+//                            });
+//                        }
 
                         // slice exporter
-                        List<SliceEntry> entries = new ArrayList<>();
-                        // today    
-                        Calendar date = new GregorianCalendar();
-                        // reset hour, minutes, seconds and millis
-                        date.set(Calendar.HOUR_OF_DAY, 0);
-                        date.set(Calendar.MINUTE, 0);
-                        date.set(Calendar.SECOND, 0);
-                        date.set(Calendar.MILLISECOND, 0);
-                        Date today = TimestampUtils.createCleanTimestamp(date.getTime());
-
-                        for (int i = 27; i >= 0; i--) {
-                            entries.add(new SliceEntry(
-                                    TimestampUtils.addMinutesToTimestamp(today, Math.round(i * -1440)),
-                                    360));
-                        }
-                        odvExpotFileName = new File(path).getAbsolutePath()
-                                + "/"
-                                + "slice-"
-                                + SliceCsVEntry.VERSION_STRING
-                                + "-"
-                                + formatter.format(new Date())
-                                + ".csv";
-                        exporter = new SliceLayoutCsvExporter(eOptions,
-                                odvExpotFileName, entries);
-                        int result3 = exporter.exportDataToFile(null);
-                        if (result3 != VaultCsvExporter.RESULT_OK) {
-                            Platform.runLater(() -> {
-                                Alert alert = new Alert(Alert.AlertType.ERROR,
-                                        "Could not export to odv csv file: "
-                                        + result3 + "\nSee logfile for details.",
-                                        ButtonType.CLOSE);
-                                alert.setHeaderText(null);
-                                alert.show();
-                            });
-                        }
+//                        List<SliceEntry> entries = new ArrayList<>();
+//                        // today    
+//                        Calendar date = new GregorianCalendar();
+//                        // reset hour, minutes, seconds and millis
+//                        date.set(Calendar.HOUR_OF_DAY, 0);
+//                        date.set(Calendar.MINUTE, 0);
+//                        date.set(Calendar.SECOND, 0);
+//                        date.set(Calendar.MILLISECOND, 0);
+//                        Date today = TimestampUtils.createCleanTimestamp(date.getTime());
+//
+//                        for (int i = 27; i >= 0; i--) {
+//                            entries.add(new SliceEntry(
+//                                    TimestampUtils.addMinutesToTimestamp(today, Math.round(i * -1440)),
+//                                    360));
+//                        }
+//                        odvExpotFileName = new File(path).getAbsolutePath()
+//                                + "/"
+//                                + "slice-"
+//                                + SliceCsVEntry.VERSION_STRING
+//                                + "-"
+//                                + formatter.format(new Date())
+//                                + ".csv";
+//                        exporter = new SliceLayoutCsvExporter(eOptions,
+//                                odvExpotFileName, entries);
+//                        int result3 = exporter.exportDataToFile(null);
+//                        if (result3 != VaultCsvExporter.RESULT_OK) {
+//                            Platform.runLater(() -> {
+//                                Alert alert = new Alert(Alert.AlertType.ERROR,
+//                                        "Could not export to odv csv file: "
+//                                        + result3 + "\nSee logfile for details.",
+//                                        ButtonType.CLOSE);
+//                                alert.setHeaderText(null);
+//                                alert.show();
+//                            });
+//                        }
 
                         // json exporter
                         odvExpotFileName = new File(path).getAbsolutePath()
@@ -810,6 +810,7 @@ public class MainGuiController implements Initializable {
                                         eOptions.exportPeriodFrom,
                                         eOptions.exportPeriodTo));
                         if (result5 != VaultCsvExporter.RESULT_OK) {
+                            
                             Platform.runLater(() -> {
                                 Alert alert = new Alert(Alert.AlertType.ERROR,
                                         "Could not export to code text file: "
