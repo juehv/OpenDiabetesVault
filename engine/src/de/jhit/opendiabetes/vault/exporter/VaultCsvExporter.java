@@ -264,7 +264,7 @@ public class VaultCsvExporter extends CsvFileExporter {
             case ML_CGM_PREDICTION:
                 tmpCsvEntry.setMlCgmValue(tmpEntry.getValue());
                 break;
-            case ML_INSULIN_SENSITIVTY:
+            case DM_INSULIN_SENSITIVTY:
                 tmpCsvEntry.setInsulinSensitivityFactor(tmpEntry.getValue());
                 break;
             case OTHER_ANNOTATION:
@@ -298,6 +298,11 @@ public class VaultCsvExporter extends CsvFileExporter {
                     case PUMP_ERROR_CODE:
                     case PUMP_INFORMATION_CODE:
                         tmpCsvEntry.addPumpAnnotation(annotation.toStringWithValue());
+                        break;
+                    case CGM_VENDOR_DEXCOM:
+                    case CGM_VENDOR_LIBRE:
+                    case CGM_VENDOR_MEDTRONIC:
+                        tmpCsvEntry.addGlucoseAnnotation(annotation.toStringWithValue());
                         break;
                     case USER_TEXT:
                         tmpCsvEntry.addOtherAnnotation(annotation.toStringWithValue());

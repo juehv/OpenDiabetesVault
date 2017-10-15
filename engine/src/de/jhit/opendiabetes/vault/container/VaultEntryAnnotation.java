@@ -42,6 +42,10 @@ public class VaultEntryAnnotation implements Serializable {
         PUMP_ERROR_CODE,
         PUMP_INFORMATION_CODE,
         //
+        CGM_VENDOR_MEDTRONIC,
+        CGM_VENDOR_LIBRE,
+        CGM_VENDOR_DEXCOM,
+        //
         ML_PREDICTION_TIME_BUCKET_SIZE,
         //
         USER_TEXT;

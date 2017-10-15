@@ -17,12 +17,13 @@
 package de.jhit.opendiabetes.vault.importer;
 
 import com.csvreader.CsvReader;
-import deprecated_code.RawDataEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import deprecated_code.Constants;
+import deprecated_code.RawDataEntry;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -48,7 +49,6 @@ public class LibreTxtImporter {
         // TODO add stuff
         // Teststreifen-Blutzucker (mg/dL)
         // Keton (mmol/L)
-
         try {
             // validate header
             // TODO implement a header-erkenner
@@ -108,9 +108,12 @@ public class LibreTxtImporter {
                     TimestampUtils.TIME_FORMAT_LIBRE_DE);
             double value = Double.parseDouble(reader.get(validHeader[2]));
 
-            VaultDao.getInstance().putEntry(
-                    new VaultEntry(VaultEntryType.GLUCOSE_CGM,
-                            timestamp, value));
+            VaultEntry tmpentry = new VaultEntry(VaultEntryType.GLUCOSE_CGM,
+                    timestamp, value);
+            tmpentry.addAnnotation(new VaultEntryAnnotation(
+                    VaultEntryAnnotation.TYPE.CGM_VENDOR_LIBRE));
+            VaultDao.getInstance().putEntry(tmpentry);
+
         } else if (type == Constants.LIBRE_TYPE_INTEGER[0]) { // ScanGlucose
             Date timestamp = TimestampUtils.createCleanTimestamp(reader.get(validHeader[0]),
                     TimestampUtils.TIME_FORMAT_LIBRE_DE);

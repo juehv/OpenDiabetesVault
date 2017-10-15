@@ -16,10 +16,31 @@
  */
 package de.jhit.opendiabetes.vault.processing;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 /**
  *
  * @author juehv
  */
 public class StaticInsulinSensivityCalculatorOptions {
+
+    public final long observationRange; // Range for calculation, also for bolus filtering in minutes
+    public final long bolusMergingSpan; // bolus merging span
+    public final long bolusActingDelay; //time after bolus until cgm should decrese
+
+    public StaticInsulinSensivityCalculatorOptions(long observationRange, long bolusMergingSpan, long bolusActingDelay) {
+        this.observationRange = observationRange;
+        this.bolusMergingSpan = bolusMergingSpan;
+        this.bolusActingDelay = bolusActingDelay;
+    }
+
+    public long getBolusMergingSpanInMilliseconds() {
+        return MILLISECONDS.convert(bolusMergingSpan, MINUTES);
+    }
+
+    public long getBolusActingDelayInMilliseconds() {
+        return MILLISECONDS.convert(bolusActingDelay, MINUTES);
+    }
 
 }

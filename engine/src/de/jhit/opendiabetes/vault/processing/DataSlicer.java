@@ -69,6 +69,7 @@ public class DataSlicer {
                         // TODO find the mid TIMEPOINT (not the timestamp in the middle)
                         // calclulate timepoint in the middle between first and last timestamp of series
                         // find the timestamp nearest to the calculated timepoint in filtered data
+                        tmpTimestamp = generateMidPoint(lastResult, new Date((item.getValue().getTime() + item.getKey().getTime()) / 2));
                         break;
                     case END_OF_SERIES:
                         tmpTimestamp = item.getValue();
@@ -94,6 +95,30 @@ public class DataSlicer {
      */
     public void registerFilter(Filter filter) {
         registeredFilter.add(filter);
+    }
+
+    private Date generateMidPoint(FilterResult lastResult, Date temporary) {
+        int localTempVar = -1;
+        for (int i = 0; i < lastResult.filteredData.size(); i++) {
+            if (lastResult.filteredData.get(i).getTimestamp().getTime() >= temporary.getTime()) {
+                // return lastResult.filteredData.get(i).getTimestamp();
+                localTempVar = i;
+                break;
+
+            }
+        }
+        if (localTempVar >= 0) {
+            int previousValueofMidpoint = (int) (temporary.getTime() - lastResult.filteredData.get(localTempVar - 1).getTimestamp().getTime());
+            int nextValueofMidpoint = (int) (lastResult.filteredData.get(localTempVar).getTimestamp().getTime() - temporary.getTime());
+            if (previousValueofMidpoint <= nextValueofMidpoint) {
+                return lastResult.filteredData.get(localTempVar - 1).getTimestamp(); //smaller value from midppoint calculated
+            } else {
+                return lastResult.filteredData.get(localTempVar).getTimestamp(); //higher value from  midpoint calculated
+            }
+
+        } else {
+            return null;
+        }
     }
 
 }
