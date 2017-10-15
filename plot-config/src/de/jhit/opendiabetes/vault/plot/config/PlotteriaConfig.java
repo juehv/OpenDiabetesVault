@@ -8,7 +8,7 @@ public class PlotteriaConfig {
     private int hmax = 180;
     private double barWidth = 0.004;
     private int bgCgmMaxValue = 300;
-    private double maxBasalValue = 3.5;
+    private double maxBasalValue = 0.0;
     private double maxBasalBelowLegendValue = 2.0;
     private int cgmBgHighLimit = 300;
     private int cgmBgLimitMarkerLow = 60;
@@ -16,7 +16,8 @@ public class PlotteriaConfig {
     private double minHrValue = 30.0;
     private double maxHrValue = 170.0;
     private int minCgmBgValue = 50;
-    private double maxBarValue = 14.0;
+    private double maxBarValue = 0.0;
+    private double interruptLinePlotMinutes = 20.0;
 
     private double legendXOffset = -0.05;
     private double legendYOffset = 0.295;
@@ -40,35 +41,35 @@ public class PlotteriaConfig {
     private boolean plotAutonomousSuspend = true;
 
     // Plot Colors 
-    private String hbgColor = "#d1fff4";
+    private String hbgColor = "#cbfcd6";
     private String gridColor = "#E6E6E6";
     private String carbBarColor = "#ed1c24";
     private String bolusBarColor = "#177d36";
-    private String bolusCalculationColor = "#00bc00";
-    private String bgPlotColor = "#9245dd";
-    private String cgmPlotColor = "#63a7de";
+    private String bolusCalculationColor = "#177d36";
+    private String bgPlotColor = "#2f55c2";
+    private String cgmPlotColor = "#4ddde0";
     private String cgmRawPlotColor = "#cc3399";
-    private String cgmCalibrationPlotColor = "#7c187b";
-    private String mlCgmPlotColor = "#ffbf80";
-    private String basalPlotColor = "#FAAC58";
-    private String heartRatePlotColor = "#cc0006";
+    private String cgmCalibrationPlotColor = "#2f55c2";
+    private String mlCgmPlotColor = "#9f24e6";
+    private String pumpCgmPredictionPlotColor = "#949196";
+    private String basalPlotColor = "#ffa67a";
+    private String heartRatePlotColor = "#e5aba3";
     private String overMaxColor = "#FF0000";
     private String symbolsColor = "#000000";
     private String pumpColor = "#000000";
-    private String symbolsBackgroundColor = "#FFE5BA";
+    private String symbolsBackgroundColor = "#dedede";
     private String cgmBgLimitMarkerColor = "#FFFFFF";
     private String stress0Color = "#ffffff";
-    private String stress1Color = "#d5d5ff";
-    private String stress2Color = "#ababff";
-    private String stress3Color = "#8181ff";
-    private String stress4Color = "#ff0000";
-    private String exerciseWalkColor = "#E9C7B9";
-    private String exerciseRunColor = "#BBE9B9";
-    private String exerciseBicycleColor = "#B9C8E9";
-    private String exerciseOtherColor = "#E5B9E9";
-    private String lightSleepColor = "#b3b3b3";//"#d9d9d9";
-    private String deepSleepColor = "#b3b3b3";
-    private String autonomousSuspendColor = "#ffd89e";
+    private String stress1Color = "#cea6b8";
+    private String stress2Color = "#aa7197";
+    private String stress3Color = "#80486d";
+    private String stress4Color = "#c40234";
+    private String exerciseLowColor = "#9ed3f1";
+    private String exerciseMidColor = "#32a0de";
+    private String exerciseHighColor = "#355f77";
+    private String lightSleepColor = "#e1e4e5";
+    private String deepSleepColor = "#cfd5d7";
+    private String autonomousSuspendColor = "#ffede4";
 
     // Axis Labels
     private boolean showXaxisLabel = false;
@@ -89,6 +90,7 @@ public class PlotteriaConfig {
     private String cgmAlertLegend = "cgm alert / fgm read";
     private String cgmCalibrationLegend = "cgm calibration";
     private String mlCgmLegend = "cgm machine learner prediction";
+    private String pumpCgmPredictionLegend = "pump cgm prediction";
     private String basalLegend = "basal";
     private String heartRateLegend = "heart rate";
     private String carbLegend = "carb";
@@ -161,6 +163,7 @@ public class PlotteriaConfig {
     private int heartRateMarkerSize = 2;
 
     // Locations
+    private String locNoDataLabel = "no data";
     private String locTransitionLabel = "transition";
     private String locHomeLabel = "home";
     private String locWorkLabel = "work";
@@ -168,18 +171,18 @@ public class PlotteriaConfig {
     private String locSportsLabel = "sports";
     private String locOtherLabel = "other";
 
-    private String locTransitionColor = "#6791E6";
-    private String locHomeColor = "#9DE667";
-    private String locWorkColor = "#F2F4B3";
-    private String locFoodColor = "#E6A567";
-    private String locSportsColor = "#67E686";
-    private String locOtherColor = "#E667E2";
+    private String locNoDataColor = "#ffffff";
+    private String locTransitionColor = "#e45d6d";
+    private String locHomeColor = "#d5cf3d";
+    private String locWorkColor = "#fbc725";
+    private String locFoodColor = "#e2b07d"; //9b6131
+    private String locSportsColor = "#5086c3";
+    private String locOtherColor = "#bfbcbd";
 
     // Exercise
-    private String exerciseWalkLabel = "walk";
-    private String exerciseRunLabel = "run";
-    private String exerciseBicycleLabel = "bicycle";
-    private String exerciseOtherLabel = "other";
+    private String exerciseLowLabel = "low exercise";
+    private String exerciseMidLabel = "mid exercise";
+    private String exerciseHighLabel = "high exercise";
 
     // Sleep
     private String lightSleepLabel = "light sleep";
@@ -188,9 +191,10 @@ public class PlotteriaConfig {
     // Linewidths
     private double heartRateLineWidth = 1.0;
     private double basalLineWidth = 1.0;
-    private double cgmLineWidth = 2.0;
+    private double cgmLineWidth = 2.5;
     private double cgmRawLineWidth = 1.0;
     private double mlCgmLineWidth = 1.0;
+    private double pumpCgmPredictionLineWidth = 1.0;
     private double bgLineWidth = 1.0;
     private double bolusCalculationLineWidth = 1.0;
 
@@ -211,7 +215,6 @@ public class PlotteriaConfig {
     private String headerFileBigSlices = "tex_g_headerBigSlices.tex";
     private String legendFileSymbols = "legendSymbols.pdf";
     private String legendFileDetailed = "legendDetailed.pdf";
-
 	public boolean isLimitsManual() {
 		return limitsManual;
 	}
@@ -295,6 +298,12 @@ public class PlotteriaConfig {
 	}
 	public void setMaxBarValue(double maxBarValue) {
 		this.maxBarValue = maxBarValue;
+	}
+	public double getInterruptLinePlotMinutes() {
+		return interruptLinePlotMinutes;
+	}
+	public void setInterruptLinePlotMinutes(double interruptLinePlotMinutes) {
+		this.interruptLinePlotMinutes = interruptLinePlotMinutes;
 	}
 	public double getLegendXOffset() {
 		return legendXOffset;
@@ -464,6 +473,12 @@ public class PlotteriaConfig {
 	public void setMlCgmPlotColor(String mlCgmPlotColor) {
 		this.mlCgmPlotColor = mlCgmPlotColor;
 	}
+	public String getPumpCgmPredictionPlotColor() {
+		return pumpCgmPredictionPlotColor;
+	}
+	public void setPumpCgmPredictionPlotColor(String pumpCgmPredictionPlotColor) {
+		this.pumpCgmPredictionPlotColor = pumpCgmPredictionPlotColor;
+	}
 	public String getBasalPlotColor() {
 		return basalPlotColor;
 	}
@@ -536,29 +551,23 @@ public class PlotteriaConfig {
 	public void setStress4Color(String stress4Color) {
 		this.stress4Color = stress4Color;
 	}
-	public String getExerciseWalkColor() {
-		return exerciseWalkColor;
+	public String getExerciseLowColor() {
+		return exerciseLowColor;
 	}
-	public void setExerciseWalkColor(String exerciseWalkColor) {
-		this.exerciseWalkColor = exerciseWalkColor;
+	public void setExerciseLowColor(String exerciseLowColor) {
+		this.exerciseLowColor = exerciseLowColor;
 	}
-	public String getExerciseRunColor() {
-		return exerciseRunColor;
+	public String getExerciseMidColor() {
+		return exerciseMidColor;
 	}
-	public void setExerciseRunColor(String exerciseRunColor) {
-		this.exerciseRunColor = exerciseRunColor;
+	public void setExerciseMidColor(String exerciseMidColor) {
+		this.exerciseMidColor = exerciseMidColor;
 	}
-	public String getExerciseBicycleColor() {
-		return exerciseBicycleColor;
+	public String getExerciseHighColor() {
+		return exerciseHighColor;
 	}
-	public void setExerciseBicycleColor(String exerciseBicycleColor) {
-		this.exerciseBicycleColor = exerciseBicycleColor;
-	}
-	public String getExerciseOtherColor() {
-		return exerciseOtherColor;
-	}
-	public void setExerciseOtherColor(String exerciseOtherColor) {
-		this.exerciseOtherColor = exerciseOtherColor;
+	public void setExerciseHighColor(String exerciseHighColor) {
+		this.exerciseHighColor = exerciseHighColor;
 	}
 	public String getLightSleepColor() {
 		return lightSleepColor;
@@ -661,6 +670,12 @@ public class PlotteriaConfig {
 	}
 	public void setMlCgmLegend(String mlCgmLegend) {
 		this.mlCgmLegend = mlCgmLegend;
+	}
+	public String getPumpCgmPredictionLegend() {
+		return pumpCgmPredictionLegend;
+	}
+	public void setPumpCgmPredictionLegend(String pumpCgmPredictionLegend) {
+		this.pumpCgmPredictionLegend = pumpCgmPredictionLegend;
 	}
 	public String getBasalLegend() {
 		return basalLegend;
@@ -878,6 +893,12 @@ public class PlotteriaConfig {
 	public void setHeartRateMarkerSize(int heartRateMarkerSize) {
 		this.heartRateMarkerSize = heartRateMarkerSize;
 	}
+	public String getLocNoDataLabel() {
+		return locNoDataLabel;
+	}
+	public void setLocNoDataLabel(String locNoDataLabel) {
+		this.locNoDataLabel = locNoDataLabel;
+	}
 	public String getLocTransitionLabel() {
 		return locTransitionLabel;
 	}
@@ -913,6 +934,12 @@ public class PlotteriaConfig {
 	}
 	public void setLocOtherLabel(String locOtherLabel) {
 		this.locOtherLabel = locOtherLabel;
+	}
+	public String getLocNoDataColor() {
+		return locNoDataColor;
+	}
+	public void setLocNoDataColor(String locNoDataColor) {
+		this.locNoDataColor = locNoDataColor;
 	}
 	public String getLocTransitionColor() {
 		return locTransitionColor;
@@ -950,29 +977,23 @@ public class PlotteriaConfig {
 	public void setLocOtherColor(String locOtherColor) {
 		this.locOtherColor = locOtherColor;
 	}
-	public String getExerciseWalkLabel() {
-		return exerciseWalkLabel;
+	public String getExerciseLowLabel() {
+		return exerciseLowLabel;
 	}
-	public void setExerciseWalkLabel(String exerciseWalkLabel) {
-		this.exerciseWalkLabel = exerciseWalkLabel;
+	public void setExerciseLowLabel(String exerciseLowLabel) {
+		this.exerciseLowLabel = exerciseLowLabel;
 	}
-	public String getExerciseRunLabel() {
-		return exerciseRunLabel;
+	public String getExerciseMidLabel() {
+		return exerciseMidLabel;
 	}
-	public void setExerciseRunLabel(String exerciseRunLabel) {
-		this.exerciseRunLabel = exerciseRunLabel;
+	public void setExerciseMidLabel(String exerciseMidLabel) {
+		this.exerciseMidLabel = exerciseMidLabel;
 	}
-	public String getExerciseBicycleLabel() {
-		return exerciseBicycleLabel;
+	public String getExerciseHighLabel() {
+		return exerciseHighLabel;
 	}
-	public void setExerciseBicycleLabel(String exerciseBicycleLabel) {
-		this.exerciseBicycleLabel = exerciseBicycleLabel;
-	}
-	public String getExerciseOtherLabel() {
-		return exerciseOtherLabel;
-	}
-	public void setExerciseOtherLabel(String exerciseOtherLabel) {
-		this.exerciseOtherLabel = exerciseOtherLabel;
+	public void setExerciseHighLabel(String exerciseHighLabel) {
+		this.exerciseHighLabel = exerciseHighLabel;
 	}
 	public String getLightSleepLabel() {
 		return lightSleepLabel;
@@ -1015,6 +1036,12 @@ public class PlotteriaConfig {
 	}
 	public void setMlCgmLineWidth(double mlCgmLineWidth) {
 		this.mlCgmLineWidth = mlCgmLineWidth;
+	}
+	public double getPumpCgmPredictionLineWidth() {
+		return pumpCgmPredictionLineWidth;
+	}
+	public void setPumpCgmPredictionLineWidth(double pumpCgmPredictionLineWidth) {
+		this.pumpCgmPredictionLineWidth = pumpCgmPredictionLineWidth;
 	}
 	public double getBgLineWidth() {
 		return bgLineWidth;
