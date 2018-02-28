@@ -835,28 +835,42 @@ public class MainGuiController implements Initializable {
 //                            });
 //                        }
                             // slice exporter
-                            if (slices != null) {
-                                odvExpotFileName = new File(path).getAbsolutePath()
-                                        + "/"
-                                        + "slice-"
-                                        + SliceCsVEntry.VERSION_STRING
-                                        + "-"
-                                        + formatter.format(new Date())
-                                        + ".csv";
-                                exporter = new SliceLayoutCsvExporter(eOptions,
-                                        odvExpotFileName, slices);
-                                int result3 = exporter.exportDataToFile(null);
-                                if (result3 != VaultCsvExporter.RESULT_OK) {
-                                    Platform.runLater(() -> {
-                                        Alert alert = new Alert(Alert.AlertType.ERROR,
-                                                "Could not export to slice csv file: "
-                                                + result3 + "\nSee logfile for details.",
-                                                ButtonType.CLOSE);
-                                        alert.setHeaderText(null);
-                                        alert.show();
-                                    });
-                                }
-                            }
+//                        List<SliceEntry> entries = new ArrayList<>();
+//                        // today    
+//                        Calendar date = new GregorianCalendar();
+//                        // reset hour, minutes, seconds and millis
+//                        date.set(Calendar.HOUR_OF_DAY, 0);
+//                        date.set(Calendar.MINUTE, 0);
+//                        date.set(Calendar.SECOND, 0);
+//                        date.set(Calendar.MILLISECOND, 0);
+//                        Date today = TimestampUtils.createCleanTimestamp(date.getTime());
+//
+//                        for (int i = 27; i >= 0; i--) {
+//                            entries.add(new SliceEntry(
+//                                    TimestampUtils.addMinutesToTimestamp(today, Math.round(i * -1440)),
+//                                    360));
+//                        }
+//                        odvExpotFileName = new File(path).getAbsolutePath()
+//                                + "/"
+//                                + "slice-"
+//                                + SliceCsVEntry.VERSION_STRING
+//                                + "-"
+//                                + formatter.format(new Date())
+//                                + ".csv";
+//                        exporter = new SliceLayoutCsvExporter(eOptions,
+//                                odvExpotFileName, entries);
+//                        int result3 = exporter.exportDataToFile(null);
+//                        if (result3 != VaultCsvExporter.RESULT_OK) {
+//                            Platform.runLater(() -> {
+//                                Alert alert = new Alert(Alert.AlertType.ERROR,
+//                                        "Could not export to odv csv file: "
+//                                        + result3 + "\nSee logfile for details.",
+//                                        ButtonType.CLOSE);
+//                                alert.setHeaderText(null);
+//                                alert.show();
+//                            });
+//                        }
+                            
                             // json exporter
                             odvExpotFileName = new File(path).getAbsolutePath()
                                     + "/"
@@ -870,6 +884,7 @@ public class MainGuiController implements Initializable {
                             int result5 = exporter.exportDataToFile(
                                     data);
                             if (result5 != VaultCsvExporter.RESULT_OK) {
+                            
                                 Platform.runLater(() -> {
                                     Alert alert = new Alert(Alert.AlertType.ERROR,
                                             "Could not export to json file: "
