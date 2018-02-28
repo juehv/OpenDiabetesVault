@@ -12,6 +12,7 @@ import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.FileExporter;
+import de.jhit.opendiabetes.vault.exporter.MlCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.OdvDbJsonExporter;
 import de.jhit.opendiabetes.vault.exporter.SliceLayoutCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
@@ -764,7 +765,31 @@ public class MainGuiController implements Initializable {
                                     alert.show();
                                 });
                             }
-
+                            
+                            
+                        odvExpotFileName = new File(path).getAbsolutePath()
+                                + "/"
+                                + "export-"
+                                + VaultCsvEntry.VERSION_STRING
+                                + "-"
+                                + formatter.format(new Date())
+                                + "-ML.csv";
+                        exporter = new MlCsvExporter(eOptions,
+                                VaultDao.getInstance(),
+                                odvExpotFileName);
+                        int result2 = exporter.exportDataToFile(null);
+                        if (result2 != VaultCsvExporter.RESULT_OK) {
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                                        "Could not export to odv container file: "
+                                        + result2 + "\nSee logfile for details.",
+                                        ButtonType.CLOSE);
+                                alert.setHeaderText(null);
+                                alert.show();
+                            });
+                        }
+                                    
+                                    
                             // odv export
 //                        odvExpotFileName = new File(path).getAbsolutePath()
 //                                + "/"

@@ -96,6 +96,10 @@ public class TimestampUtils {
         cal.setTime(timestamp);
         return cal.get(Calendar.MINUTE);
     }
+    
+    public static long getMinutesBetweenTimestamps(Date timestamp1, Date timestamp2){
+        return Math.round(Math.floor(Math.abs(timestamp2.getTime() - timestamp1.getTime()) / 60000 ));
+    }
 
     /**
      *
