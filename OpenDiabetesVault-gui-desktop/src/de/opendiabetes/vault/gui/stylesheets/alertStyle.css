@@ -1,0 +1,70 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 11.02.2018, 20:07:21
+    Author     : schae
+*/
+
+.dialog-pane{
+    -fx-background-color: #EEEEEE;
+}
+
+
+.dialog-pane:header .header-panel{
+    -fx-background-color: #e0e0e0;
+}
+
+.dialog-pane > .button-bar{
+    -fx-background-color: #EEEEEE;
+}
+
+.dialog-pane .button{
+    -fx-background-color: #007399;
+    -fx-opacity: 0.9;
+    -fx-text-fill: white;
+    -fx-wrap-text: true;
+    -fx-cursor: hand;
+}
+
+.dialog-pane .button:hover{
+    -fx-opacity: 0.7;
+}
+
+.dialog-pane .button:pressed{
+    -fx-opacity: 1.0;
+}
+
+
+.alert.confirmation.dialog-pane,
+.text-input-dialog.dialog-pane,
+.choice-dialog.dialog-pane {
+    -fx-graphic: url("asdf2.png");
+}
+
+.dialog-pane:header .header-panel .label {
+    -fx-font-size: 18;
+    -fx-wrap-text: true;
+    -fx-font-family: 'Roboto';
+}
+
+.alert.information.dialog-pane {
+    -fx-graphic: url("info.png");
+}
+
+.alert.error.dialog-pane {
+    -fx-graphic: url("error.png");
+}
+
+.alert.warning.dialog-pane {
+    -fx-graphic: url("ausrufe.png");
+}
+
+.dialog-pane > .content.label {
+    -fx-alignment: top-left;
+    -fx-padding: 1.333em 0.833em 0 0.833em; /* 16px 10px 0px 10px */
+    -fx-font-family: 'Roboto';
+    -fx-font-size: 14;
+}

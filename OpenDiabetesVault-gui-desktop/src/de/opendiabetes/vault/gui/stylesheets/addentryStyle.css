@@ -1,0 +1,31 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 05.02.2018, 01:40:13
+    Author     : Daniel Schäfer
+*/
+
+.button {
+    -fx-background-color:  #007399;
+    -fx-text-fill: #FFFFFF;
+    -fx-stroke: #FFFFFF;
+}
+
+.button:hover{
+    -fx-background-color: #328fad;
+}
+
+.button:pressed{
+    -fx-background-color: #005c7a;
+}
+
+.text{
+    -fx-font-family: 'Roboto';
+}
+
+.text-field{
+    -fx-font-family: 'Roboto';
+}

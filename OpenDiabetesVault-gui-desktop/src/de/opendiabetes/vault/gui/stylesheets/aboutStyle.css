@@ -1,0 +1,38 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 11.03.2018, 21:21:23
+    Author     : schae
+*/
+
+.text{
+    -fx-font-family: 'Roboto';
+}
+
+.text-area{
+    -fx-font-family: 'Roboto';
+    -fx-font-size: 14;
+    -fx-background-color: #EEEEEE;
+    -fx-border-width: 1 0 1 0;
+    -fx-border-color: #007399;
+}
+
+.text-area .content{
+    -fx-background-color: #EEEEEE;
+}
+
+#test{
+    -fx-fill: #E0E0E0;
+    -fx-stroke: #E0E0E0;
+    -fx-border-color: #007399;
+    -fx-border-width: 0 0 1.5 0;
+}
+
+#test2{
+    -fx-background-color: transparent;
+    -fx-border-color: #007399;
+    -fx-border-width: 0 0 1.5 0;
+}

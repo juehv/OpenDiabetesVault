@@ -1,0 +1,103 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 11.02.2018, 23:30:17
+    Author     : schae
+*/
+
+.button{
+    -fx-background-color: #007399;
+    -fx-text-fill: white;
+    -fx-opacity: 0.9;
+}
+
+.button:hover{
+    -fx-opacity: 0.7;
+}
+
+.button:pressed{
+    -fx-opacity: 1.0;
+}
+
+.text-field{
+    -fx-background-color: transparent;
+    -fx-font-family: 'Roboto';
+}
+
+#welcome_label{
+    -fx-font-family: 'Roboto Thin';
+    -fx-font-size: 70;
+    -fx-text-fill: #A6A6A6;
+    /*-fx-effect: dropshadow(three-pass-box, #777777, 5, 0, 2, 2);*/
+}
+
+#passwordLabel{
+    -fx-font-family: 'Roboto';
+}
+
+#passwordLabel1{
+    -fx-font-family: 'Roboto';
+}
+
+.combo-box{
+    -fx-font-family: 'Roboto';
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );*/
+}    
+
+.combo-box-popup .list-view .list-cell {
+    -fx-padding: 4 0 4 5;
+
+    /* No alternate highlighting */
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover {
+    /*-fx-background: -fx-accent;*/
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: black;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: #EEEEEE;
+    -fx-text-fill: black;
+}
+
+.combo-box-base  {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.combo-box-base:hover{
+    -fx-background-color: transparent;
+}
+
+.combo-box-base:showing {
+    -fx-color: blue;
+}
+
+.combo-box-base:focused {
+    -fx-border-color: transparent;
+}
+
+.combo-box-base:disabled {
+    -fx-opacity: 0.4;
+}
+
+#languageLabel{
+    -fx-font-family: 'Roboto';
+    -fx-text-fill: #007399;
+    -fx-font-size: 12;
+}
