@@ -15,8 +15,6 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>BP-OpenDiabetesVault-GUI</name>
             <source-roots>
-                <root id="src.plotteria.dir"/>
-                <root id="src.filesintojarfolder.dir"/>
                 <root id="src.dir"/>
             </source-roots>
             <test-roots>
