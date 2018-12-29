@@ -1,0 +1,224 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 09.03.2018, 16:25:25
+    Author     : Daniel Schäfer
+*/
+
+#startDateLabel{
+    -fx-font-size: 12;
+    -fx-text-fill: #007399;
+}
+
+#endDateLabel{
+    -fx-font-size: 12;
+    -fx-text-fill: #007399;
+}
+
+#dateAreaLabel{
+    -fx-font-size: 14;
+    -fx-text-fill: white;
+}
+
+#dateArea{
+    -fx-fill: #FBFBFB;
+    -fx-stroke: #007399;
+    -fx-stroke-size: 0.5;
+}
+
+#dateTextAreaRectangle{
+    -fx-fill: #007399;
+    -fx-stroke: #007399;
+}
+
+.button {
+    -fx-background-color:  #007399;
+    -fx-text-fill: #FFFFFF;
+    -fx-stroke: #FFFFFF;
+}
+
+.button:hover{
+    -fx-background-color: #328fad;
+}
+
+.button:pressed{
+    -fx-background-color: #005c7a;
+}
+
+.text{
+    -fx-font-family: 'Roboto';
+}
+
+.date-picker{
+    -fx-background-color: transparent;
+}
+
+.date-picker .text-field{
+    -fx-background-color: transparent;
+    -fx-font-size: 13;
+}
+
+.date-picker .arrow-button{
+    -fx-background-color: #E0E0E0;
+    -fx-border-color: #777777;
+    -fx-border-width: 0 0 0 0.5;
+}
+
+.date-picker .arrow-button:pressed{
+    -fx-background-color: #C9C9C9;
+}
+.date-picker-popup .button{
+    -fx-background-color: transparent;
+    -fx-shape:"M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z";
+}
+
+.date-picker .cell:hover{
+    -fx-background-color: #007399;
+}
+
+.date-picker .cell:focused{
+    -fx-background-color: #007399;
+}
+
+.date-picker .arrow-button .arrow{
+    -fx-shape:"M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z";
+    -fx-scale-x: 1.5;
+    -fx-scale-y: 1.5;
+}
+
+.titled-pane:collapsed .title{
+    -fx-background-color: #E0E0E0;
+    -fx-border-color: #007399;
+    -fx-border-width: 0.2;
+}
+
+.titled-pane:expanded .title{
+    -fx-background-color: linear-gradient(#E0E0E0 0%, #EEEEEE 100%);
+    -fx-border-color: #007399;
+    -fx-border-width: 0.2;
+}
+
+.titled-pane .arrow-button .arrow{
+    -fx-background-color: black;
+    -fx-shape:"M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z";
+}
+
+.progress-bar .track{
+    -fx-background-color: #FBFBFB;
+    -fx-border-color: #777777;
+}
+
+.progress-bar{
+    -fx-scale-x: 1;
+    -fx-scale-y: 0.7;
+ /*   -fx-translate-x: 40; */
+    -fx-translate-y: 0;
+}
+
+#fieldBox{
+    -fx-fill: #E0E0E0;
+    -fx-arc-height: 7;
+    -fx-arc-width: 7;
+    -fx-translate-x: 18;
+    -fx-translate-y: 40;
+}
+
+#importPfad{
+    -fx-background-color: transparent;
+}
+
+#fieldRectangle{
+    -fx-fill: #007399;
+    -fx-translate-x: 18;
+    -fx-translate-y: 87.5;
+}
+
+#fieldLabel{
+    -fx-text-fill: #007399;
+    -fx-font-size: 12;
+    -fx-translate-x: 22;
+    -fx-translate-y: 40;
+}
+
+#interpreterLabel{
+    -fx-text-fill: #007399;
+    -fx-font-size: 12;
+    -fx-translate-x: 514;
+    -fx-translate-y: 40;
+}
+
+#comboBoxBox{
+    -fx-fill: #E0E0E0;
+    -fx-arc-height: 7;
+    -fx-arc-width: 7;
+    -fx-translate-x: 510;
+    -fx-translate-y: 40;
+}
+
+#comboBoxRectangle{
+    -fx-fill: #007399;
+    -fx-translate-x: 510;
+    -fx-translate-y: 87.5;
+}
+
+
+.progress-bar > .bar {
+   -fx-background-color: #007399;
+}
+
+.combo-box{
+    -fx-font-family: 'Roboto';
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );*/
+}    
+
+.combo-box-popup .list-view .list-cell {
+    -fx-padding: 4 0 4 5;
+
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover {
+    /*-fx-background: -fx-accent;*/
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: black;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: #EEEEEE;
+    -fx-text-fill: black;
+}
+
+.combo-box-base  {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.combo-box-base:hover{
+    -fx-background-color: transparent;
+}
+
+.combo-box-base:showing {
+    -fx-color: blue;
+}
+
+.combo-box-base:focused {
+    -fx-border-color: transparent;
+}
+
+.combo-box-base:disabled {
+    -fx-opacity: 0.4;
+}
+

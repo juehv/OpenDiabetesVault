@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="fatherPane" style="-fx-background-color: #EEEEEE;" stylesheets="@../../stylesheets/optionWindowStyle.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="opendiabetesvaultgui.launcher.OptionsWindowController">
+   <children>
+      <TabPane fx:id="tabs" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="351.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab fx:id="languagesAndDateFormat" text="%option.languageTab">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="326.0" prefWidth="600.0">
+                     <children>
+                        <Rectangle fx:id="passwordBox1" arcHeight="7.0" arcWidth="7.0" fill="#e0e0e0" height="49.0" layoutX="15.0" layoutY="26.0" stroke="#e0e0e0" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" width="231.0" />
+                        <ComboBox fx:id="selectLanguage" layoutX="15.0" layoutY="43.0" prefHeight="25.0" prefWidth="231.0" />
+                        <Label fx:id="languageLabel" layoutX="18.0" layoutY="24.0" prefHeight="20.0" prefWidth="213.0" text="%option.chooseLanguageText">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Rectangle fx:id="passwordRectangle1" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="1.5" layoutX="15.0" layoutY="74.0" stroke="#007399" strokeType="INSIDE" width="231.0" />
+                        <Rectangle fx:id="passwordBox12" arcHeight="7.0" arcWidth="7.0" fill="#e0e0e0" height="49.0" layoutX="15.0" layoutY="136.0" stroke="#e0e0e0" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" width="231.0" />
+                        <ComboBox fx:id="selectDateFormat" layoutX="15.0" layoutY="156.0" prefHeight="25.0" prefWidth="231.0" />
+                        <Label fx:id="dateFormatLabel" layoutX="18.0" layoutY="136.0" prefHeight="20.0" prefWidth="213.0" text="%option.dateFormatLabel">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Rectangle fx:id="passwordRectangle12" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="1.5" layoutX="15.0" layoutY="183.0" stroke="#007399" strokeType="INSIDE" width="231.0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab fx:id="database" text="%option.databaseTab">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="databasePathChooserButton" layoutX="400.0" layoutY="100.0" mnemonicParsing="false" onAction="#choosePath" prefHeight="25.0" prefWidth="133.0" text="%option.selectDirectoryButton" />
+                        <Rectangle fx:id="databasePathBox" arcHeight="7.0" arcWidth="7.0" fill="#e0e0e0" height="49.0" layoutX="15.0" layoutY="80.0" stroke="#e0e0e0" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" width="351.0" />
+                        <Label fx:id="pathLabel" layoutX="18.0" layoutY="80.0" prefHeight="20.0" prefWidth="337.0" text="%option.pathLabel">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Rectangle fx:id="databasePathRectangle" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="2.0" layoutX="15.0" layoutY="128.0" stroke="#007399" strokeType="INSIDE" width="351.0" />
+                        <CheckBox fx:id="isInMemoryCheckBox" layoutX="15.0" layoutY="25.0" mnemonicParsing="false" onAction="#toggleDatabasePath" prefHeight="17.0" prefWidth="214.0" text="%option.checkBox" />
+                        <TextField fx:id="dataBasePath" layoutX="18.0" layoutY="100.0" prefHeight="25.0" prefWidth="345.0" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <Button fx:id="applyButton" disable="true" layoutX="440.0" layoutY="365.0" mnemonicParsing="false" onAction="#applyChanges" prefHeight="25.0" prefWidth="127.0" text="%option.applyButton" />
+      <Button fx:id="cancelButton" layoutX="274.0" layoutY="365.0" mnemonicParsing="false" onAction="#closeWindow" prefHeight="25.0" prefWidth="127.0" text="%option.cancelButton" />
+   </children>
+</AnchorPane>

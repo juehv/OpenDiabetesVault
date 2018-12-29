@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="426.0" prefWidth="600.0" style="-fx-background-color: #EEEEEE;" stylesheets="@../../stylesheets/aboutStyle.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="opendiabetesvaultgui.about.AboutPageController">
+   <children>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="225.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../shapes/Logo.png" />
+         </image>
+      </ImageView>
+      <TextArea fx:id="text" editable="false" layoutY="158.0" prefHeight="176.0" prefWidth="600.0" text="%about.mainText" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextArea>
+      <GridPane layoutX="1.0" layoutY="336.0" prefHeight="90.0" prefWidth="600.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Hyperlink fx:id="licenseInformationLink" onAction="#handleLinkAction" text="%about.licenseLink" />
+            <Hyperlink fx:id="redistributionLink" onAction="#handleLinkAction" text="%about.redistributionLink" GridPane.rowIndex="1" />
+            <Hyperlink fx:id="donationLink" onAction="#handleLinkAction" text="%about.donateLink" GridPane.rowIndex="2" />
+            <Hyperlink fx:id="contributionLink" onAction="#handleLinkAction" text="%about.howToContributeLink" GridPane.columnIndex="1" />
+            <Hyperlink fx:id="listOfContributersLink" onAction="#handleLinkAction" text="%about.contributersLink" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+      <Rectangle fx:id="test" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="45.0" layoutX="29.0" layoutY="75.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="189.0" />
+      <TextField fx:id="test2" layoutX="29.0" layoutY="95.0" prefHeight="25.0" prefWidth="189.0" visible="false" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,27 @@
+\begin{changemargin}{4em}{4em} 
+
+The OpenDiabetesVault-Plot trys to combine all supported datatypes in one comprehensive plot.
+This enables fast data analysis for both, checking novel algorithms and analysing the health status of a patient.
+
+The plot is divided into 3 zones:
+\begin{itemize}
+ \item Symbol bars: The upper symbol bar indicates technical information about the insulin pump and the glucose sensor systems.
+ The second symbol bar is indicating abstracted locations of the patients.
+ The third symbol bar indicates physical activity in three intense steps.
+ The fourth and lowest symbol bar shows the stress level (currently calculated from heart variability values).
+ \item Continuous data: The middle zone shows time series data.
+ Continuous glucose measurement data (or flash glucose measurement data), heart rate data and machine learning prediction results are shown as line plot.
+ Blood glucose values are shown as dots and are connected with a line plot for better readability.
+ Blood glucose values taken for calibration or bolus calculation are specially marked by a symbol within the plot.
+ The sleeping phases are indicated by the background color.
+ \item Discrete data: This zone shows the amount of insulin and meals logged by the insulin pump. 
+ Bolus insulin and meals are shown as bar plot.
+ Meals are taken from the bolus insulin calculation.
+ Therefore, patients should always put the exact estimated amount of carbs in it. 
+ If some insulin savings are intended, patents should modify the calculation result of the bolus calculator.
+ Basal insulin is shown as stepped line plot, which is a mixture of the bolus profile and temporary modification.
+ It is not shown if it is a temporary basal rate or a profile rate, but it the plot shows the actual injected basal insulin.
+ However, if the pump can act autonomously, a different colored background indicates this action.
+\end{itemize}
+
+\end{changemargin}

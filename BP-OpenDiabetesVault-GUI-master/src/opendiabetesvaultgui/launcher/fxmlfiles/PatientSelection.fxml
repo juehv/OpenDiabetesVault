@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" fx:id="patient_pane" prefHeight="450.0" prefWidth="800.0" style="-fx-background-color: #EEEEEE;" stylesheets="@../../stylesheets/patientselectionStyle.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="opendiabetesvaultgui.patientselection.PatientSelectionController">
+   <children>
+      <TableView fx:id="tableView" depthTest="ENABLE" editable="true" layoutY="58.0" onMouseClicked="#selectPatient" prefHeight="392.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="58.0">
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy></TableView>
+      <Rectangle fx:id="passwordBox" arcHeight="7.0" arcWidth="7.0" fill="#e0e0e0" height="49.0" layoutX="562.0" layoutY="4.0" stroke="#e0e0e0" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" width="270.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="4.0" />
+      <Rectangle fx:id="passwordRectangle" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="1.5" layoutX="523.0" layoutY="51.5" stroke="#007399" strokeType="INSIDE" width="270.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="51.5" />
+      <Label fx:id="passwordLabel" layoutX="569.0" layoutY="4.0" prefHeight="17.0" prefWidth="241.0" text="%patient.textAboveSearchbar" textFill="#007399" AnchorPane.rightAnchor="31.0" AnchorPane.topAnchor="4.0" />
+      <TextField fx:id="searchbar" layoutX="569.0" layoutY="23.0" maxHeight="25.0" maxWidth="300.0" minHeight="25.0" minWidth="15.0" prefHeight="25.0" prefWidth="262.0" promptText="%patient.searchBarPromptText" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="23.0">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </TextField>
+      <Circle fx:id="removeEntryHitbox" fill="#ffffff00" layoutX="24.0" layoutY="25.0" onMouseClicked="#removeAnEntry" radius="10.0" scaleX="1.5" scaleY="1.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="15.0" />
+      <Circle fx:id="addEntryHitbox" fill="#ffffff00" layoutX="73.0" layoutY="25.0" onMouseClicked="#addEntry" radius="10.0" scaleX="1.5" scaleY="1.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" AnchorPane.leftAnchor="63.0" AnchorPane.topAnchor="15.0" />
+      <Circle fx:id="editEntryHitbox" fill="#ffffff00" layoutX="122.0" layoutY="25.0" onMouseClicked="#editData" radius="10.5" scaleX="1.5" scaleY="1.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" AnchorPane.leftAnchor="111.5" AnchorPane.topAnchor="14.5" />
+      <SVGPath fx:id="test1" content="M 25.568359 6.2597656 A 18.687497 18.687497 0 0 0 23.699219 6.2910156 A 18.687497 18.687497 0 0 0 6.2675781 25.763672 A 18.687497 18.687497 0 0 0 25.349609 43.621094 A 18.687497 18.687497 0 0 0 43.625 24.9375 L 43.552734 23.289062 A 18.687497 18.687497 0 0 0 25.568359 6.2597656 z M 11.810547 20.191406 L 38.033203 20.191406 L 38.033203 29.121094 L 11.810547 29.121094 L 11.810547 20.191406 z " fill="a9a9a9" layoutX="325.0" onMouseClicked="#removeAnEntry" scaleX="0.8" scaleY="0.8" visible="false" AnchorPane.leftAnchor="331.24845600128174" AnchorPane.topAnchor="6.2491912841796875" />
+      <SVGPath fx:id="test2" content="M 25.568359 6.2597656 A 18.687497 18.687497 0 0 0 23.699219 6.2910156 A 18.687497 18.687497 0 0 0 6.2675781 25.763672 A 18.687497 18.687497 0 0 0 25.349609 43.621094 A 18.687497 18.687497 0 0 0 43.625 24.9375 L 43.552734 23.289062 A 18.687497 18.687497 0 0 0 25.568359 6.2597656 z M 20.695312 11.361328 L 29.623047 11.361328 L 29.623047 20.007812 L 38.271484 20.007812 L 38.271484 28.935547 L 29.623047 28.935547 L 29.623047 37.583984 L 20.695312 37.583984 L 20.695312 28.935547 L 12.048828 28.935547 L 12.048828 20.007812 L 20.695312 20.007812 L 20.695312 11.361328 z " fill="a9a9a9" layoutX="375.0" onMouseClicked="#addEntry" scaleX="0.8" scaleY="0.8" visible="false" AnchorPane.leftAnchor="381.24845600128174" AnchorPane.topAnchor="6.2491912841796875" />
+      <SVGPath fx:id="test3" content="M 25.568359 6.2597656 A 18.687497 18.687497 0 0 0 23.699219 6.2910156 A 18.687497 18.687497 0 0 0 6.2675781 25.763672 A 18.687497 18.687497 0 0 0 25.349609 43.621094 A 18.687497 18.687497 0 0 0 43.625 24.9375 L 43.552734 23.289062 A 18.687497 18.687497 0 0 0 25.568359 6.2597656 z M 32.216797 9.6054688 L 40.513672 18.013672 L 39.632812 18.878906 L 31.333984 10.470703 L 32.216797 9.6054688 z M 30.482422 11.322266 L 38.779297 19.730469 L 24.410156 33.910156 L 16.113281 25.501953 L 30.482422 11.322266 z M 15.228516 26.386719 L 19.376953 30.589844 L 23.527344 34.794922 L 17.642578 36.123047 L 16.980469 36.273438 C 16.205869 34.620834 14.955612 33.236497 13.380859 32.283203 L 13.494141 31.919922 L 15.228516 26.386719 z M 13.087891 33.216797 C 14.350727 34.030094 15.36375 35.160298 16.029297 36.488281 L 11.757812 37.453125 L 13.087891 33.216797 z " fill="a9a9a9" layoutX="418.0" onMouseClicked="#editData" scaleX="0.8" scaleY="0.8" visible="false" AnchorPane.leftAnchor="424.24845600128174" AnchorPane.topAnchor="6.2491912841796875" />
+      <SVGPath fx:id="editEntryButton" content="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" layoutX="109.0" layoutY="12.0" onMouseClicked="#editData" scaleX="1.3" scaleY="1.3" AnchorPane.leftAnchor="112.0" AnchorPane.topAnchor="14.9975004196167" />
+      <SVGPath fx:id="addEntryButton" content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="TRANSPARENT" layoutX="61.0" layoutY="13.0" onMouseClicked="#addEntry" scaleX="1.8" scaleY="1.8" AnchorPane.leftAnchor="66.0" AnchorPane.topAnchor="18.0" />
+      <SVGPath fx:id="removeEntry" content="M19 13H5v-2h14v2z" layoutX="12.0" layoutY="13.0" onMouseClicked="#removeAnEntry" scaleX="1.8" scaleY="1.8" AnchorPane.leftAnchor="17.0" AnchorPane.topAnchor="24.0" />
+      <SVGPath content="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#007399" layoutX="750.0" layoutY="16.0" scaleX="1.8" scaleY="1.8" style="-fx-opacity: 0.6;" AnchorPane.rightAnchor="29.510000228881836" />
+   </children>
+</AnchorPane>

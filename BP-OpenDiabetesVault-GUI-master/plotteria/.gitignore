@@ -1,0 +1,8 @@
+*.pdf
+*.png
+*.aux
+*.log
+*.ilg
+*.ind
+*.idx
+export*

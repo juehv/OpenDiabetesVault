@@ -1,0 +1,22 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+
+.button {
+    -fx-background-color:  #007399;
+    -fx-text-fill: #FFFFFF;
+    -fx-stroke: #FFFFFF;
+}
+
+.button:hover{
+    -fx-background-color: #328fad;
+}
+
+.button:pressed{
+    -fx-background-color: #005c7a;
+}
+
+.text{
+    -fx-font-family: 'Roboto';
+}

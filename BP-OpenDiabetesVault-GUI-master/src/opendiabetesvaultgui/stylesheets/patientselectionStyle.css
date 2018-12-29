@@ -1,0 +1,184 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 05.02.2018, 01:16:47
+    Author     : Daniel Schäfer
+*/
+
+#removeEntryHitbox{
+    -fx-cursor: hand;
+}
+
+#addEntryHitbox{
+    -fx-cursor: hand;
+}
+
+#refreshHitbox{
+    -fx-cursor: hand;
+}
+
+#editEntryHitbox{
+    -fx-cursor: hand;
+}
+
+.Circle{
+    -fx-cursor: hand;
+}
+
+#addEntryButton{
+    -fx-cursor: hand;
+    -fx-fill: #007399;
+}
+
+#removeEntry{
+    -fx-cursor: hand;
+    -fx-fill: #007399;
+}
+
+#editEntryButton{
+    -fx-cursor: hand;
+    -fx-fill: #007399;
+}
+
+#addEntryButton:hover{
+    -fx-fill: #328fad;
+}
+
+#removeEntry:hover{
+    -fx-fill: #328fad;
+}
+
+#editEntryButton:hover{
+    -fx-fill: #328fad;
+}
+
+#addEntryButton:pressed{
+    -fx-fill: #005c7a;
+}
+
+#removeEntry:pressed{
+    -fx-fill: #005c7a;
+}
+
+#editEntryButton:pressed{
+    -fx-fill: #005c7a;
+}
+
+#searchbar{
+    -fx-background-color: transparent;
+    
+}
+
+#tableView{
+    -fx-focus-color: #EEEEEE;
+}
+
+#tableView .table-cell{
+    -fx-text-fill: #303030;
+}
+
+/*
+#tableView .table-cell:selected{
+    -fx-text-fill: black;
+}
+*/
+#tableView .column-header{
+    /*-fx-background-color: linear-gradient(#007399 0%, #EEEEEE 100%);*/
+    /*-fx-background-color: #8e8e8e;*/
+    -fx-background-color: #e0e0e0;
+    /*-fx-border-color: #5f5f5f;*/
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-border-radius: 1;
+}
+
+
+.table-view .filler{
+    -fx-background-color: #e0e0e0;
+}
+
+.table-view .column-header .label{
+    /*-fx-text-fill: black;*/
+    -fx-text-fill: black;
+    /*-fx-text-overrun: center-word-ellipsis;*/
+    /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );*/
+    /*-fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 10,0,0,1 );*/
+    -fx-font-size: 15px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-weight: bold;
+    
+}
+
+.table-view .column-header .text{
+    /*-fx-stroke-width: 0.3;
+    -fx-stroke: black;*/
+    -fx-font-size: 16;
+    -fx-font-smoothing-type: lcd;
+}
+
+
+.table-row-cell{
+    -fx-background-color: white;
+    -fx-border-color:  #e3e3e3;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+    -fx-cell-size: 35;
+}
+
+.table-row-cell:odd{
+    -fx-background-color: white;
+    -fx-border-color: #e3e3e3;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+    -fx-cell-size: 40;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #EEEEEE;
+    -fx-border-color: #e3e3e3;
+}
+
+.table-row-cell:focused {
+    
+}
+
+.table-row-cell:selected .text{
+    -fx-fill: #303030;
+}
+
+#tableView .table-column{
+    -fx-alignment: CENTER-LEFT;
+    -fx-border-color: transparent;
+}
+
+
+.root{
+    -fx-font-family: 'Roboto';
+}
+.text {
+    -fx-font-family: 'Roboto';
+}
+
+.text-field{
+    -fx-font-family: 'Roboto';
+}
+
+
+#test1{
+    -fx-cursor: hand;
+    -fx-fill: #007399;
+}
+
+#test2{
+    -fx-cursor: hand;
+    -fx-fill: #007399;
+    
+}
+
+#test3{
+    -fx-cursor: hand;
+    -fx-fill: #007399;
+}

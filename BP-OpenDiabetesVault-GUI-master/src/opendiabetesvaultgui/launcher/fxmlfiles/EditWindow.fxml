@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+
+<AnchorPane id="AnchorPane" prefHeight="287.0" prefWidth="327.0" style="-fx-background-color: #EEEEEE;" stylesheets="@../../stylesheets/addentryStyle.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="opendiabetesvaultgui.patientselection.EditWindowController">
+   <children>
+      <Rectangle fx:id="firstnameBox" arcHeight="7.0" arcWidth="7.0" fill="#e0e0e0" height="49.0" layoutX="48.0" layoutY="23.0" stroke="#e0e0e0" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" width="231.0" />
+      <Rectangle fx:id="firstnameRectangle" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="1.5" layoutX="48.0" layoutY="70.5" stroke="#007399" strokeType="INSIDE" width="231.0" />
+      <Label fx:id="firstnameLabel" layoutX="55.0" layoutY="23.0" prefHeight="17.0" prefWidth="220.0" text="%edit.enterFirstNameText" textFill="#007399" />
+      <TextField fx:id="firstnameInput" layoutX="54.0" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#listenToText" prefHeight="25.0" prefWidth="220.0" promptText="%edit.enterFirstNameTextField" style="-fx-background-color: #e0e0e0;" />
+      <Rectangle fx:id="secondnameBox" arcHeight="7.0" arcWidth="7.0" fill="#e0e0e0" height="49.0" layoutX="48.0" layoutY="95.0" stroke="#e0e0e0" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" width="231.0" />
+      <Rectangle fx:id="secondnameRectangle" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="1.5" layoutX="48.0" layoutY="142.5" stroke="#007399" strokeType="INSIDE" width="231.0" />
+      <Label fx:id="secondnameLabel" layoutX="55.0" layoutY="95.0" prefHeight="17.0" prefWidth="220.0" text="%edit.enterLastNameText" textFill="#007399" />
+      <TextField fx:id="lastnameInput" layoutX="54.0" layoutY="112.0" onAction="#listenToText" prefHeight="25.0" prefWidth="220.0" promptText="%edit.enterLastNameTextField" style="-fx-background-color: #e0e0e0;" />
+      <Rectangle fx:id="dobBox" arcHeight="7.0" arcWidth="7.0" fill="#e0e0e0" height="49.0" layoutX="48.0" layoutY="163.0" stroke="#e0e0e0" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" width="231.0" />
+      <Rectangle fx:id="dobRectangle" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="1.5" layoutX="48.0" layoutY="210.5" stroke="#007399" strokeType="INSIDE" width="231.0" />
+      <Label fx:id="dobLabel" layoutX="55.0" layoutY="163.0" prefHeight="17.0" prefWidth="220.0" text="%edit.enterDateOfBirthText" textFill="#007399" />
+      <TextField fx:id="dayInput" layoutX="58.0" layoutY="181.0" onAction="#listenToText" prefHeight="25.0" prefWidth="50.0" promptText="%edit.enterDateOfBirthTextFieldDay" style="-fx-background-color: #e0e0e0;" />
+      <TextField fx:id="monthInput" layoutX="139.0" layoutY="181.0" onAction="#listenToText" prefHeight="25.0" prefWidth="50.0" promptText="%edit.enterDateOfBirthTextFieldMonth" style="-fx-background-color: #e0e0e0;" />
+      <TextField fx:id="yearInput" layoutX="210.0" layoutY="181.0" onAction="#listenToText" prefHeight="25.0" prefWidth="65.0" promptText="%edit.enterDateOfBirthTextFieldYear" style="-fx-background-color: #e0e0e0;" />
+      <Button fx:id="editButton" layoutX="48.0" layoutY="248.0" mnemonicParsing="false" onAction="#alterInfo" prefHeight="25.0" prefWidth="231.0" text="%edit.editButton" />
+      <Rectangle fx:id="dobRectangle2" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="1.5" layoutX="103.0" layoutY="197.0" rotate="90.0" stroke="#007399" strokeType="INSIDE" width="28.0" />
+      <Rectangle fx:id="dobRectangle3" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="1.5" layoutX="186.0" layoutY="197.0" rotate="90.0" stroke="#007399" strokeType="INSIDE" width="28.0" />
+   </children>
+</AnchorPane>

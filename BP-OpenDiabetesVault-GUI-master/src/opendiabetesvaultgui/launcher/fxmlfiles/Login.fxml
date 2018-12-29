@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+
+<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="400.0" stylesheets="@../../stylesheets/loginStyle.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="opendiabetesvaultgui.login.LoginController">
+   <children>
+      <Rectangle fx:id="passwordBox" arcHeight="7.0" arcWidth="7.0" fill="#E0E0E0" height="49.0" layoutX="85.0" layoutY="286.0" stroke="#E0E0E0" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" width="231.0" />
+      <PasswordField id="PasswordField" fx:id="password" layoutX="90.0" layoutY="305.0" onKeyPressed="#passwordLoginKey" prefHeight="25.0" prefWidth="220.0" promptText="%login.passwordText" />
+      <Button id="LoginButton" fx:id="login" layoutX="85.0" layoutY="352.0" mnemonicParsing="false" onAction="#passwordLogin" prefHeight="27.0" prefWidth="231.0" text="%login.button" />
+      <ImageView fitHeight="164.0" fitWidth="157.0" layoutX="125.0" layoutY="47.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../shapes/Logo.png" />
+         </image>
+      </ImageView>
+      <Label id="PasswordLabel" fx:id="passwordLabel" layoutX="92.0" layoutY="288.0" prefHeight="17.0" prefWidth="220.0" text="%login.enterPasswordText" />
+      <Rectangle fx:id="passwordRectangle" accessibleRole="IMAGE_VIEW" arcHeight="2.0" arcWidth="2.0" fill="#007399" height="2.0" layoutX="85.0" layoutY="333.0" stroke="#007399" strokeType="INSIDE" width="231.0" />
+   </children>
+</AnchorPane>
