@@ -12,6 +12,8 @@ The platform is plugin based. It loads the plugins form "export" folder within t
 Source Code for provided plugins are here:
 https://github.com/lucasbuschlinger/BachelorPraktikum
 
+If Netbeans does not find the correct class to launch try de.opendiabetesvaultgui.launcher.Launch.java
+
 Known for working most of the time:
 * Carelink importer in importer tab
 * "Medical Plot" in Slicer tab when set up correctly
